@@ -1,0 +1,19 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# Logs / temporários
+*.log
+npm-debug.log*
+
+# Dependências (não usamos build; vendor é versionado de propósito)
+node_modules/
+
+# Nunca versionar segredos (a publishable key do config.js é pública por design)
+.env
+.env.*
+*.secret

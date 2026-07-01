@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mindle — Painel de leads</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0F0F0E">
+
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%230F0F0E"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <script src="config.js"></script>
+</head>
+<body class="admin-body">
+
+  <header class="admin-header">
+    <a class="brand" href="index.html" aria-label="Mindle — voltar ao site">
+      <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+        <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H539.349V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+        <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="var(--color-accent)"/>
+      </svg>
+    </a>
+    <span class="admin-tag">Painel de leads</span>
+    <button class="btn btn-header admin-sair" id="btn-sair" hidden>Sair</button>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ── Login ── -->
+    <section class="login-view" id="view-login" hidden>
+      <div class="login-card">
+        <p class="eyebrow"><span class="eyebrow-index">&#9679;</span>Acesso restrito</p>
+        <h1 class="login-title">Painel de leads.</h1>
+        <p class="login-sub">Entre com o e-mail e a senha de admin.</p>
+        <form id="form-login" novalidate>
+          <div class="field">
+            <label class="field-label" for="login-email">E-mail</label>
+            <input class="field-input" type="email" id="login-email" autocomplete="email" required placeholder="voce@dominio.com.br">
+          </div>
+          <div class="field">
+            <label class="field-label" for="login-senha">Senha</label>
+            <input class="field-input" type="password" id="login-senha" autocomplete="current-password" required placeholder="••••••••">
+          </div>
+          <button class="btn btn-primary login-btn" type="submit" id="btn-login">Entrar</button>
+        </form>
+        <p class="login-msg" id="login-msg" role="status" hidden></p>
+      </div>
+    </section>
+
+    <!-- ── Painel ── -->
+    <section class="app-view" id="view-app" hidden>
+
+      <div class="tabs" role="tablist" aria-label="Seções do painel">
+        <button class="tab is-on" role="tab" data-tab="leads" aria-selected="true">Leads</button>
+        <button class="tab" role="tab" data-tab="briefings" aria-selected="false">Briefings <span class="tab-count" id="tab-count-briefings" hidden></span></button>
+        <button class="tab" role="tab" data-tab="brandings" aria-selected="false">Branding <span class="tab-count" id="tab-count-brandings" hidden></span></button>
+        <button class="tab" role="tab" data-tab="diagnostico" aria-selected="false">Diagnóstico</button>
+        <button class="tab" role="tab" data-tab="clientes" aria-selected="false">Clientes <span class="tab-count" id="tab-count-clientes" hidden></span></button>
+      </div>
+
+      <div class="tab-pane" id="tab-leads">
+      <div class="stats" id="stats">
+        <div class="stat"><span class="stat-num" id="stat-total">–</span><span class="stat-label">Total</span></div>
+        <div class="stat"><span class="stat-num stat-a" id="stat-a">–</span><span class="stat-label">Caminho A</span></div>
+        <div class="stat"><span class="stat-num" id="stat-b">–</span><span class="stat-label">Caminho B</span></div>
+        <div class="stat"><span class="stat-num" id="stat-novos">–</span><span class="stat-label">Novos</span></div>
+      </div>
+
+      <div class="toolbar">
+        <div class="chips" id="chips-caminho" role="group" aria-label="Filtrar por caminho">
+          <button class="chip is-on" data-caminho="todos">Todos</button>
+          <button class="chip" data-caminho="A">Caminho A</button>
+          <button class="chip" data-caminho="B">Caminho B</button>
+        </div>
+        <select class="field-input toolbar-status" id="filtro-status" aria-label="Filtrar por status">
+          <option value="todos">Todos os status</option>
+          <option value="novo">Novo</option>
+          <option value="contatado">Contatado</option>
+          <option value="agendado">Agendado</option>
+          <option value="fechado">Fechado</option>
+          <option value="descartado">Descartado</option>
+        </select>
+        <input class="field-input toolbar-busca" type="search" id="busca" placeholder="Buscar nome, e-mail, profissão&hellip;" aria-label="Buscar leads">
+      </div>
+
+      <p class="admin-msg" id="app-msg" role="status" hidden></p>
+      <div class="leads" id="leads-list" aria-live="polite"></div>
+      <p class="empty" id="empty" hidden>Nenhum lead com esses filtros.</p>
+      </div><!-- /tab-leads -->
+
+      <div class="tab-pane" id="tab-briefings" hidden>
+        <div class="toolbar">
+          <select class="field-input toolbar-status" id="bf-filtro-status" aria-label="Filtrar briefings por status">
+            <option value="todos">Todos os status</option>
+            <option value="novo">Novo</option>
+            <option value="em_analise">Em análise</option>
+            <option value="em_producao">Em produção</option>
+            <option value="concluido">Concluído</option>
+          </select>
+          <input class="field-input toolbar-busca" type="search" id="bf-busca" placeholder="Buscar empresa, segmento, cidade&hellip;" aria-label="Buscar briefings">
+        </div>
+        <p class="admin-msg" id="bf-msg" role="status" hidden></p>
+        <div class="leads" id="briefings-list" aria-live="polite"></div>
+        <p class="empty" id="bf-empty" hidden>Nenhum briefing com esses filtros.</p>
+      </div><!-- /tab-briefings -->
+
+      <div class="tab-pane" id="tab-brandings" hidden>
+        <div class="toolbar">
+          <select class="field-input toolbar-status" id="bd-filtro-status" aria-label="Filtrar brandings por status">
+            <option value="todos">Todos os status</option>
+            <option value="novo">Novo</option>
+            <option value="em_analise">Em análise</option>
+            <option value="em_producao">Em produção</option>
+            <option value="concluido">Concluído</option>
+          </select>
+          <input class="field-input toolbar-busca" type="search" id="bd-busca" placeholder="Buscar empresa, segmento, cidade&hellip;" aria-label="Buscar brandings">
+        </div>
+        <p class="admin-msg" id="bd-msg" role="status" hidden></p>
+        <div class="leads" id="brandings-list" aria-live="polite"></div>
+        <p class="empty" id="bd-empty" hidden>Nenhum briefing de branding com esses filtros.</p>
+      </div><!-- /tab-brandings -->
+
+      <!-- ── Diagnóstico ao vivo (companheiro da call de 30 min) ── -->
+      <div class="tab-pane" id="tab-diagnostico" hidden>
+        <div class="dg-grid">
+
+          <aside class="dg-rail">
+            <section class="dg-card dg-rail-card">
+              <h3 class="dg-t"><span class="dg-num">05</span>Sinais <span class="dg-min">marque ao ouvir</span></h3>
+
+              <p class="dg-grupo dg-grupo--lp">Sinais de página de vendas</p>
+              <div class="dg-checks">
+                <label class="dg-check"><input type="checkbox" data-sig="lp" value="Oferta única e madura — responde sem hesitar o que vende, para quem e por quanto" data-dg><span></span>Oferta única e madura — responde sem hesitar o que vende, para quem e por quanto</label>
+                <label class="dg-check"><input type="checkbox" data-sig="lp" value="Discurso coerente; o que falta é a vitrine" data-dg><span></span>Discurso coerente; o que falta é a vitrine</label>
+                <label class="dg-check"><input type="checkbox" data-sig="lp" value="Gatilho pontual: lançar oferta, rodar tráfego, lead que pesquisa" data-dg><span></span>Gatilho pontual: lançar oferta, rodar tráfego, lead que pesquisa</label>
+                <label class="dg-check"><input type="checkbox" data-sig="lp" value="Tem matéria-prima: prova social, fotos, história" data-dg><span></span>Tem matéria-prima: prova social, fotos, história</label>
+              </div>
+
+              <p class="dg-grupo dg-grupo--br">Sinais de branding completo</p>
+              <div class="dg-checks">
+                <label class="dg-check"><input type="checkbox" data-sig="br1" value="Trava no fundamento: não articula diferencial, público ou oferta" data-dg><span></span>Trava no fundamento: não articula diferencial, público ou oferta <strong>(decisivo)</strong></label>
+                <label class="dg-check"><input type="checkbox" data-sig="br" value="Incoerência sistêmica: cada ponto de contato diz uma coisa" data-dg><span></span>Incoerência sistêmica: cada ponto de contato diz uma coisa</label>
+                <label class="dg-check"><input type="checkbox" data-sig="br" value="Mudança de patamar: subir preço, trocar público, marca nova" data-dg><span></span>Mudança de patamar: subir preço, trocar público, marca nova</label>
+                <label class="dg-check"><input type="checkbox" data-sig="br" value="Vai investir em tráfego, automação ou equipe em seguida" data-dg><span></span>Vai investir em tráfego, automação ou equipe em seguida</label>
+                <label class="dg-check"><input type="checkbox" data-sig="br" value="Histórico de peças soltas compradas repetidamente" data-dg><span></span>Histórico de peças soltas compradas repetidamente</label>
+              </div>
+
+              <p class="dg-grupo dg-grupo--rc">Sinais de recusa</p>
+              <div class="dg-checks">
+                <label class="dg-check"><input type="checkbox" data-sig="rc" value="Quer só logo / peça avulsa" data-dg><span></span>Quer só logo / peça avulsa</label>
+                <label class="dg-check"><input type="checkbox" data-sig="rc" value="Quer copiar o concorrente" data-dg><span></span>Quer copiar o concorrente</label>
+                <label class="dg-check"><input type="checkbox" data-sig="rc" value="Prazo irreal" data-dg><span></span>Prazo irreal</label>
+                <label class="dg-check"><input type="checkbox" data-sig="rc" value="Quer remendo sem aceitar reconstruir a base" data-dg><span></span>Quer remendo sem aceitar reconstruir a base</label>
+                <label class="dg-check"><input type="checkbox" data-sig="rc5" value="Decisor ausente" data-dg><span></span>Decisor ausente — reagendar com quem decide</label>
+              </div>
+            </section>
+          </aside>
+
+          <div class="dg-main">
+
+            <section class="dg-card">
+              <h3 class="dg-t"><span class="dg-num">00</span>Preparação — antes da call</h3>
+              <p class="dg-hint">Pesquise o nome do lead no Google como um cliente faria. Abra o link e o Instagram. Anote 3 incoerências concretas: <em>"você diz que é X — sua presença comunica Y"</em>.</p>
+              <div class="dg-fields">
+                <div class="dg-row">
+                  <div class="dg-field">
+                    <label class="field-label" for="dg-lead">Lead (do CRM)</label>
+                    <select class="field-input" id="dg-lead"><option value="">— selecionar ou digitar abaixo —</option></select>
+                  </div>
+                  <div class="dg-field">
+                    <label class="field-label" for="dg-nome">Nome</label>
+                    <input class="field-input" type="text" id="dg-nome" data-dg placeholder="Nome do lead">
+                  </div>
+                </div>
+                <div class="dg-field">
+                  <label class="field-label" for="dg-inc1">Incoerência 1 <span class="dg-eixo">preço × aparência</span></label>
+                  <input class="field-input" type="text" id="dg-inc1" data-dg placeholder="Ex: cobra premium, mas o site parece feito às pressas">
+                </div>
+                <div class="dg-field">
+                  <label class="field-label" for="dg-inc2">Incoerência 2 <span class="dg-eixo">autoridade × visibilidade</span></label>
+                  <input class="field-input" type="text" id="dg-inc2" data-dg placeholder="Ex: 15 anos de experiência que não aparecem em lugar nenhum">
+                </div>
+                <div class="dg-field">
+                  <label class="field-label" for="dg-inc3">Incoerência 3 <span class="dg-eixo">público × linguagem</span></label>
+                  <input class="field-input" type="text" id="dg-inc3" data-dg placeholder="Ex: atende empresário, mas a comunicação fala com iniciante">
+                </div>
+                <div class="dg-field">
+                  <label class="field-label" for="dg-inc4">Incoerência 4 <span class="dg-eixo">canal × canal</span></label>
+                  <input class="field-input" type="text" id="dg-inc4" data-dg placeholder="Ex: o Google e o Instagram contam histórias diferentes">
+                </div>
+              </div>
+            </section>
+
+            <section class="dg-card">
+              <h3 class="dg-t"><span class="dg-num">01</span>Enquadramento <span class="dg-min">0–3 min</span></h3>
+              <blockquote class="dg-script">"Isso aqui é um diagnóstico, não uma apresentação de vendas. Vou te fazer perguntas, no final te devolvo uma leitura do seu caso — e se o que você precisa não for o que a gente faz, eu falo."</blockquote>
+            </section>
+
+            <section class="dg-card">
+              <h3 class="dg-t"><span class="dg-num">02</span>Oferta e negócio <span class="dg-min">3–10 min</span></h3>
+              <p class="dg-hint">Aqui você testa o <em>fundamento</em>. Escute como ele responde, não só o que responde.</p>
+              <ul class="dg-perguntas">
+                <li>"O que exatamente você vende, e por quanto?"<span class="dg-pista">responde na hora = oferta madura (sinal de página); hesita ou foge = fundamento frágil (branding)</span></li>
+                <li>"Quem é o cliente que paga sem negociar?"<span class="dg-pista">descreve uma pessoa específica = bom; "todo mundo" = público indefinido (branding)</span></li>
+                <li>"Em uma frase: por que escolhem você, e não o concorrente?"<span class="dg-pista">não articula o diferencial = trava no fundamento (sinal decisivo de branding)</span></li>
+                <li>"Você tem uma oferta só ou várias? Como elas se conectam?"<span class="dg-pista">várias soltas, sem hierarquia = marca confusa (branding)</span></li>
+                <li>"Como esse cliente chega até você hoje?"<span class="dg-pista">indicação x tráfego: define a urgência e o tipo de gatilho</span></li>
+              </ul>
+              <div class="dg-field">
+                <label class="field-label" for="dg-oferta">Anotações</label>
+                <textarea class="field-input dg-ta" id="dg-oferta" data-dg placeholder="Oferta, preço, público, canal…"></textarea>
+              </div>
+            </section>
+
+            <section class="dg-card">
+              <h3 class="dg-t"><span class="dg-num">03</span>Dor e gatilho <span class="dg-min">10–18 min</span></h3>
+              <p class="dg-hint">Aqui você mede a <em>urgência</em> e descobre o histórico que vira munição na proposta.</p>
+              <ul class="dg-perguntas">
+                <li>"O que te fez procurar isso <em>agora</em>?"<span class="dg-pista">evento concreto (lançamento, cliente perdido) = gatilho pontual (página); "tava na hora" = difuso</span></li>
+                <li>"Quando pesquisam seu nome, o que aparece? Combina com o que você cobra?"<span class="dg-pista">cada canal diz uma coisa = incoerência sistêmica (branding)</span></li>
+                <li>"Já perdeu negócio que você atribui à presença digital?"<span class="dg-pista">quantifica o custo da inação: vira argumento na proposta</span></li>
+                <li>"O que já tentou antes (freelancer, template, agência)? O que aconteceu?"<span class="dg-pista">histórico de peças soltas = sinal de branding + frustração para ancorar o fechamento</span></li>
+                <li>"Nos próximos meses: subir preço, mudar de público, rodar tráfego ou montar equipe?"<span class="dg-pista">qualquer um = mudança de patamar / vai investir (branding)</span></li>
+              </ul>
+              <div class="dg-field">
+                <label class="field-label" for="dg-dor">Anotações</label>
+                <textarea class="field-input dg-ta" id="dg-dor" data-dg placeholder="Gatilho, perdas, tentativas anteriores…"></textarea>
+              </div>
+            </section>
+
+            <section class="dg-card">
+              <h3 class="dg-t"><span class="dg-num">04</span>Leitura ao vivo <span class="dg-min">18–24 min</span></h3>
+              <p class="dg-hint">Devolva as incoerências anotadas, uma a uma: <em>"você me disse que é X — sua presença comunica Y"</em>. Não prescreva ainda. É aqui que ele percebe método.</p>
+              <ul class="dg-ecos" id="dg-ecos"></ul>
+            </section>
+
+            <section class="dg-card">
+              <h3 class="dg-t"><span class="dg-num">06</span>Prescrição <span class="dg-min">24–28 min</span></h3>
+              <p class="dg-hint">O veredito no painel ao lado já montou o argumento a partir dos sinais que você marcou. Devolva a recomendação na ordem <em>"por quê" antes do "o quê"</em>: o cliente fecha porque foi entendido, não pela lista de entregáveis. Se o veredito for recusa, diga agora, sem rodeio — é o que mais gera confiança.</p>
+              <ul class="dg-perguntas">
+                <li>Repita o diagnóstico em 2 linhas (as incoerências) antes de prescrever.</li>
+                <li>Conecte a recomendação à dor que ele te contou, não ao seu portfólio.</li>
+                <li>Ancore o investimento no custo da inação que ele já admitiu.</li>
+              </ul>
+            </section>
+
+            <section class="dg-card">
+              <h3 class="dg-t"><span class="dg-num">07</span>Próximo passo <span class="dg-min">28–30 min</span></h3>
+              <p class="dg-hint">Feche com <em>uma</em> ação concreta — nunca "vamos nos falando". Antes de desligar, clique em <strong>Gerar resumo + proposta</strong> e <strong>Salvar no lead</strong> aqui ao lado.</p>
+              <blockquote class="dg-script">"Fechamos assim: até [hoje/amanhã] você recebe a proposta com escopo e investimento. Me confirma por lá e a gente trava a sua data de início."</blockquote>
+              <p class="dg-hint">Recusa ou reagendamento? Então o próximo passo é indicar a direção certa ou marcar nova call com quem decide — sempre com data definida na hora.</p>
+            </section>
+
+          </div>
+
+          <aside class="dg-side">
+
+            <section class="dg-card dg-sticky">
+              <div class="dg-timer">
+                <span class="dg-clock" id="dg-clock">00:00</span>
+                <button class="btn btn-header" id="dg-play" type="button">Iniciar</button>
+              </div>
+              <ol class="dg-fases" id="dg-fases">
+                <li data-de="0" data-ate="3">00–03 · Enquadramento</li>
+                <li data-de="3" data-ate="10">03–10 · Oferta e negócio</li>
+                <li data-de="10" data-ate="18">10–18 · Dor e gatilho</li>
+                <li data-de="18" data-ate="24">18–24 · Leitura ao vivo</li>
+                <li data-de="24" data-ate="28">24–28 · Prescrição</li>
+                <li data-de="28" data-ate="60">28–30 · Próximo passo</li>
+              </ol>
+
+              <div class="dg-veredito" id="dg-veredito">
+                <span class="dg-veredito-tag">Veredito</span>
+                <p class="dg-veredito-txt" id="dg-veredito-txt">Marque os sinais durante a conversa — o veredito aparece aqui.</p>
+              </div>
+
+              <div class="dg-acoes">
+                <button class="btn btn-primary dg-btn" id="dg-gerar" type="button">Gerar resumo + proposta</button>
+                <button class="btn btn-header dg-btn" id="dg-salvar" type="button" disabled>Salvar no lead selecionado</button>
+                <button class="btn dg-btn dg-btn-limpar" id="dg-limpar" type="button">Limpar para a próxima call</button>
+                <p class="admin-msg" id="dg-msg" role="status" hidden></p>
+              </div>
+            </section>
+
+          </aside>
+
+          <section class="dg-card dg-saida-full" id="dg-saida" hidden>
+            <h3 class="dg-t"><span class="dg-num">A</span>Resumo para o CRM
+              <span class="dg-acts">
+                <button class="dg-copy" data-copy="dg-resumo" type="button">copiar</button>
+                <button class="ta-expand" data-ta="dg-resumo" type="button">expandir</button>
+              </span>
+            </h3>
+            <textarea class="field-input dg-ta dg-ta--out" id="dg-resumo" rows="8"></textarea>
+
+            <h3 class="dg-t"><span class="dg-num">B</span>Rascunho do e-mail de retorno
+              <span class="dg-acts">
+                <button class="dg-copy" data-copy="dg-proposta" type="button">copiar</button>
+                <button class="ta-expand" data-ta="dg-proposta" type="button">expandir</button>
+              </span>
+            </h3>
+            <textarea class="field-input dg-ta dg-ta--out" id="dg-proposta" rows="10"></textarea>
+
+            <h3 class="dg-t"><span class="dg-num">C</span>Prompt p/ gerar a proposta no Claude
+              <span class="dg-acts">
+                <button class="dg-copy" data-copy="dg-prompt" type="button">copiar</button>
+                <button class="ta-expand" data-ta="dg-prompt" type="button">expandir</button>
+              </span>
+            </h3>
+            <p class="dg-hint">Copie e cole no Claude (claude.ai). Ele devolve a proposta desenhada, pronta para enviar.</p>
+            <textarea class="field-input dg-ta dg-ta--out" id="dg-prompt" rows="10"></textarea>
+          </section>
+
+        </div>
+      </div><!-- /tab-diagnostico -->
+
+      <!-- ── Clientes (pós-venda / recorrência) ── -->
+      <div class="tab-pane" id="tab-clientes" hidden>
+        <div class="stats" id="cl-stats">
+          <div class="stat"><span class="stat-num" id="cl-stat-ativos">–</span><span class="stat-label">Clientes ativos</span></div>
+          <div class="stat"><span class="stat-num stat-a" id="cl-stat-mrr">–</span><span class="stat-label">Receita mensal (MRR)</span></div>
+          <div class="stat"><span class="stat-num" id="cl-stat-renova">–</span><span class="stat-label">Renovam em 7 dias</span></div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn btn-primary cl-novo-btn" id="cl-novo-btn" type="button">+ Novo cliente</button>
+          <select class="field-input toolbar-status" id="cl-filtro-status" aria-label="Filtrar clientes por status">
+            <option value="todos">Todos os status</option>
+            <option value="ativo">Ativo</option>
+            <option value="pausado">Pausado</option>
+            <option value="encerrado">Encerrado</option>
+          </select>
+          <input class="field-input toolbar-busca" type="search" id="cl-busca" placeholder="Buscar nome, contato&hellip;" aria-label="Buscar clientes">
+        </div>
+
+        <form class="cl-form" id="cl-form" hidden>
+          <div class="cl-form-grid">
+            <div class="dg-field"><label class="field-label" for="cl-nome">Nome</label><input class="field-input" id="cl-nome" required></div>
+            <div class="dg-field"><label class="field-label" for="cl-contato">Contato (e-mail / WhatsApp)</label><input class="field-input" id="cl-contato"></div>
+            <div class="dg-field"><label class="field-label" for="cl-valor">Valor mensal (R$)</label><input class="field-input" id="cl-valor" type="number" min="0" step="50" placeholder="0"></div>
+            <div class="dg-field"><label class="field-label" for="cl-dia">Dia de renovação</label><input class="field-input" id="cl-dia" type="number" min="1" max="31" placeholder="1–31"></div>
+          </div>
+          <fieldset class="cl-planos">
+            <legend class="field-label">Planos ativos</legend>
+            <label class="dg-check"><input type="checkbox" value="manutencao"><span></span>Manutenção</label>
+            <label class="dg-check"><input type="checkbox" value="reputacao"><span></span>Reputação de busca</label>
+            <label class="dg-check"><input type="checkbox" value="autoridade"><span></span>Autoridade documentada</label>
+          </fieldset>
+          <div class="dg-field"><label class="field-label" for="cl-notas">Notas</label><textarea class="field-input dg-ta" id="cl-notas" placeholder="Observações do cliente…"></textarea></div>
+          <div class="cl-form-acoes">
+            <button class="btn btn-primary" id="cl-salvar" type="submit">Salvar cliente</button>
+            <button class="btn cl-cancelar" id="cl-cancelar" type="button">Cancelar</button>
+            <p class="admin-msg" id="cl-form-msg" role="alert" hidden></p>
+          </div>
+        </form>
+
+        <p class="admin-msg" id="cl-msg" role="status" hidden></p>
+        <div class="leads" id="clientes-list" aria-live="polite"></div>
+        <p class="empty" id="cl-empty" hidden>Nenhum cliente ainda. Comece adicionando o primeiro pós-entrega.</p>
+      </div><!-- /tab-clientes -->
+
+    </section>
+
+    <p class="admin-msg admin-msg--center" id="boot-msg">Carregando&hellip;</p>
+  </main>
+
+  <!-- Modal de leitura (e-mail / proposta de um lead) -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-head">
+        <h3 class="modal-title" id="modal-title">Conteúdo</h3>
+        <div class="modal-acts">
+          <button class="dg-copy" id="modal-copy" type="button">copiar</button>
+          <button class="modal-x" id="modal-close" type="button" aria-label="Fechar">&times;</button>
+        </div>
+      </header>
+      <pre class="modal-body" id="modal-body"></pre>
+    </div>
+  </div>
+
+  <script src="js/vendor/supabase.min.js" defer></script>
+  <script src="js/admin.js" defer></script>
+</body>
+</html>

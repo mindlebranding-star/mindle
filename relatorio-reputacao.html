@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Reputação — Mindle</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --territory: #0F0F0E; --surface: #1A1A18; --surface2: #222220;
+      --accent: #2E8B8E; --accent-light: #3DB4B6;
+      --respiro: #F0EDE6; --muted: #9A9890; --muted-deep: #6B6B68;
+      --border: #26262A;
+      --display: 'Mango Grotesque','Archivo Narrow',sans-serif;
+      --body: 'Lato',sans-serif; --mono: 'JetBrains Mono',monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #050504; color: var(--respiro);
+      font-family: var(--body); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding: 32px 16px;
+    }
+    .barra-topo {
+      max-width: 820px; margin: 0 auto 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px;
+    }
+    .barra-topo p { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-deep); }
+    .btn-print {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-light); background: transparent;
+      border: 1px solid rgba(61,180,182,0.4); border-radius: 4px;
+      padding: 10px 18px; cursor: pointer; transition: border-color .25s, color .25s;
+    }
+    .btn-print:hover { border-color: var(--accent); color: var(--respiro); }
+
+    .folha {
+      max-width: 820px; margin: 0 auto;
+      background: var(--territory);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: clamp(28px, 5vw, 56px);
+    }
+
+    .cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .marca { display: flex; align-items: center; gap: 12px; }
+    .marca-mark { width: 26px; height: 26px; flex: none; }
+    .marca-nome { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: 0.02em; }
+    .eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted-deep); }
+    .cab-info { text-align: right; }
+    .cab-info .eyebrow { margin-bottom: 4px; }
+
+    h1 { font-family: var(--display); font-weight: 500; font-size: clamp(30px, 5vw, 46px); line-height: 1.0; letter-spacing: -0.01em; margin: 28px 0 6px; }
+    h1 .tx { color: var(--accent); }
+    .sub { color: var(--muted); font-size: 15px; }
+
+    section { margin-top: 32px; }
+    .sec-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-light); display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .sec-tag::before { content: ""; width: 22px; height: 1px; background: var(--accent); }
+
+    .print-area {
+      border: 1px dashed var(--border); border-radius: 8px;
+      min-height: 220px; display: grid; place-items: center;
+      color: var(--muted-deep); font-size: 13px; text-align: center;
+      background: var(--surface); padding: 20px;
+    }
+    .print-area img { max-width: 100%; border-radius: 6px; }
+
+    .numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 560px) { .numeros { grid-template-columns: 1fr; } }
+    .num-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+    .num-card .num-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted-deep); }
+    .num-card .num-valor { font-family: var(--display); font-weight: 500; font-size: 34px; line-height: 1.1; margin-top: 4px; color: var(--respiro); }
+    .num-card .num-nota { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    ul.lista { list-style: none; display: grid; gap: 10px; }
+    ul.lista li { position: relative; padding-left: 22px; color: var(--respiro); font-size: 15px; }
+    ul.lista li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 14px; height: 1px; background: var(--accent); }
+
+    .destaque { border-left: 2px solid var(--accent); background: rgba(46,139,142,0.06); padding: 16px 20px; border-radius: 0 6px 6px 0; }
+    .destaque .sec-tag { margin-bottom: 8px; }
+
+    [contenteditable] { outline: none; border-radius: 4px; transition: background .2s; }
+    [contenteditable]:hover { background: rgba(240,237,230,0.03); }
+    [contenteditable]:focus { background: rgba(46,139,142,0.08); box-shadow: 0 0 0 1px rgba(61,180,182,0.4); }
+    [contenteditable]:empty::before { content: attr(data-vazio); color: var(--muted-deep); }
+
+    .rodape { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-deep); }
+
+    .dica { max-width: 820px; margin: 16px auto 0; font-size: 12px; color: var(--muted-deep); text-align: center; }
+
+    /* ── Impressão / PDF ── */
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+      html, body { background: var(--territory); }
+      body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .barra-topo, .dica { display: none !important; }
+      .folha { border: none; border-radius: 0; max-width: 100%; padding: 22px 30px; }
+      [contenteditable]:hover, [contenteditable]:focus { background: transparent; box-shadow: none; }
+
+      /* compactar para caber tudo em UMA página */
+      .cabecalho { padding-bottom: 14px; }
+      h1 { font-size: 30px; margin: 16px 0 4px; }
+      .sub { font-size: 13px; }
+      section { margin-top: 16px; break-inside: avoid; }
+      .sec-tag { margin-bottom: 8px; }
+      .print-area { min-height: 110px; }
+      .print-area img { max-height: 300px; object-fit: contain; }
+      .numeros { gap: 8px; }
+      .num-card { padding: 12px; }
+      .num-card .num-valor { font-size: 26px; }
+      ul.lista { gap: 6px; }
+      ul.lista li { font-size: 13px; }
+      .destaque { padding: 12px 16px; }
+      .rodape { margin-top: 18px; padding-top: 12px; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="barra-topo">
+    <p>Editável: clique em qualquer texto e digite. Print da busca: arraste a imagem para a área.</p>
+    <button class="btn-print" onclick="window.print()">Salvar como PDF</button>
+  </div>
+
+  <div class="folha">
+
+    <header class="cabecalho">
+      <div class="marca">
+        <svg class="marca-mark" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="64" height="64" rx="9" fill="var(--surface2)"/>
+          <rect x="17" y="13" width="30" height="17" fill="var(--accent)"/>
+          <rect x="17" y="34" width="30" height="18" fill="var(--accent)"/>
+        </svg>
+        <span class="marca-nome">Mindle</span>
+      </div>
+      <div class="cab-info">
+        <p class="eyebrow">Relatório de reputação</p>
+        <p class="eyebrow" contenteditable="true" data-vazio="mês / ano">junho / 2026</p>
+      </div>
+    </header>
+
+    <h1>O que aparece quando<br>pesquisam <span class="tx" id="rep-nome" contenteditable="true" data-vazio="seu nome">o seu nome</span>.</h1>
+    <p class="sub" id="rep-sub" contenteditable="true" data-vazio="Cliente · especialidade">Cliente · especialidade</p>
+
+    <section>
+      <p class="sec-tag">A primeira página do Google hoje</p>
+      <div class="print-area" id="dropzone">
+        Arraste aqui o print da primeira página da busca do nome
+        <input type="file" accept="image/*" id="fileinput" style="display:none">
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-tag">Números</p>
+      <div class="numeros">
+        <div class="num-card">
+          <p class="num-label">Avaliações no Google</p>
+          <p class="num-valor" contenteditable="true" data-vazio="0">—</p>
+          <p class="num-nota" contenteditable="true" data-vazio="nota e variação">nota — · mês passado —</p>
+        </div>
+        <div class="num-card">
+          <p class="num-label">Posição do seu site no nome</p>
+          <p class="num-valor" contenteditable="true" data-vazio="—">1º</p>
+          <p class="num-nota" contenteditable="true" data-vazio="observação">resultado orgânico</p>
+        </div>
+        <div class="num-card">
+          <p class="num-label">Perfil do Google</p>
+          <p class="num-valor" contenteditable="true" data-vazio="—">Ativo</p>
+          <p class="num-nota" contenteditable="true" data-vazio="atualizado em">atualizado em dd/mm</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-tag">O que mudou este mês</p>
+      <ul class="lista">
+        <li contenteditable="true" data-vazio="ex.: +3 avaliações novas">ex.: +3 avaliações novas</li>
+        <li contenteditable="true" data-vazio="ex.: nova foto publicada no Perfil do Google">ex.: nova foto publicada no Perfil do Google</li>
+        <li contenteditable="true" data-vazio="ex.: LinkedIn atualizado">ex.: LinkedIn atualizado</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="sec-tag">Alertas</p>
+      <ul class="lista">
+        <li contenteditable="true" data-vazio="algo novo apareceu na busca? ameaça? ou nada a reportar">Nada a reportar este mês.</li>
+      </ul>
+    </section>
+
+    <section class="destaque">
+      <p class="sec-tag">Recomendação do mês</p>
+      <p contenteditable="true" data-vazio="uma única ação concreta para o próximo mês">Peça avaliação aos clientes atendidos nas últimas semanas — é o que mais move a reputação.</p>
+    </section>
+
+    <div class="rodape">
+      <span>Mindle · ponto · linha · sistema</span>
+      <span contenteditable="true" data-vazio="contato">contato@mindle</span>
+    </div>
+
+  </div>
+
+  <p class="dica">Dica: preencha os campos, arraste o print da busca, e clique em "Salvar como PDF". No diálogo de impressão, ative "Gráficos de plano de fundo" para manter o visual escuro.</p>
+
+  <script>
+    // Pré-preenche nome do cliente quando aberto pelo painel (?cliente=Nome)
+    (function () {
+      const nome = new URLSearchParams(location.search).get('cliente');
+      if (!nome) return;
+      const h = document.getElementById('rep-nome'); if (h) h.textContent = nome;
+      const s = document.getElementById('rep-sub'); if (s) s.textContent = nome + ' · ';
+    })();
+
+    // Arrastar/clicar para colocar o print da busca
+    const dz = document.getElementById('dropzone');
+    const fi = document.getElementById('fileinput');
+    function mostra(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      const url = URL.createObjectURL(file);
+      dz.innerHTML = '<img src="' + url + '" alt="Print da busca">';
+    }
+    dz.addEventListener('click', () => fi.click());
+    fi.addEventListener('change', (e) => mostra(e.target.files[0]));
+    dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.style.borderColor = 'var(--accent)'; });
+    dz.addEventListener('dragleave', () => { dz.style.borderColor = ''; });
+    dz.addEventListener('drop', (e) => { e.preventDefault(); dz.style.borderColor = ''; mostra(e.dataTransfer.files[0]); });
+  </script>
+</body>
+</html>
