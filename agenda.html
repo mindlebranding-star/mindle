@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendar conversa — Mindle</title>
+  <meta name="description" content="Agende trinta minutos ao vivo com a Mindle. Uma conversa, um diagnóstico, nenhum compromisso.">
+  <!-- link privado de agendamento — fora do índice de busca -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0F0F0E">
+
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%230F0F0E"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Bold.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    /* Página de agenda avulsa — aproveita os tokens do styles.css */
+    .agenda-page {
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    .agenda-main {
+      width: min(960px, calc(100% - 48px));
+      margin-inline: auto;
+      padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 5vw, 3.5rem);
+    }
+    .agenda-head {
+      text-align: center;
+      display: grid;
+      justify-items: center;
+      gap: 14px;
+      margin-bottom: clamp(1.8rem, 4vw, 2.8rem);
+    }
+    .agenda-head .h2 { max-width: 18ch; }
+    .agenda-lead { color: var(--color-muted); max-width: 52ch; }
+    .agenda-footer {
+      border-top: 1px solid var(--color-border-subtle);
+      padding: 22px 24px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-muted-deep);
+      text-align: center;
+    }
+    /* header simplificado (sem nav) */
+    .agenda-header {
+      display: flex;
+      justify-content: center;
+      padding: clamp(20px, 3.5vw, 32px) 24px 0;
+    }
+    .agenda-header .brand-mark { height: 30px; width: auto; color: var(--color-respiro-base); }
+  </style>
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="agenda-page">
+
+    <header class="agenda-header">
+      <a class="brand" href="index.html" aria-label="Mindle — início">
+        <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+          <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H539.349V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+          <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="var(--color-accent)"/>
+        </svg>
+      </a>
+    </header>
+
+    <main class="agenda-main">
+      <header class="agenda-head">
+        <span class="success-node" aria-hidden="true"></span>
+        <h1 class="h2">Uma conversa. Um <span class="tx">diagnóstico.</span></h1>
+        <p class="lead agenda-lead">Trinta minutos ao vivo, sem custo e sem script. Escolha abaixo o horário que funciona para você — saímos da conversa com uma leitura do seu caso.</p>
+      </header>
+
+      <div class="cal-slot" id="cal-slot" aria-label="Agenda de horários do diagnóstico"></div>
+
+      <p class="micro cal-micro" style="text-align:center">Problema com a agenda? <a class="cal-fallback" href="https://cal.com/mindle-diagnostico/branding" target="_blank" rel="noopener">abrir em nova aba &nearr;</a></p>
+    </main>
+
+    <footer class="agenda-footer">
+      <span>Mindle · Ponto · Linha · Sistema</span>
+    </footer>
+
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    (function () {
+      // Mesmo embed do index (montarCal), aqui montado direto no load.
+      // Aceita ?nome=Fulano&email=fulano@x.com para pré-preencher a agenda.
+      var params = new URLSearchParams(window.location.search);
+      var nome = params.get('nome') || '';
+      var email = params.get('email') || '';
+
+      (function (C, A, L) {
+        let p = function (a, ar) { a.q.push(ar); };
+        let d = C.document;
+        C.Cal = C.Cal || function () {
+          let cal = C.Cal, ar = arguments;
+          if (!cal.loaded) {
+            cal.ns = {}; cal.q = cal.q || [];
+            d.head.appendChild(d.createElement('script')).src = A;
+            cal.loaded = true;
+          }
+          if (ar[0] === L) {
+            const api = function () { p(api, arguments); };
+            const namespace = ar[1];
+            api.q = api.q || [];
+            if (typeof namespace === 'string') {
+              cal.ns[namespace] = cal.ns[namespace] || api;
+              p(cal.ns[namespace], ar);
+              p(cal, ['initNamespace', namespace]);
+            } else p(cal, ar);
+            return;
+          }
+          p(cal, ar);
+        };
+      })(window, 'https://app.cal.com/embed/embed.js', 'init');
+
+      Cal('init', { origin: 'https://app.cal.com' });
+      Cal('inline', {
+        elementOrSelector: '#cal-slot',
+        calLink: window.MINDLE_CAL,
+        config: { theme: 'dark', name: nome, email: email }
+      });
+      Cal('ui', { theme: 'dark', styles: { branding: { brandColor: '#2E8B8E' } } });
+    })();
+  </script>
+</body>
+</html>
