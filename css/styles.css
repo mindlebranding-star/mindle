@@ -930,6 +930,41 @@ html.is-light .site-header.is-scrolled {
   color: var(--color-muted-deep);
 }
 .cal-micro { margin-top: 4px; }
+
+/* Aviso pós-agendamento — os botões "adicionar ao calendário" ficam dentro
+   do iframe do Cal (fora do nosso CSS); este aviso pulsa ao lado, apontando */
+.agenda-nudge { display: none; margin-top: 18px; justify-content: center; }
+.agenda-nudge.is-on { display: flex; }
+.agenda-nudge-pill {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 14px 22px;
+  background: rgba(46, 139, 142, 0.10);
+  border: 1px solid rgba(46, 139, 142, 0.45);
+  border-radius: 999px;
+  font-size: var(--font-body-sm);
+  color: var(--color-respiro-base);
+  animation: nudge-pulse 2.2s ease-in-out infinite;
+}
+.agenda-nudge-pill strong { color: var(--color-accent-light); }
+.agenda-nudge-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 0 rgba(46, 139, 142, 0.55);
+  animation: nudge-dot 2.2s ease-out infinite;
+  flex: none;
+}
+@keyframes nudge-pulse {
+  0%, 100% { border-color: rgba(46, 139, 142, 0.45); }
+  50%      { border-color: rgba(88, 211, 213, 0.9); }
+}
+@keyframes nudge-dot {
+  0%   { box-shadow: 0 0 0 0 rgba(46, 139, 142, 0.55); }
+  70%  { box-shadow: 0 0 0 12px rgba(46, 139, 142, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 139, 142, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .agenda-nudge-pill, .agenda-nudge-dot { animation: none; }
+}
 .cal-fallback {
   color: var(--color-accent-light);
   border-bottom: 1px solid rgba(61, 180, 182, 0.35);

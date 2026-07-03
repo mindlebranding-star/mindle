@@ -268,6 +268,15 @@
       config: { theme: 'dark', name: nome || '', email: email || '', locale: 'pt-BR' }
     });
     Cal('ui', { theme: 'dark', styles: { branding: { brandColor: '#2E8B8E' } } });
+
+    // Agendamento confirmado → aviso pulsante apontando pros botões
+    // "adicionar ao calendário" do Cal (dentro do iframe, fora do nosso CSS)
+    const mostrarNudge = () => {
+      const n = document.getElementById('agenda-nudge');
+      if (n) n.classList.add('is-on');
+    };
+    Cal('on', { action: 'bookingSuccessful',   callback: mostrarNudge });
+    Cal('on', { action: 'bookingSuccessfulV2', callback: mostrarNudge });
   }
 
   /* ──────────────────────────────────────────────
