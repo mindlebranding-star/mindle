@@ -265,7 +265,7 @@
       calLink: window.MINDLE_CAL,
       // pré-preenche com os dados que o lead acabou de informar (sobrescreve
       // qualquer prefill da conta Cal logada no navegador)
-      config: { theme: 'dark', name: nome || '', email: email || '' }
+      config: { theme: 'dark', name: nome || '', email: email || '', locale: 'pt-BR' }
     });
     Cal('ui', { theme: 'dark', styles: { branding: { brandColor: '#2E8B8E' } } });
   }
