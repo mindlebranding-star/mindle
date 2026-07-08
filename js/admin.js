@@ -1156,7 +1156,8 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
         <div class="cl-row">
           <span class="badge badge-b">${esc(p.forma_pagamento || '—')}</span>
           <span class="badge">${esc(p.parcelas || '—')}</span>
-          ${p.comprovante_path ? `<button type="button" class="lead-view pr-comprovante" data-path="${esc(p.comprovante_path)}">ver comprovante &nearr;</button>` : '<span class="lead-data">sem comprovante</span>'}
+          ${p.comprovante_path ? `<button type="button" class="lead-view pr-file" data-path="${esc(p.comprovante_path)}">ver comprovante &nearr;</button>` : '<span class="lead-data">sem comprovante</span>'}
+          ${p.contrato_path ? `<button type="button" class="lead-view pr-file" data-path="${esc(p.contrato_path)}">ver contrato &nearr;</button>` : ''}
         </div>` : `
         <div class="pr-pay" hidden>
           <div class="cl-form-grid">
@@ -1165,8 +1166,12 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
             <div class="dg-field"><label class="field-label">Parcelamento</label>
               <select class="field-input pr-pay-parcelas">${PR_PARCELAS.map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select></div>
           </div>
-          <div class="dg-field"><label class="field-label">Comprovante (PDF ou imagem) — opcional</label>
-            <input class="field-input pr-pay-file" type="file" accept="image/*,application/pdf"></div>
+          <div class="cl-form-grid">
+            <div class="dg-field"><label class="field-label">Comprovante (PDF ou imagem) — opcional</label>
+              <input class="field-input pr-pay-file" type="file" accept="image/*,application/pdf"></div>
+            <div class="dg-field"><label class="field-label">Contrato (PDF ou imagem) — opcional</label>
+              <input class="field-input pr-pay-contrato" type="file" accept="image/*,application/pdf"></div>
+          </div>
           <div class="cl-form-acoes">
             <button type="button" class="btn btn-primary pr-pay-confirmar">Confirmar pagamento</button>
             <p class="admin-msg pr-pay-msg" role="alert" hidden></p>
@@ -1231,8 +1236,8 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     // abrir/fechar o formulário de pagamento
     const reg = e.target.closest('.pr-registrar');
     if (reg) { const box = reg.closest('.lead-card').querySelector('.pr-pay'); if (box) box.hidden = !box.hidden; return; }
-    // ver comprovante (URL assinada; abre a aba no clique pra não ser bloqueada)
-    const vc = e.target.closest('.pr-comprovante');
+    // ver comprovante/contrato (URL assinada; abre a aba no clique pra não ser bloqueada)
+    const vc = e.target.closest('.pr-file');
     if (vc) {
       const w = window.open('', '_blank');
       const { data } = await sb.storage.from('propostas').createSignedUrl(vc.dataset.path, 3600);
@@ -1248,18 +1253,28 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
       const forma = card.querySelector('.pr-pay-forma').value;
       const parcelas = card.querySelector('.pr-pay-parcelas').value;
       const file = card.querySelector('.pr-pay-file').files[0];
+      const contratoFile = card.querySelector('.pr-pay-contrato').files[0];
       const pmsg = card.querySelector('.pr-pay-msg');
       pmsg.hidden = true; pmsg.classList.remove('is-error');
       conf.disabled = true; conf.textContent = 'Salvando…';
 
-      let comprovante_path = null;
+      const falha = (msg) => { pmsg.textContent = msg; pmsg.classList.add('is-error'); pmsg.hidden = false; conf.disabled = false; conf.textContent = 'Confirmar pagamento'; };
+
+      let comprovante_path = p.comprovante_path || null;
       if (file) {
         const ext = (file.name.split('.').pop() || 'pdf').toLowerCase();
         comprovante_path = `comprovantes/${p.codigo}-comprovante.${ext}`;
         const up = await sb.storage.from('propostas').upload(comprovante_path, file, { contentType: file.type || undefined, upsert: true });
-        if (up.error) { pmsg.textContent = 'Erro ao subir o comprovante: ' + up.error.message; pmsg.classList.add('is-error'); pmsg.hidden = false; conf.disabled = false; conf.textContent = 'Confirmar pagamento'; return; }
+        if (up.error) { falha('Erro ao subir o comprovante: ' + up.error.message); return; }
       }
-      const patch = { pago: true, forma_pagamento: forma, parcelas, comprovante_path, faturado_em: new Date().toISOString() };
+      let contrato_path = p.contrato_path || null;
+      if (contratoFile) {
+        const ext = (contratoFile.name.split('.').pop() || 'pdf').toLowerCase();
+        contrato_path = `contratos/${p.codigo}-contrato.${ext}`;
+        const up = await sb.storage.from('propostas').upload(contrato_path, contratoFile, { contentType: contratoFile.type || undefined, upsert: true });
+        if (up.error) { falha('Erro ao subir o contrato: ' + up.error.message); return; }
+      }
+      const patch = { pago: true, forma_pagamento: forma, parcelas, comprovante_path, contrato_path, faturado_em: new Date().toISOString() };
       const { error } = await sb.from('propostas').update(patch).eq('id', p.id);
       if (error) { pmsg.textContent = 'Erro ao salvar: ' + error.message; pmsg.classList.add('is-error'); pmsg.hidden = false; conf.disabled = false; conf.textContent = 'Confirmar pagamento'; return; }
       Object.assign(p, patch);
@@ -1273,7 +1288,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const p = propostas.find((x) => x.id === card.dataset.id);
     if (!p) return;
     if (!confirm('Excluir a proposta de "' + p.cliente + '"? O link para de funcionar.')) return;
-    const paths = [p.pdf_path]; if (p.comprovante_path) paths.push(p.comprovante_path);
+    const paths = [p.pdf_path]; if (p.comprovante_path) paths.push(p.comprovante_path); if (p.contrato_path) paths.push(p.contrato_path);
     await sb.storage.from('propostas').remove(paths);
     const { error } = await sb.from('propostas').delete().eq('id', p.id);
     if (error) { $('#pr-msg').textContent = 'Erro ao excluir: ' + error.message; $('#pr-msg').classList.add('is-error'); $('#pr-msg').hidden = false; return; }
@@ -1316,13 +1331,14 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
           <div class="lead-field"><dt>Aceite do cliente</dt><dd>${p.status === 'aprovada' ? esc(p.aceito_nome || 'sim') : '—'}</dd></div>
         </dl>
         <div class="cl-row">
-          ${p.comprovante_path ? `<button type="button" class="lead-view ft-comprovante" data-path="${esc(p.comprovante_path)}">ver comprovante &nearr;</button>` : '<span class="lead-data">sem comprovante</span>'}
+          ${p.comprovante_path ? `<button type="button" class="lead-view ft-file" data-path="${esc(p.comprovante_path)}">ver comprovante &nearr;</button>` : '<span class="lead-data">sem comprovante</span>'}
+          ${p.contrato_path ? `<button type="button" class="lead-view ft-file" data-path="${esc(p.contrato_path)}">ver contrato &nearr;</button>` : ''}
         </div>
       </article>`).join('');
   }
   const ftList = $('#faturamento-list');
   ftList.addEventListener('click', async (e) => {
-    const vc = e.target.closest('.ft-comprovante');
+    const vc = e.target.closest('.ft-file');
     if (!vc) return;
     const w = window.open('', '_blank');
     const { data } = await sb.storage.from('propostas').createSignedUrl(vc.dataset.path, 3600);
