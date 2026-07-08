@@ -1094,6 +1094,12 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const a = new Uint8Array(6); crypto.getRandomValues(a);
     return Array.from(a).map((b) => (b % 36).toString(36)).join('').slice(0, 6);
   }
+  // "7000" → "R$ 7.000"; "R$ 3.000" → "R$ 3.000"; texto sem número fica como está
+  function prValorFmt(v) {
+    if (!v) return null;
+    const n = v.replace(/[^\d]/g, '');
+    return n ? 'R$ ' + Number(n).toLocaleString('pt-BR') : v;
+  }
 
   async function carregarPropostas() {
     const { data, error } = await sb.from('propostas').select('*').order('criado_em', { ascending: false });
@@ -1152,7 +1158,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   prForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const cliente = $('#pr-cliente').value.trim();
-    const valor = $('#pr-valor').value.trim() || null;
+    const valor = prValorFmt($('#pr-valor').value.trim());
     const file = $('#pr-pdf').files[0];
     const fmsg = $('#pr-form-msg');
     fmsg.hidden = true; fmsg.classList.remove('is-error');
