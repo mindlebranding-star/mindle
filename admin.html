@@ -65,6 +65,7 @@
         <button class="tab" role="tab" data-tab="diagnostico" aria-selected="false">Diagnóstico</button>
         <button class="tab" role="tab" data-tab="clientes" aria-selected="false">Clientes <span class="tab-count" id="tab-count-clientes" hidden></span></button>
         <button class="tab" role="tab" data-tab="propostas" aria-selected="false">Propostas <span class="tab-count" id="tab-count-propostas" hidden></span></button>
+        <button class="tab" role="tab" data-tab="faturamento" aria-selected="false">Faturamento <span class="tab-count" id="tab-count-faturamento" hidden></span></button>
       </div>
 
       <div class="tab-pane" id="tab-leads">
@@ -377,8 +378,16 @@
 
         <form class="cl-form" id="pr-form" hidden>
           <div class="cl-form-grid">
+            <div class="dg-field">
+              <label class="field-label" for="pr-responsavel">Quem está fazendo?</label>
+              <select class="field-input" id="pr-responsavel" required>
+                <option value="">— selecionar —</option>
+                <option value="Rodrigo">Rodrigo</option>
+                <option value="Maria">Maria</option>
+              </select>
+            </div>
             <div class="dg-field"><label class="field-label" for="pr-cliente">Cliente / empresa</label><input class="field-input" id="pr-cliente" required></div>
-            <div class="dg-field"><label class="field-label" for="pr-valor">Valor (opcional)</label><input class="field-input" id="pr-valor" placeholder="Ex: R$ 3.000"></div>
+            <div class="dg-field"><label class="field-label" for="pr-valor">Valor (opcional)</label><input class="field-input" id="pr-valor" placeholder="Ex: 7000 → vira R$ 7.000"></div>
           </div>
           <div class="dg-field">
             <label class="field-label" for="pr-pdf">PDF da proposta (exportado do NotebookLM)</label>
@@ -395,6 +404,27 @@
         <div class="leads" id="propostas-list" aria-live="polite"></div>
         <p class="empty" id="pr-empty" hidden>Nenhuma proposta ainda. Suba o PDF de uma proposta pra gerar o link de aceite.</p>
       </div><!-- /tab-propostas -->
+
+      <!-- ── Faturamento (propostas pagas) ── -->
+      <div class="tab-pane" id="tab-faturamento" hidden>
+        <div class="stats" id="ft-stats">
+          <div class="stat"><span class="stat-num stat-a" id="ft-stat-total">–</span><span class="stat-label">Total faturado</span></div>
+          <div class="stat"><span class="stat-num" id="ft-stat-rodrigo">–</span><span class="stat-label">Rodrigo</span></div>
+          <div class="stat"><span class="stat-num" id="ft-stat-maria">–</span><span class="stat-label">Maria</span></div>
+        </div>
+
+        <div class="toolbar">
+          <select class="field-input toolbar-status" id="ft-filtro-resp" aria-label="Filtrar por responsável">
+            <option value="todos">Todos os responsáveis</option>
+            <option value="Rodrigo">Rodrigo</option>
+            <option value="Maria">Maria</option>
+          </select>
+          <input class="field-input toolbar-busca" type="search" id="ft-busca" placeholder="Buscar cliente&hellip;" aria-label="Buscar no faturamento">
+        </div>
+
+        <div class="leads" id="faturamento-list" aria-live="polite"></div>
+        <p class="empty" id="ft-empty" hidden>Nenhum pagamento registrado ainda. Registre o pagamento de uma proposta na aba Propostas.</p>
+      </div><!-- /tab-faturamento -->
 
     </section>
 

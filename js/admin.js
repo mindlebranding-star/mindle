@@ -257,6 +257,7 @@
       $('#tab-diagnostico').hidden = tab.dataset.tab !== 'diagnostico';
       $('#tab-clientes').hidden = tab.dataset.tab !== 'clientes';
       $('#tab-propostas').hidden = tab.dataset.tab !== 'propostas';
+      $('#tab-faturamento').hidden = tab.dataset.tab !== 'faturamento';
     });
   });
 
@@ -1083,7 +1084,11 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   /* ── Propostas (aceite eletrônico) ───────────────── */
   let propostas = [];
   const prFiltro = { q: '' };
+  const ftFiltro = { resp: 'todos', q: '' };
   const PR_STATUS = { rascunho: 'Rascunho', enviada: 'Enviada', aprovada: 'Aprovada', recusada: 'Recusada' };
+  const PR_FORMAS = ['PIX', 'Cartão de crédito', 'Transferência / TED', 'Boleto'];
+  const PR_PARCELAS = ['À vista', '2x', '3x', '4x', '5x', '6x', '7x', '8x', '9x', '10x', '11x', '12x'];
+  const prValorNum = (v) => Number((v || '').replace(/[^\d]/g, '')) || 0;
 
   function prLink(p) { return location.origin + '/proposta?p=' + encodeURIComponent(p.codigo); }
   function prSlug(s) {
@@ -1115,6 +1120,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const pend = propostas.filter((p) => p.status === 'enviada').length;
     count.textContent = pend; count.hidden = pend === 0;
     renderPropostas();
+    renderFaturamento();
   }
 
   function renderPropostas() {
@@ -1128,10 +1134,12 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
       <article class="lead-card${aprovada ? ' is-ok' : ''}" data-id="${esc(p.id)}">
         <div class="lead-top">
           <span class="badge badge-status">${esc(PR_STATUS[p.status] || p.status)}</span>
+          ${p.pago ? '<span class="badge badge-b">Pago</span>' : ''}
           <span class="lead-nome">${esc(p.cliente)}</span>
           <span class="lead-data">${p.valor ? esc(p.valor) : ''}</span>
         </div>
         <dl class="lead-grid">
+          <div class="lead-field"><dt>Responsável</dt><dd>${esc(p.responsavel || '—')}</dd></div>
           <div class="lead-field"><dt>Criada em</dt><dd>${esc(fmtData(p.criado_em))}</dd></div>
           ${aprovada ? `
             <div class="lead-field"><dt>Aprovada por</dt><dd>${esc(p.aceito_nome || '—')}</dd></div>
@@ -1144,7 +1152,28 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
           <button type="button" class="lead-view pr-copiar" data-link="${esc(link)}">copiar link</button>
           <a class="lead-view" href="${esc(link)}" target="_blank" rel="noopener">abrir &nearr;</a>
         </div>
+        ${p.pago ? `
+        <div class="cl-row">
+          <span class="badge badge-b">${esc(p.forma_pagamento || '—')}</span>
+          <span class="badge">${esc(p.parcelas || '—')}</span>
+          ${p.comprovante_path ? `<button type="button" class="lead-view pr-comprovante" data-path="${esc(p.comprovante_path)}">ver comprovante &nearr;</button>` : '<span class="lead-data">sem comprovante</span>'}
+        </div>` : `
+        <div class="pr-pay" hidden>
+          <div class="cl-form-grid">
+            <div class="dg-field"><label class="field-label">Forma de pagamento</label>
+              <select class="field-input pr-pay-forma">${PR_FORMAS.map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select></div>
+            <div class="dg-field"><label class="field-label">Parcelamento</label>
+              <select class="field-input pr-pay-parcelas">${PR_PARCELAS.map((f) => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}</select></div>
+          </div>
+          <div class="dg-field"><label class="field-label">Comprovante (PDF ou imagem) — opcional</label>
+            <input class="field-input pr-pay-file" type="file" accept="image/*,application/pdf"></div>
+          <div class="cl-form-acoes">
+            <button type="button" class="btn btn-primary pr-pay-confirmar">Confirmar pagamento</button>
+            <p class="admin-msg pr-pay-msg" role="alert" hidden></p>
+          </div>
+        </div>` }
         <div class="lead-foot">
+          ${p.pago ? '' : '<button type="button" class="lead-view pr-registrar">+ Registrar pagamento</button>'}
           <button type="button" class="cl-excluir pr-excluir" aria-label="Excluir proposta">excluir</button>
         </div>
       </article>`;
@@ -1157,12 +1186,13 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
 
   prForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const responsavel = $('#pr-responsavel').value;
     const cliente = $('#pr-cliente').value.trim();
     const valor = prValorFmt($('#pr-valor').value.trim());
     const file = $('#pr-pdf').files[0];
     const fmsg = $('#pr-form-msg');
     fmsg.hidden = true; fmsg.classList.remove('is-error');
-    if (!cliente || !file) { fmsg.textContent = 'Preencha o cliente e selecione o PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+    if (!responsavel || !cliente || !file) { fmsg.textContent = 'Selecione o responsável, o cliente e o PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
     if (file.type !== 'application/pdf') { fmsg.textContent = 'O arquivo precisa ser um PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
 
     const btn = $('#pr-salvar'); btn.disabled = true; btn.textContent = 'Enviando…';
@@ -1172,7 +1202,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const up = await sb.storage.from('propostas').upload(pdf_path, file, { contentType: 'application/pdf', upsert: false });
     if (up.error) { fmsg.textContent = 'Erro ao subir o PDF: ' + up.error.message; fmsg.classList.add('is-error'); fmsg.hidden = false; btn.disabled = false; btn.textContent = 'Gerar proposta'; return; }
 
-    const { error } = await sb.from('propostas').insert({ codigo, cliente, valor, pdf_path, status: 'enviada' });
+    const { error } = await sb.from('propostas').insert({ codigo, cliente, valor, pdf_path, status: 'enviada', responsavel });
     if (error) {
       await sb.storage.from('propostas').remove([pdf_path]); // desfaz o upload órfão
       fmsg.textContent = 'Erro ao salvar: ' + error.message; fmsg.classList.add('is-error'); fmsg.hidden = false;
@@ -1192,26 +1222,114 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
 
   const prList = $('#propostas-list');
   prList.addEventListener('click', async (e) => {
+    // copiar link
     const cp = e.target.closest('.pr-copiar');
     if (cp) {
       try { await navigator.clipboard.writeText(cp.dataset.link); cp.textContent = 'copiado ✓'; setTimeout(() => { cp.textContent = 'copiar link'; }, 1500); } catch (err) {}
       return;
     }
+    // abrir/fechar o formulário de pagamento
+    const reg = e.target.closest('.pr-registrar');
+    if (reg) { const box = reg.closest('.lead-card').querySelector('.pr-pay'); if (box) box.hidden = !box.hidden; return; }
+    // ver comprovante (URL assinada; abre a aba no clique pra não ser bloqueada)
+    const vc = e.target.closest('.pr-comprovante');
+    if (vc) {
+      const w = window.open('', '_blank');
+      const { data } = await sb.storage.from('propostas').createSignedUrl(vc.dataset.path, 3600);
+      if (data && data.signedUrl && w) w.location = data.signedUrl; else if (w) w.close();
+      return;
+    }
+    // confirmar pagamento
+    const conf = e.target.closest('.pr-pay-confirmar');
+    if (conf) {
+      const card = conf.closest('.lead-card');
+      const p = propostas.find((x) => x.id === card.dataset.id);
+      if (!p) return;
+      const forma = card.querySelector('.pr-pay-forma').value;
+      const parcelas = card.querySelector('.pr-pay-parcelas').value;
+      const file = card.querySelector('.pr-pay-file').files[0];
+      const pmsg = card.querySelector('.pr-pay-msg');
+      pmsg.hidden = true; pmsg.classList.remove('is-error');
+      conf.disabled = true; conf.textContent = 'Salvando…';
+
+      let comprovante_path = null;
+      if (file) {
+        const ext = (file.name.split('.').pop() || 'pdf').toLowerCase();
+        comprovante_path = `comprovantes/${p.codigo}-comprovante.${ext}`;
+        const up = await sb.storage.from('propostas').upload(comprovante_path, file, { contentType: file.type || undefined, upsert: true });
+        if (up.error) { pmsg.textContent = 'Erro ao subir o comprovante: ' + up.error.message; pmsg.classList.add('is-error'); pmsg.hidden = false; conf.disabled = false; conf.textContent = 'Confirmar pagamento'; return; }
+      }
+      const patch = { pago: true, forma_pagamento: forma, parcelas, comprovante_path, faturado_em: new Date().toISOString() };
+      const { error } = await sb.from('propostas').update(patch).eq('id', p.id);
+      if (error) { pmsg.textContent = 'Erro ao salvar: ' + error.message; pmsg.classList.add('is-error'); pmsg.hidden = false; conf.disabled = false; conf.textContent = 'Confirmar pagamento'; return; }
+      Object.assign(p, patch);
+      renderPropostas(); renderFaturamento();
+      return;
+    }
+    // excluir
     const del = e.target.closest('.pr-excluir');
     if (!del) return;
     const card = del.closest('.lead-card');
     const p = propostas.find((x) => x.id === card.dataset.id);
     if (!p) return;
     if (!confirm('Excluir a proposta de "' + p.cliente + '"? O link para de funcionar.')) return;
-    await sb.storage.from('propostas').remove([p.pdf_path]);
+    const paths = [p.pdf_path]; if (p.comprovante_path) paths.push(p.comprovante_path);
+    await sb.storage.from('propostas').remove(paths);
     const { error } = await sb.from('propostas').delete().eq('id', p.id);
     if (error) { $('#pr-msg').textContent = 'Erro ao excluir: ' + error.message; $('#pr-msg').classList.add('is-error'); $('#pr-msg').hidden = false; return; }
     propostas = propostas.filter((x) => x.id !== p.id);
     const count = $('#tab-count-propostas'); const pend = propostas.filter((x) => x.status === 'enviada').length;
     count.textContent = pend; count.hidden = pend === 0;
-    renderPropostas();
+    renderPropostas(); renderFaturamento();
   });
   $('#pr-busca').addEventListener('input', (e) => { prFiltro.q = e.target.value.trim(); renderPropostas(); });
+
+  /* ── Faturamento (propostas pagas) ── */
+  function brlNum(n) { return 'R$ ' + Number(n || 0).toLocaleString('pt-BR'); }
+  function renderFaturamento() {
+    const pagas = propostas.filter((p) => p.pago);
+    const totalGeral = pagas.reduce((s, p) => s + prValorNum(p.valor), 0);
+    const totRod = pagas.filter((p) => p.responsavel === 'Rodrigo').reduce((s, p) => s + prValorNum(p.valor), 0);
+    const totMar = pagas.filter((p) => p.responsavel === 'Maria').reduce((s, p) => s + prValorNum(p.valor), 0);
+    $('#ft-stat-total').textContent = brlNum(totalGeral);
+    $('#ft-stat-rodrigo').textContent = brlNum(totRod);
+    $('#ft-stat-maria').textContent = brlNum(totMar);
+    const count = $('#tab-count-faturamento'); count.textContent = pagas.length; count.hidden = pagas.length === 0;
+
+    const q = ftFiltro.q.toLowerCase();
+    const lista = pagas.filter((p) =>
+      (ftFiltro.resp === 'todos' || p.responsavel === ftFiltro.resp) &&
+      (!q || (p.cliente && p.cliente.toLowerCase().includes(q)))
+    ).sort((a, b) => (b.faturado_em || '').localeCompare(a.faturado_em || ''));
+    $('#ft-empty').hidden = pagas.length > 0;
+    $('#faturamento-list').innerHTML = lista.map((p) => `
+      <article class="lead-card is-ok" data-id="${esc(p.id)}">
+        <div class="lead-top">
+          <span class="badge badge-b">${esc(p.responsavel || '—')}</span>
+          <span class="lead-nome">${esc(p.cliente)}</span>
+          <span class="lead-data">${p.valor ? esc(p.valor) : ''}</span>
+        </div>
+        <dl class="lead-grid">
+          <div class="lead-field"><dt>Forma</dt><dd>${esc(p.forma_pagamento || '—')}</dd></div>
+          <div class="lead-field"><dt>Parcelamento</dt><dd>${esc(p.parcelas || '—')}</dd></div>
+          <div class="lead-field"><dt>Pago em</dt><dd>${esc(fmtData(p.faturado_em))}</dd></div>
+          <div class="lead-field"><dt>Aceite do cliente</dt><dd>${p.status === 'aprovada' ? esc(p.aceito_nome || 'sim') : '—'}</dd></div>
+        </dl>
+        <div class="cl-row">
+          ${p.comprovante_path ? `<button type="button" class="lead-view ft-comprovante" data-path="${esc(p.comprovante_path)}">ver comprovante &nearr;</button>` : '<span class="lead-data">sem comprovante</span>'}
+        </div>
+      </article>`).join('');
+  }
+  const ftList = $('#faturamento-list');
+  ftList.addEventListener('click', async (e) => {
+    const vc = e.target.closest('.ft-comprovante');
+    if (!vc) return;
+    const w = window.open('', '_blank');
+    const { data } = await sb.storage.from('propostas').createSignedUrl(vc.dataset.path, 3600);
+    if (data && data.signedUrl && w) w.location = data.signedUrl; else if (w) w.close();
+  });
+  $('#ft-filtro-resp').addEventListener('change', (e) => { ftFiltro.resp = e.target.value; renderFaturamento(); });
+  $('#ft-busca').addEventListener('input', (e) => { ftFiltro.q = e.target.value.trim(); renderFaturamento(); });
 
   /* ── Boot ─────────────────────────────────────── */
   sb.auth.onAuthStateChange((event) => {
