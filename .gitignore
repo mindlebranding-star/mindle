@@ -17,3 +17,7 @@ node_modules/
 .env
 .env.*
 *.secret
+
+# PDFs de propostas de clientes — pesados e privados; ficam no Supabase Storage,
+# não no repositório. (Protótipo local usa site/propostas/*.pdf sem commitar.)
+propostas/*.pdf

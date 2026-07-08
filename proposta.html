@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta — Mindle</title>
+  <meta name="description" content="Proposta Mindle — sistema de presença digital.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0F0F0E">
+
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%230F0F0E"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Bold.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    .prop-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: clamp(16px, 2.6vw, 24px) clamp(20px, 4vw, 40px);
+      border-bottom: 1px solid var(--color-border-subtle);
+      position: sticky; top: 0; z-index: 5;
+      background: rgba(15, 15, 14, 0.82);
+      backdrop-filter: blur(10px);
+    }
+    .prop-header .brand-mark { height: 26px; width: auto; color: var(--color-respiro-base); }
+    .prop-header-tag {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--color-muted-deep);
+    }
+    .prop-viewer {
+      width: min(1000px, calc(100% - 32px));
+      margin: clamp(24px, 4vw, 40px) auto 0;
+    }
+    /* páginas do PDF renderizadas via PDF.js */
+    .prop-pages { display: grid; gap: 16px; }
+    .prop-page {
+      width: 100%;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface-01);
+      display: block;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    .prop-page canvas { width: 100%; height: auto; display: block; border-radius: var(--radius-sm); }
+    .prop-loading {
+      display: grid; place-items: center; min-height: 300px;
+      font-family: var(--font-mono); font-size: 10.5px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--color-muted-deep);
+    }
+    .prop-viewer-hint {
+      text-align: center; margin-top: 12px;
+      font-family: var(--font-mono); font-size: 10.5px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--color-muted-deep);
+    }
+    .prop-viewer-hint a { color: var(--color-accent-light); border-bottom: 1px solid rgba(61,180,182,.35); }
+
+    .prop-accept {
+      width: min(680px, calc(100% - 32px));
+      margin: clamp(40px, 7vw, 72px) auto clamp(48px, 8vw, 90px);
+      background:
+        linear-gradient(180deg, rgba(46,139,142,0.06), transparent 40%),
+        var(--color-surface-01);
+      border: 1px solid rgba(46, 139, 142, 0.32);
+      border-radius: var(--radius-lg);
+      padding: clamp(32px, 5vw, 56px);
+      text-align: center;
+      display: grid; justify-items: center; gap: 16px;
+    }
+    .prop-accept .eyebrow { justify-content: center; }
+    .prop-accept-lead { color: var(--color-muted); max-width: 46ch; }
+    .prop-accept .field { width: 100%; max-width: 380px; text-align: left; }
+    .prop-check {
+      display: flex; gap: 10px; align-items: flex-start;
+      max-width: 420px; text-align: left; cursor: pointer;
+      font-size: var(--font-body-sm); color: var(--color-muted);
+    }
+    .prop-check input { margin-top: 3px; accent-color: var(--color-accent); flex: none; }
+    .prop-btn { width: 100%; max-width: 380px; }
+    .prop-micro { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--color-muted-deep); }
+
+    /* Estado aprovado + carimbo */
+    .prop-approved { display: none; }
+    .prop-approved.is-on { display: grid; justify-items: center; gap: 14px; }
+    .stamp {
+      --stamp: #2E8B8E;
+      display: inline-grid; place-items: center;
+      padding: 14px 26px; margin: 6px 0 4px;
+      border: 3px solid var(--stamp); border-radius: 10px;
+      color: var(--stamp);
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(30px, 6vw, 46px); letter-spacing: 0.08em;
+      transform: rotate(-7deg);
+      box-shadow: inset 0 0 0 2px rgba(46,139,142,.25);
+      text-transform: uppercase; line-height: 1;
+      opacity: 0; animation: stamp-in .5s cubic-bezier(.2,1.3,.4,1) forwards;
+    }
+    @keyframes stamp-in {
+      0%   { opacity: 0; transform: rotate(-7deg) scale(1.8); }
+      100% { opacity: .92; transform: rotate(-7deg) scale(1); }
+    }
+    .stamp-meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; color: var(--color-muted); text-transform: uppercase; }
+    @media (prefers-reduced-motion: reduce) { .stamp { animation: none; opacity: .92; } }
+  </style>
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="prop-header">
+    <a class="brand" href="index.html" aria-label="Mindle">
+      <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+        <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H539.349V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+        <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="var(--color-accent)"/>
+      </svg>
+    </a>
+    <span class="prop-header-tag" id="prop-tag">Proposta · Clínica Alvi</span>
+  </header>
+
+  <!-- O PDF do NotebookLM, exibido intacto (renderizado via PDF.js) -->
+  <div class="prop-viewer">
+    <div class="prop-pages" id="prop-pages"><p class="prop-loading">Carregando a proposta…</p></div>
+    <p class="prop-viewer-hint">No celular, dê zoom com os dedos para ler · <a href="propostas/clinicalvi.pdf" target="_blank" rel="noopener" id="prop-download">baixar em PDF &nearr;</a></p>
+  </div>
+
+  <!-- Moldura HTML de aceite (o botão que o PDF não pode ter) -->
+  <section class="prop-accept" id="prop-accept" aria-label="Aceite da proposta">
+    <div id="prop-form" style="display:grid;justify-items:center;gap:16px;">
+      <p class="eyebrow"><span class="eyebrow-index">·</span>Aceite da proposta</p>
+      <h2 class="h3-lg">Vamos começar?</h2>
+      <p class="prop-accept-lead">Ao aceitar, você confirma que leu a proposta acima e concorda com o escopo e o investimento apresentados. Registramos a data e a hora do aceite.</p>
+
+      <div class="field">
+        <label class="field-question" for="prop-nome">Seu nome completo</label>
+        <input class="field-input" type="text" id="prop-nome" autocomplete="name" placeholder="Nome de quem aprova">
+      </div>
+
+      <div class="field">
+        <label class="field-question" for="prop-email">Seu e-mail</label>
+        <input class="field-input" type="email" id="prop-email" autocomplete="email" placeholder="onde você recebe o comprovante">
+      </div>
+
+      <div class="field">
+        <label class="field-question" for="prop-doc">CPF ou CNPJ</label>
+        <input class="field-input" type="text" id="prop-doc" inputmode="numeric" placeholder="de quem está aprovando">
+      </div>
+
+      <label class="prop-check">
+        <input type="checkbox" id="prop-li">
+        <span>Li a proposta e aceito o escopo e o investimento apresentados.</span>
+      </label>
+
+      <button class="btn btn-primary prop-btn" id="prop-aceitar" type="button" data-hover>Aceitar proposta</button>
+      <p class="prop-micro">Um comprovante carimbado é enviado por e-mail</p>
+    </div>
+
+    <div class="prop-approved" id="prop-approved">
+      <span class="success-node" aria-hidden="true"></span>
+      <span class="stamp">Aprovado</span>
+      <p class="stamp-meta" id="stamp-meta">Clínica Alvi · —</p>
+      <p class="prop-accept-lead">Aceite registrado. Enviamos um comprovante por e-mail e entramos em contato para os próximos passos. <strong>Bem-vindo à Mindle.</strong></p>
+    </div>
+  </section>
+
+  <script src="config.js"></script>
+  <script src="js/vendor/pdf.min.js"></script>
+  <script>
+    (function () {
+      const cfg = window.MINDLE_SUPABASE || {};
+      const FN = cfg.url + '/functions/v1/aceitar-proposta';
+      const KEY = cfg.anonKey;
+      const codigo = new URLSearchParams(location.search).get('p');
+
+      const cont = document.getElementById('prop-pages');
+      const tag = document.getElementById('prop-tag');
+      const dl = document.getElementById('prop-download');
+      const form = document.getElementById('prop-form');
+      const okBox = document.getElementById('prop-approved');
+      const meta = document.getElementById('stamp-meta');
+
+      let dados = null;
+
+      // ── carrega a proposta pela Edge Function ──
+      if (!codigo) { erroGeral('Link de proposta inválido.'); return; }
+      fetch(FN + '?codigo=' + encodeURIComponent(codigo), { headers: { apikey: KEY } })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.error) { erroGeral(d.error); return; }
+          dados = d;
+          if (tag) tag.textContent = 'Proposta · ' + (d.cliente || '');
+          if (dl && d.pdfUrl) dl.href = d.pdfUrl;
+          if (d.status === 'aprovada') { mostrarJaAprovada(); }
+          if (d.pdfUrl) renderPdf(d.pdfUrl); else cont.innerHTML = '<p class="prop-loading">PDF indisponível.</p>';
+        })
+        .catch(() => erroGeral('Não foi possível carregar a proposta.'));
+
+      function erroGeral(msg) {
+        cont.innerHTML = '<p class="prop-loading">' + msg + '</p>';
+        const sec = document.getElementById('prop-accept');
+        if (sec) sec.style.display = 'none';
+      }
+      function mostrarJaAprovada() {
+        document.getElementById('prop-form').style.display = 'none';
+        meta.textContent = (dados.cliente || '') + ' · aceite já registrado';
+        okBox.querySelector('.prop-accept-lead').textContent = 'Esta proposta já foi aceita. O comprovante foi enviado por e-mail.';
+        okBox.classList.add('is-on');
+      }
+
+      /* ── Renderiza o PDF com PDF.js (nítido no zoom, recicla páginas) ── */
+      function renderPdf(url) {
+        if (!window.pdfjsLib) { cont.innerHTML = '<p class="prop-loading">Não foi possível carregar o leitor.</p>'; return; }
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'js/vendor/pdf.worker.min.js';
+        const QUALITY = 2.2, MAX_PX = 2600;
+
+        pdfjsLib.getDocument(url).promise.then(async (pdf) => {
+          cont.innerHTML = '';
+          const maxW = cont.clientWidth || 900;
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((e) => { if (e.isIntersecting) renderPage(e.target); else clearPage(e.target); });
+          }, { rootMargin: '1200px 0px' });
+          for (let n = 1; n <= pdf.numPages; n++) {
+            const page = await pdf.getPage(n);
+            const vp = page.getViewport({ scale: 1 });
+            let s = (maxW / vp.width) * QUALITY;
+            if (vp.width * s > MAX_PX) s = MAX_PX / vp.width;
+            const wrap = document.createElement('div');
+            wrap.className = 'prop-page';
+            wrap.style.aspectRatio = (vp.width / vp.height).toFixed(4);
+            wrap._page = page; wrap._scale = s; wrap._rendered = false;
+            cont.appendChild(wrap); io.observe(wrap);
+          }
+        }).catch((err) => {
+          cont.innerHTML = '<p class="prop-loading">Não foi possível abrir a proposta. <a class="cal-fallback" href="' + url + '" target="_blank" rel="noopener">baixar em PDF</a></p>';
+          console.error('PDF.js:', err);
+        });
+
+        function renderPage(wrap) {
+          if (wrap._rendered) return; wrap._rendered = true;
+          const vp = wrap._page.getViewport({ scale: wrap._scale });
+          const canvas = document.createElement('canvas');
+          canvas.width = vp.width; canvas.height = vp.height;
+          wrap.appendChild(canvas);
+          wrap._task = wrap._page.render({ canvasContext: canvas.getContext('2d'), viewport: vp });
+          wrap._task.promise.catch(() => {});
+        }
+        function clearPage(wrap) {
+          if (!wrap._rendered) return; wrap._rendered = false;
+          if (wrap._task) { try { wrap._task.cancel(); } catch (e) {} }
+          const c = wrap.querySelector('canvas');
+          if (c) { c.width = 0; c.height = 0; c.remove(); }
+        }
+      }
+
+      /* ── Aceite: chama a Edge Function (grava + carimba + e-mail) ── */
+      const btn = document.getElementById('prop-aceitar');
+      const nome = document.getElementById('prop-nome');
+      const email = document.getElementById('prop-email');
+      const docEl = document.getElementById('prop-doc');
+      const li = document.getElementById('prop-li');
+
+      const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      const docOk = (v) => { const n = v.replace(/\D/g, ''); return n.length === 11 || n.length === 14; };
+
+      btn.addEventListener('click', async function () {
+        [nome, email, docEl].forEach((f) => f.classList.remove('is-invalid'));
+        if (!nome.value.trim())    { nome.classList.add('is-invalid'); nome.focus(); return; }
+        if (!emailOk(email.value)) { email.classList.add('is-invalid'); email.focus(); return; }
+        if (!docOk(docEl.value))   { docEl.classList.add('is-invalid'); docEl.focus(); return; }
+        if (!li.checked)           { li.focus(); return; }
+
+        btn.disabled = true; btn.textContent = 'Registrando…';
+        try {
+          const r = await fetch(FN, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', apikey: KEY },
+            body: JSON.stringify({ codigo, nome: nome.value.trim(), email: email.value.trim(), doc: docEl.value.trim() }),
+          });
+          const d = await r.json();
+          if (!r.ok || d.error) { throw new Error(d.error || 'Falha ao registrar o aceite.'); }
+
+          const data = new Date().toLocaleDateString('pt-BR');
+          meta.textContent = (dados && dados.cliente ? dados.cliente + ' · ' : '') + 'aprovado por ' + nome.value.trim() + ' · ' + data;
+          document.getElementById('prop-form').style.display = 'none';
+          okBox.classList.add('is-on');
+          okBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          btn.disabled = false; btn.textContent = 'Aceitar proposta';
+          alert(err.message || 'Não foi possível registrar o aceite. Tente novamente.');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

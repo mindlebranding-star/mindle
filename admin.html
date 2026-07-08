@@ -64,6 +64,7 @@
         <button class="tab" role="tab" data-tab="brandings" aria-selected="false">Branding <span class="tab-count" id="tab-count-brandings" hidden></span></button>
         <button class="tab" role="tab" data-tab="diagnostico" aria-selected="false">Diagnóstico</button>
         <button class="tab" role="tab" data-tab="clientes" aria-selected="false">Clientes <span class="tab-count" id="tab-count-clientes" hidden></span></button>
+        <button class="tab" role="tab" data-tab="propostas" aria-selected="false">Propostas <span class="tab-count" id="tab-count-propostas" hidden></span></button>
       </div>
 
       <div class="tab-pane" id="tab-leads">
@@ -366,6 +367,34 @@
         <div class="leads" id="clientes-list" aria-live="polite"></div>
         <p class="empty" id="cl-empty" hidden>Nenhum cliente ainda. Comece adicionando o primeiro pós-entrega.</p>
       </div><!-- /tab-clientes -->
+
+      <!-- ── Propostas (aceite eletrônico) ── -->
+      <div class="tab-pane" id="tab-propostas" hidden>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="pr-novo-btn" type="button">+ Nova proposta</button>
+          <input class="field-input toolbar-busca" type="search" id="pr-busca" placeholder="Buscar cliente&hellip;" aria-label="Buscar propostas">
+        </div>
+
+        <form class="cl-form" id="pr-form" hidden>
+          <div class="cl-form-grid">
+            <div class="dg-field"><label class="field-label" for="pr-cliente">Cliente / empresa</label><input class="field-input" id="pr-cliente" required></div>
+            <div class="dg-field"><label class="field-label" for="pr-valor">Valor (opcional)</label><input class="field-input" id="pr-valor" placeholder="Ex: R$ 3.000"></div>
+          </div>
+          <div class="dg-field">
+            <label class="field-label" for="pr-pdf">PDF da proposta (exportado do NotebookLM)</label>
+            <input class="field-input" id="pr-pdf" type="file" accept="application/pdf" required>
+          </div>
+          <div class="cl-form-acoes">
+            <button class="btn btn-primary" id="pr-salvar" type="submit">Gerar proposta</button>
+            <button class="btn cl-cancelar" id="pr-cancelar" type="button">Cancelar</button>
+            <p class="admin-msg" id="pr-form-msg" role="alert" hidden></p>
+          </div>
+        </form>
+
+        <p class="admin-msg" id="pr-msg" role="status" hidden></p>
+        <div class="leads" id="propostas-list" aria-live="polite"></div>
+        <p class="empty" id="pr-empty" hidden>Nenhuma proposta ainda. Suba o PDF de uma proposta pra gerar o link de aceite.</p>
+      </div><!-- /tab-propostas -->
 
     </section>
 

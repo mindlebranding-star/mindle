@@ -133,6 +133,7 @@
     carregarBriefings();
     carregarBrandings();
     carregarClientes();
+    carregarPropostas();
     dgPopularLeads();
   }
 
@@ -255,6 +256,7 @@
       $('#tab-brandings').hidden = tab.dataset.tab !== 'brandings';
       $('#tab-diagnostico').hidden = tab.dataset.tab !== 'diagnostico';
       $('#tab-clientes').hidden = tab.dataset.tab !== 'clientes';
+      $('#tab-propostas').hidden = tab.dataset.tab !== 'propostas';
     });
   });
 
@@ -1077,6 +1079,133 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   });
   $('#cl-filtro-status').addEventListener('change', (e) => { clFiltro.status = e.target.value; renderClientes(); });
   $('#cl-busca').addEventListener('input', (e) => { clFiltro.q = e.target.value.trim(); renderClientes(); });
+
+  /* ── Propostas (aceite eletrônico) ───────────────── */
+  let propostas = [];
+  const prFiltro = { q: '' };
+  const PR_STATUS = { rascunho: 'Rascunho', enviada: 'Enviada', aprovada: 'Aprovada', recusada: 'Recusada' };
+
+  function prLink(p) { return location.origin + '/proposta?p=' + encodeURIComponent(p.codigo); }
+  function prSlug(s) {
+    return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'proposta';
+  }
+  function prCodigoRandom() {
+    const a = new Uint8Array(6); crypto.getRandomValues(a);
+    return Array.from(a).map((b) => (b % 36).toString(36)).join('').slice(0, 6);
+  }
+
+  async function carregarPropostas() {
+    const { data, error } = await sb.from('propostas').select('*').order('criado_em', { ascending: false });
+    const msg = $('#pr-msg');
+    if (error) {
+      msg.textContent = 'Erro ao carregar propostas: ' + error.message +
+        (/does not exist|schema cache/i.test(error.message) ? ' — rode o propostas.sql no SQL Editor.' : '');
+      msg.classList.add('is-error'); msg.hidden = false; return;
+    }
+    msg.classList.remove('is-error');
+    propostas = data || [];
+    const count = $('#tab-count-propostas');
+    const pend = propostas.filter((p) => p.status === 'enviada').length;
+    count.textContent = pend; count.hidden = pend === 0;
+    renderPropostas();
+  }
+
+  function renderPropostas() {
+    const q = prFiltro.q.toLowerCase();
+    const lista = propostas.filter((p) => !q || (p.cliente && p.cliente.toLowerCase().includes(q)));
+    $('#pr-empty').hidden = propostas.length > 0;
+    $('#propostas-list').innerHTML = lista.map((p) => {
+      const link = prLink(p);
+      const aprovada = p.status === 'aprovada';
+      return `
+      <article class="lead-card${aprovada ? ' is-ok' : ''}" data-id="${esc(p.id)}">
+        <div class="lead-top">
+          <span class="badge badge-status">${esc(PR_STATUS[p.status] || p.status)}</span>
+          <span class="lead-nome">${esc(p.cliente)}</span>
+          <span class="lead-data">${p.valor ? esc(p.valor) : ''}</span>
+        </div>
+        <dl class="lead-grid">
+          <div class="lead-field"><dt>Criada em</dt><dd>${esc(fmtData(p.criado_em))}</dd></div>
+          ${aprovada ? `
+            <div class="lead-field"><dt>Aprovada por</dt><dd>${esc(p.aceito_nome || '—')}</dd></div>
+            <div class="lead-field"><dt>Em</dt><dd>${esc(fmtData(p.aceito_em))}</dd></div>
+            <div class="lead-field"><dt>E-mail</dt><dd>${esc(p.aceito_email || '—')}</dd></div>
+            <div class="lead-field"><dt>CPF/CNPJ</dt><dd>${esc(p.aceito_doc || '—')}</dd></div>` : ''}
+        </dl>
+        <div class="cl-row">
+          <input class="field-input pr-link-input" readonly value="${esc(link)}" aria-label="Link da proposta">
+          <button type="button" class="lead-view pr-copiar" data-link="${esc(link)}">copiar link</button>
+          <a class="lead-view" href="${esc(link)}" target="_blank" rel="noopener">abrir &nearr;</a>
+        </div>
+        <div class="lead-foot">
+          <button type="button" class="cl-excluir pr-excluir" aria-label="Excluir proposta">excluir</button>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  const prForm = $('#pr-form');
+  $('#pr-novo-btn').addEventListener('click', () => { prForm.hidden = !prForm.hidden; if (!prForm.hidden) $('#pr-cliente').focus(); });
+  $('#pr-cancelar').addEventListener('click', () => { prForm.hidden = true; prForm.reset(); });
+
+  prForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const cliente = $('#pr-cliente').value.trim();
+    const valor = $('#pr-valor').value.trim() || null;
+    const file = $('#pr-pdf').files[0];
+    const fmsg = $('#pr-form-msg');
+    fmsg.hidden = true; fmsg.classList.remove('is-error');
+    if (!cliente || !file) { fmsg.textContent = 'Preencha o cliente e selecione o PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+    if (file.type !== 'application/pdf') { fmsg.textContent = 'O arquivo precisa ser um PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+
+    const btn = $('#pr-salvar'); btn.disabled = true; btn.textContent = 'Enviando…';
+    const codigo = prSlug(cliente) + '-' + prCodigoRandom();
+    const pdf_path = codigo + '.pdf';
+
+    const up = await sb.storage.from('propostas').upload(pdf_path, file, { contentType: 'application/pdf', upsert: false });
+    if (up.error) { fmsg.textContent = 'Erro ao subir o PDF: ' + up.error.message; fmsg.classList.add('is-error'); fmsg.hidden = false; btn.disabled = false; btn.textContent = 'Gerar proposta'; return; }
+
+    const { error } = await sb.from('propostas').insert({ codigo, cliente, valor, pdf_path, status: 'enviada' });
+    if (error) {
+      await sb.storage.from('propostas').remove([pdf_path]); // desfaz o upload órfão
+      fmsg.textContent = 'Erro ao salvar: ' + error.message; fmsg.classList.add('is-error'); fmsg.hidden = false;
+      btn.disabled = false; btn.textContent = 'Gerar proposta'; return;
+    }
+
+    btn.disabled = false; btn.textContent = 'Gerar proposta';
+    prForm.hidden = true; prForm.reset();
+    await carregarPropostas();
+
+    const url = location.origin + '/proposta?p=' + codigo;
+    const msg = $('#pr-msg');
+    msg.innerHTML = 'Proposta criada. Link (copiado) pra enviar ao cliente: <strong>' + esc(url) + '</strong>';
+    msg.classList.remove('is-error'); msg.hidden = false;
+    try { await navigator.clipboard.writeText(url); } catch (err) {}
+  });
+
+  const prList = $('#propostas-list');
+  prList.addEventListener('click', async (e) => {
+    const cp = e.target.closest('.pr-copiar');
+    if (cp) {
+      try { await navigator.clipboard.writeText(cp.dataset.link); cp.textContent = 'copiado ✓'; setTimeout(() => { cp.textContent = 'copiar link'; }, 1500); } catch (err) {}
+      return;
+    }
+    const del = e.target.closest('.pr-excluir');
+    if (!del) return;
+    const card = del.closest('.lead-card');
+    const p = propostas.find((x) => x.id === card.dataset.id);
+    if (!p) return;
+    if (!confirm('Excluir a proposta de "' + p.cliente + '"? O link para de funcionar.')) return;
+    await sb.storage.from('propostas').remove([p.pdf_path]);
+    const { error } = await sb.from('propostas').delete().eq('id', p.id);
+    if (error) { $('#pr-msg').textContent = 'Erro ao excluir: ' + error.message; $('#pr-msg').classList.add('is-error'); $('#pr-msg').hidden = false; return; }
+    propostas = propostas.filter((x) => x.id !== p.id);
+    const count = $('#tab-count-propostas'); const pend = propostas.filter((x) => x.status === 'enviada').length;
+    count.textContent = pend; count.hidden = pend === 0;
+    renderPropostas();
+  });
+  $('#pr-busca').addEventListener('input', (e) => { prFiltro.q = e.target.value.trim(); renderPropostas(); });
 
   /* ── Boot ─────────────────────────────────────── */
   sb.auth.onAuthStateChange((event) => {
