@@ -68,12 +68,14 @@
           <div class="brow">
             <div class="bfield" data-required>
               <label class="blabel" for="f-wpp-agente">WhatsApp que vai virar o agente <span class="req" aria-hidden="true"></span></label>
-              <input class="binput" type="text" id="f-wpp-agente" name="whatsapp_agente" placeholder="De preferência um chip só do negócio, não o seu pessoal">
+              <p class="bhint">Dica: use um chip só do negócio, não o seu número pessoal.</p>
+              <input class="binput" type="text" id="f-wpp-agente" name="whatsapp_agente" placeholder="Ex: (41) 90000-0000">
               <span class="berr">Este campo é obrigatório</span>
             </div>
             <div class="bfield" data-required>
               <label class="blabel" for="f-wpp-humano">WhatsApp do atendente humano <span class="req" aria-hidden="true"></span></label>
-              <input class="binput" type="text" id="f-wpp-humano" name="whatsapp_humano" placeholder="Pra onde o agente te avisa quando precisar de uma pessoa">
+              <p class="bhint">Pra onde o agente te avisa quando precisar passar a conversa a uma pessoa.</p>
+              <input class="binput" type="text" id="f-wpp-humano" name="whatsapp_humano" placeholder="Ex: (41) 90000-0000">
               <span class="berr">Este campo é obrigatório</span>
             </div>
           </div>
@@ -84,7 +86,8 @@
             </div>
             <div class="bfield">
               <label class="blabel" for="f-agenda">Link de agendamento <em>opcional</em></label>
-              <input class="binput" type="text" id="f-agenda" name="link_agendamento" placeholder="Se você usa uma agenda online (Cal, Calendly…)">
+              <p class="bhint">Se você usa uma agenda online (Cal, Calendly…).</p>
+              <input class="binput" type="text" id="f-agenda" name="link_agendamento" placeholder="https://…">
             </div>
           </div>
           <div class="bfield" data-required>
@@ -105,26 +108,31 @@
         <div class="bfields">
           <div class="bfield" data-required>
             <label class="blabel" for="f-voz">Ele fala em 1ª pessoa (como você, o dono) ou como um assistente do negócio? <span class="req" aria-hidden="true"></span></label>
-            <input class="binput" type="text" id="f-voz" name="voz" placeholder="Recomendação Mindle: 1ª pessoa — soa mais próximo e pessoal">
+            <p class="bhint"><strong>Recomendação Mindle:</strong> 1ª pessoa — soa mais próximo e pessoal.</p>
+            <input class="binput" type="text" id="f-voz" name="voz" placeholder="Sua resposta">
             <span class="berr">Este campo é obrigatório</span>
           </div>
           <div class="bfield" data-required>
             <label class="blabel" for="f-robo">Se um cliente perguntar "isso é um robô?", como você quer que ele responda? <span class="req" aria-hidden="true"></span></label>
-            <textarea class="binput btextarea" id="f-robo" name="resposta_robo" placeholder="Recomendação Mindle: ser honesto — a triagem inicial é automática, mas o atendimento é seu de verdade"></textarea>
+            <p class="bhint"><strong>Recomendação Mindle:</strong> ser honesto — a triagem inicial é automática, mas o atendimento é seu de verdade.</p>
+            <textarea class="binput btextarea" id="f-robo" name="resposta_robo"></textarea>
             <span class="berr">Este campo é obrigatório</span>
           </div>
           <div class="bfield" data-required>
             <label class="blabel" for="f-preco">Sobre preço: o agente pode falar valor, dar uma faixa, ou nunca fala preço no chat? <span class="req" aria-hidden="true"></span></label>
-            <input class="binput" type="text" id="f-preco" name="politica_preco" placeholder="Recomendação Mindle: não falar preço no chat — deixar pra proposta / conversa">
+            <p class="bhint"><strong>Recomendação Mindle:</strong> não falar preço no chat — deixar pra proposta / conversa.</p>
+            <input class="binput" type="text" id="f-preco" name="politica_preco" placeholder="Sua resposta">
             <span class="berr">Este campo é obrigatório</span>
           </div>
           <div class="bfield">
             <label class="blabel" for="f-estilo">Tem algum estilo que você NÃO quer? <em>opcional</em></label>
-            <input class="binput" type="text" id="f-estilo" name="estilo_proibido" placeholder="Recomendação Mindle: sem emoji e sem travessão — texto limpo">
+            <p class="bhint"><strong>Recomendação Mindle:</strong> sem emoji e sem travessão — texto limpo.</p>
+            <input class="binput" type="text" id="f-estilo" name="estilo_proibido" placeholder="Sua resposta">
           </div>
           <div class="bfield" data-required>
             <label class="blabel" for="f-objetivo">Qual o objetivo principal da conversa? <span class="req" aria-hidden="true"></span></label>
-            <input class="binput" type="text" id="f-objetivo" name="objetivo" placeholder="Agendar uma conversa, vender direto, ou triar (separar curioso de cliente real)?">
+            <p class="bhint">Ex: agendar uma conversa, vender direto, ou triar (separar curioso de cliente real).</p>
+            <input class="binput" type="text" id="f-objetivo" name="objetivo" placeholder="Sua resposta">
             <span class="berr">Este campo é obrigatório</span>
           </div>
         </div>

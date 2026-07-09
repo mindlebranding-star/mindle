@@ -114,6 +114,13 @@
 }
 .req { width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); flex: none; }
 
+/* Dica visível (recomendação) — quebra linha, não some ao digitar */
+.bhint {
+  font-family: var(--font-body); font-size: 13.5px; line-height: 1.5;
+  color: var(--color-muted); margin-top: -3px;
+}
+.bhint strong { color: var(--color-accent-light); font-weight: 700; }
+
 .binput {
   width: 100%;
   background: transparent;
