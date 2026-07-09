@@ -269,7 +269,7 @@
   const BF_STATUS = { novo: 'Novo', em_analise: 'Em análise', em_producao: 'Em produção', concluido: 'Concluído' };
   const BF_ZONAS = { prova: 'Provas sociais', logo: 'Logo', fotos: 'Fotos', depo: 'Depoimentos', videos: 'Vídeos', paleta: 'Paleta / Identidade' };
   const BF_SECOES = [
-    ['01 · Sobre o negócio', [['empresa_nome', 'Empresa'], ['segmento', 'Segmento'], ['cidade', 'Cidade / Região'], ['site', 'Site'], ['instagram', 'Instagram']]],
+    ['01 · Sobre o negócio', [['empresa_nome', 'Empresa'], ['segmento', 'Segmento'], ['cidade', 'Cidade / Região'], ['email', 'E-mail'], ['whatsapp', 'WhatsApp'], ['site', 'Site'], ['instagram', 'Instagram']]],
     ['02 · Oferta principal', [['servico', 'Serviço'], ['valor', 'Valor médio'], ['resultado', 'Resultado'], ['diferencial_oferta', 'Diferencial'], ['para_quem', 'Para quem é']]],
     ['03 · Público-alvo', [['cliente_ideal', 'Cliente ideal'], ['idade', 'Idade média'], ['genero', 'Gênero'], ['problema_pub', 'Problema principal'], ['medo', 'Maior medo'], ['valores', 'O que valoriza']]],
     ['04 · Problema e desejo', [['dor', 'Dor principal'], ['evitar', 'Quer evitar'], ['desejo', 'Deseja alcançar'], ['gatilho', 'O que faz procurar']]],
@@ -502,7 +502,7 @@
   let brandings = [];
   const bdFiltro = { status: 'todos', q: '' };
   const BD_SECOES = [
-    ['01 · Sobre a empresa', [['empresa_nome', 'Empresa'], ['segmento', 'Segmento'], ['cidade', 'Cidade / Região'], ['site', 'Site'], ['instagram', 'Instagram']]],
+    ['01 · Sobre a empresa', [['empresa_nome', 'Empresa'], ['segmento', 'Segmento'], ['cidade', 'Cidade / Região'], ['email', 'E-mail'], ['whatsapp', 'WhatsApp'], ['site', 'Site'], ['instagram', 'Instagram']]],
     ['02 · Negócio e serviço', [['o_que_faz', 'O que faz na prática'], ['como_funciona', 'Como funciona'], ['acompanhamento', 'Acompanhamento'], ['tempo_volume_motivo', 'Tempo, volume e motivação'], ['quem_por_tras', 'Quem está por trás'], ['valor', 'Valor médio']]],
     ['03 · Mercado e concorrência', [['perfis_concorrentes', 'Perfis de concorrentes'], ['incomoda_mercado', 'O que incomoda no mercado'], ['concorrentes', 'Concorrentes principais']]],
     ['04 · Público', [['cliente_ideal', 'Cliente ideal'], ['idade', 'Idade média'], ['genero', 'Gênero'], ['valores', 'O que valoriza']]],
@@ -1051,7 +1051,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const q = clFiltro.q.toLowerCase();
     const lista = clientes.filter((c) =>
       (clFiltro.status === 'todos' || c.status === clFiltro.status) &&
-      (!q || [c.nome, c.contato, c.notas].some((v) => v && v.toLowerCase().includes(q)))
+      (!q || [c.nome, c.email, c.whatsapp, c.contato, c.notas].some((v) => v && v.toLowerCase().includes(q)))
     );
     $('#cl-empty').hidden = lista.length > 0;
     $('#clientes-list').innerHTML = lista.map((c) => {
@@ -1068,6 +1068,8 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
           <span class="lead-data">${brl(c.valor_mensal)}/mês</span>
         </div>
         <dl class="lead-grid">
+          ${c.email ? `<div class="lead-field"><dt>E-mail</dt><dd>${esc(c.email)}</dd></div>` : ''}
+          ${c.whatsapp ? `<div class="lead-field"><dt>WhatsApp</dt><dd>${esc(c.whatsapp)}</dd></div>` : ''}
           ${c.contato ? `<div class="lead-field"><dt>Contato</dt><dd>${esc(c.contato)}</dd></div>` : ''}
           <div class="lead-field"><dt>Renovação</dt><dd>${esc(renovTxt)}</dd></div>
           <div class="lead-field"><dt>Cliente desde</dt><dd>${esc(fmtData(c.created_at))}</dd></div>
@@ -1119,6 +1121,14 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   // formulário de novo cliente
   const clForm = $('#cl-form');
   $('#cl-novo-btn').addEventListener('click', () => { clForm.hidden = !clForm.hidden; if (!clForm.hidden) $('#cl-nome').focus(); });
+  const clWhats = $('#cl-whatsapp');
+  if (clWhats) clWhats.addEventListener('input', () => {
+    const d = clWhats.value.replace(/\D/g, '').slice(0, 11);
+    clWhats.value = d.length <= 2 ? (d ? '(' + d : '')
+      : d.length <= 6 ? '(' + d.slice(0, 2) + ') ' + d.slice(2)
+      : d.length <= 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6)
+      : '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  });
   $('#cl-cancelar').addEventListener('click', () => { clForm.hidden = true; clForm.reset(); $('#cl-form-msg').hidden = true; });
   clForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1128,7 +1138,8 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const planos = Array.from(clForm.querySelectorAll('.cl-planos input:checked')).map((i) => i.value);
     const novo = {
       nome,
-      contato: $('#cl-contato').value.trim() || null,
+      email: $('#cl-email').value.trim() || null,
+      whatsapp: $('#cl-whatsapp').value.trim() || null,
       valor_mensal: Number($('#cl-valor').value) || 0,
       dia_renovacao: $('#cl-dia').value ? Number($('#cl-dia').value) : null,
       planos,
