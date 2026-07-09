@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Briefing de automação — Mindle</title>
+  <meta name="description" content="Briefing de automação Mindle: o atendimento automático que fala como o seu negócio.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0F0F0E">
+
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%230F0F0E"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/briefing.css">
+
+  <script src="config.js"></script>
+  <script>
+    window.MINDLE_FORM = { table: 'automacoes', draftKey: 'mindle_automacao_rascunho', prefix: 'automacao-' };
+  </script>
+</head>
+<body class="briefing-body">
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="bf-header">
+    <a class="brand" href="index.html" aria-label="Mindle — voltar ao site">
+      <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+        <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H539.349V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+        <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="var(--color-accent)"/>
+      </svg>
+    </a>
+    <span class="bf-tag">Briefing de automação</span>
+  </header>
+
+  <main class="bf-main">
+
+    <div class="bf-intro" id="bf-intro">
+      <p class="eyebrow"><span class="eyebrow-index">00</span>Antes de começar</p>
+      <h1 class="bf-title">Seu atendimento automático, falando como o seu <span class="tx">negócio.</span></h1>
+      <p class="bf-lead">Estas respostas ensinam o agente a atender do seu jeito: o tom, os limites e o objetivo de cada conversa. Não existe resposta errada — quanto mais real, melhor ele soa. Escreva como você fala.</p>
+      <p class="micro bf-micro">3 etapas · ~8 minutos · rascunho salvo automaticamente</p>
+    </div>
+
+    <div class="bf-progress" id="bf-progress" aria-hidden="true"></div>
+    <p class="bf-counter micro"><span id="bf-step-label">Etapa 01 / 3 — Contato e operação</span></p>
+
+    <!-- ════════ ETAPAS ════════ -->
+    <div class="bf-steps" id="bf-steps">
+
+      <!-- 01 · CONTATO E OPERAÇÃO -->
+      <section class="bstep is-active" data-step="1" data-nome="Contato e operação">
+        <header class="bstep-head">
+          <p class="bstep-tag">Etapa 01 — onde e quando</p>
+          <h2 class="bstep-title">Contato e <span class="tx">operação.</span></h2>
+          <p class="bstep-sub">Onde o agente vai atender e pra onde ele chama você quando precisar.</p>
+        </header>
+        <div class="bfields">
+          <div class="bfield" data-required>
+            <label class="blabel" for="f-empresa">Nome do seu negócio <span class="req" aria-hidden="true"></span></label>
+            <input class="binput" type="text" id="f-empresa" name="empresa_nome">
+            <span class="berr">Este campo é obrigatório</span>
+          </div>
+          <div class="brow">
+            <div class="bfield" data-required>
+              <label class="blabel" for="f-wpp-agente">WhatsApp que vai virar o agente <span class="req" aria-hidden="true"></span></label>
+              <input class="binput" type="text" id="f-wpp-agente" name="whatsapp_agente" placeholder="De preferência um chip só do negócio, não o seu pessoal">
+              <span class="berr">Este campo é obrigatório</span>
+            </div>
+            <div class="bfield" data-required>
+              <label class="blabel" for="f-wpp-humano">WhatsApp do atendente humano <span class="req" aria-hidden="true"></span></label>
+              <input class="binput" type="text" id="f-wpp-humano" name="whatsapp_humano" placeholder="Pra onde o agente te avisa quando precisar de uma pessoa">
+              <span class="berr">Este campo é obrigatório</span>
+            </div>
+          </div>
+          <div class="brow">
+            <div class="bfield">
+              <label class="blabel" for="f-site">Seu site <em>opcional</em></label>
+              <input class="binput" type="text" id="f-site" name="site" placeholder="www.seunegocio.com.br">
+            </div>
+            <div class="bfield">
+              <label class="blabel" for="f-agenda">Link de agendamento <em>opcional</em></label>
+              <input class="binput" type="text" id="f-agenda" name="link_agendamento" placeholder="Se você usa uma agenda online (Cal, Calendly…)">
+            </div>
+          </div>
+          <div class="bfield" data-required>
+            <label class="blabel" for="f-horarios">Horários de atendimento <span class="req" aria-hidden="true"></span></label>
+            <input class="binput" type="text" id="f-horarios" name="horarios" placeholder="Ex: seg a sex, 9h às 18h">
+            <span class="berr">Este campo é obrigatório</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 · PERSONA DO AGENTE -->
+      <section class="bstep" data-step="2" data-nome="Persona do agente">
+        <header class="bstep-head">
+          <p class="bstep-tag">Etapa 02 — como ele fala</p>
+          <h2 class="bstep-title">A voz do <span class="tx">agente.</span></h2>
+          <p class="bstep-sub">Como você quer que ele soe, e o que ele pode ou não dizer.</p>
+        </header>
+        <div class="bfields">
+          <div class="bfield" data-required>
+            <label class="blabel" for="f-voz">Ele fala em 1ª pessoa (como você, o dono) ou como um assistente do negócio? <span class="req" aria-hidden="true"></span></label>
+            <input class="binput" type="text" id="f-voz" name="voz" placeholder="Recomendação Mindle: 1ª pessoa — soa mais próximo e pessoal">
+            <span class="berr">Este campo é obrigatório</span>
+          </div>
+          <div class="bfield" data-required>
+            <label class="blabel" for="f-robo">Se um cliente perguntar "isso é um robô?", como você quer que ele responda? <span class="req" aria-hidden="true"></span></label>
+            <textarea class="binput btextarea" id="f-robo" name="resposta_robo" placeholder="Recomendação Mindle: ser honesto — a triagem inicial é automática, mas o atendimento é seu de verdade"></textarea>
+            <span class="berr">Este campo é obrigatório</span>
+          </div>
+          <div class="bfield" data-required>
+            <label class="blabel" for="f-preco">Sobre preço: o agente pode falar valor, dar uma faixa, ou nunca fala preço no chat? <span class="req" aria-hidden="true"></span></label>
+            <input class="binput" type="text" id="f-preco" name="politica_preco" placeholder="Recomendação Mindle: não falar preço no chat — deixar pra proposta / conversa">
+            <span class="berr">Este campo é obrigatório</span>
+          </div>
+          <div class="bfield">
+            <label class="blabel" for="f-estilo">Tem algum estilo que você NÃO quer? <em>opcional</em></label>
+            <input class="binput" type="text" id="f-estilo" name="estilo_proibido" placeholder="Recomendação Mindle: sem emoji e sem travessão — texto limpo">
+          </div>
+          <div class="bfield" data-required>
+            <label class="blabel" for="f-objetivo">Qual o objetivo principal da conversa? <span class="req" aria-hidden="true"></span></label>
+            <input class="binput" type="text" id="f-objetivo" name="objetivo" placeholder="Agendar uma conversa, vender direto, ou triar (separar curioso de cliente real)?">
+            <span class="berr">Este campo é obrigatório</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 · OBJEÇÕES E FECHAMENTO -->
+      <section class="bstep" data-step="3" data-nome="Objeções e fechamento">
+        <header class="bstep-head">
+          <p class="bstep-tag">Etapa 03 — o que ele precisa saber</p>
+          <h2 class="bstep-title">Dúvidas e <span class="tx">objeções.</span></h2>
+          <p class="bstep-sub">O que os clientes mais perguntam — e como você responde. É isso que deixa o agente afiado.</p>
+        </header>
+        <div class="bfields">
+          <div class="bfield" data-required>
+            <label class="blabel" for="f-objecoes">Quais as dúvidas e objeções mais comuns dos seus clientes, e como você responde cada uma? <span class="req" aria-hidden="true"></span></label>
+            <textarea class="binput btextarea btextarea--lg" id="f-objecoes" name="objecoes" placeholder="Ex: &ldquo;é caro&rdquo; → explico que é um sistema, não um site solto; &ldquo;demora?&rdquo; → entrego em X dias…"></textarea>
+            <span class="berr">Este campo é obrigatório</span>
+          </div>
+          <div class="bfield">
+            <label class="blabel" for="f-obs">Algo mais que o agente precisa saber sobre o seu negócio? <em>opcional</em></label>
+            <textarea class="binput btextarea" id="f-obs" name="observacoes" placeholder="Diferenciais, o que você NÃO faz, promoções, qualquer detalhe importante…"></textarea>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Sucesso -->
+    <div class="bf-success" id="bf-success" hidden>
+      <span class="success-node" aria-hidden="true"></span>
+      <h2 class="bf-title">Briefing <span class="tx">recebido.</span></h2>
+      <p class="bf-lead">Tudo o que você escreveu vira a base do seu agente — o tom, os limites e o objetivo de cada conversa. Lemos cada resposta antes de configurar qualquer coisa. <strong>Em breve retornamos com os próximos passos.</strong></p>
+      <p class="micro">Mindle — ponto · linha · sistema</p>
+    </div>
+
+    <p class="bf-error" id="bf-error" role="alert" hidden></p>
+
+  </main>
+
+  <!-- Navegação fixa -->
+  <nav class="bf-nav" id="bf-nav" aria-label="Navegação do briefing">
+    <div class="bf-nav-inner">
+      <button class="btn bf-btn-back" id="btn-voltar" type="button" disabled>&larr; Voltar</button>
+      <span class="micro bf-nav-count" id="bf-nav-count">01 / 3</span>
+      <button class="btn btn-primary bf-btn-next" id="btn-avancar" type="button" data-magnetic>Próximo &rarr;</button>
+    </div>
+  </nav>
+
+  <script src="js/vendor/gsap.min.js" defer></script>
+  <script src="js/briefing.js" defer></script>
+</body>
+</html>

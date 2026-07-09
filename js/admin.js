@@ -134,6 +134,7 @@
     carregarBrandings();
     carregarClientes();
     carregarPropostas();
+    carregarAutomacoes();
     dgPopularLeads();
   }
 
@@ -258,6 +259,7 @@
       $('#tab-clientes').hidden = tab.dataset.tab !== 'clientes';
       $('#tab-propostas').hidden = tab.dataset.tab !== 'propostas';
       $('#tab-faturamento').hidden = tab.dataset.tab !== 'faturamento';
+      $('#tab-automacoes').hidden = tab.dataset.tab !== 'automacoes';
     });
   });
 
@@ -555,6 +557,71 @@
   });
   $('#bd-filtro-status').addEventListener('change', (e) => { bdFiltro.status = e.target.value; renderBrandings(); });
   $('#bd-busca').addEventListener('input', (e) => { bdFiltro.q = e.target.value.trim(); renderBrandings(); });
+
+  /* ── Automações (briefings de automação) ── */
+  let automacoes = [];
+  const auFiltro = { status: 'todos', q: '' };
+  const AU_SECOES = [
+    ['01 · Contato e operação', [['whatsapp_agente', 'WhatsApp do agente'], ['whatsapp_humano', 'WhatsApp humano'], ['site', 'Site'], ['link_agendamento', 'Link de agendamento'], ['horarios', 'Horários']]],
+    ['02 · Persona do agente', [['voz', 'Voz (1ª pessoa / assistente)'], ['resposta_robo', 'Resposta a "é um robô?"'], ['politica_preco', 'Política de preço'], ['estilo_proibido', 'Estilo proibido'], ['objetivo', 'Objetivo da conversa']]],
+    ['03 · Objeções e fechamento', [['objecoes', 'Objeções e respostas'], ['observacoes', 'Observações']]]
+  ];
+
+  async function carregarAutomacoes() {
+    const { data, error } = await sb.from('automacoes').select('*').order('created_at', { ascending: false });
+    const msg = $('#au-msg');
+    if (error) {
+      msg.textContent = 'Erro ao carregar automações: ' + error.message +
+        (/does not exist|schema cache/i.test(error.message) ? ' — rode o automacoes.sql no SQL Editor.' : '');
+      msg.classList.add('is-error'); msg.hidden = false; return;
+    }
+    automacoes = data || [];
+    msg.hidden = true;
+    const count = $('#tab-count-automacoes');
+    count.textContent = automacoes.length; count.hidden = automacoes.length === 0;
+    renderAutomacoes();
+  }
+
+  function renderAutomacoes() {
+    const q = auFiltro.q.toLowerCase();
+    const lista = automacoes.filter((a) =>
+      (auFiltro.status === 'todos' || a.status === auFiltro.status) &&
+      (!q || [a.empresa_nome, a.objetivo, a.notas].some((v) => v && v.toLowerCase().includes(q)))
+    );
+    $('#au-empty').hidden = lista.length > 0;
+    $('#automacoes-list').innerHTML = lista.map((a) => {
+      const secoes = AU_SECOES.map(([titulo, campos]) => {
+        const linhas = campos.map(([k, label]) => {
+          const v = valorCampo(a[k]);
+          return v ? `<div class="lead-field"><dt>${esc(label)}</dt><dd>${esc(v)}</dd></div>` : '';
+        }).join('');
+        return linhas ? `<section class="bsec"><h4 class="bsec-t">${esc(titulo)}</h4><dl class="lead-grid">${linhas}</dl></section>` : '';
+      }).join('');
+      return `
+      <article class="lead-card bcard" data-id="${esc(a.id)}">
+        <div class="lead-top">
+          <span class="badge badge-status">${esc(BF_STATUS[a.status] || a.status)}</span>
+          <span class="lead-nome">${esc(a.empresa_nome || '—')}</span>
+          <span class="bcard-meta">${esc(a.objetivo || '')}</span>
+          <span class="lead-data">${esc(fmtData(a.created_at))}</span>
+        </div>
+        <div class="bcard-body" hidden>${secoes}</div>
+        <div class="lead-foot">
+          <button type="button" class="bcard-toggle">Ver respostas</button>
+          <select class="lead-status" aria-label="Status da automação">
+            ${Object.entries(BF_STATUS).map(([v, l]) => `<option value="${v}" ${v === a.status ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+          <textarea class="lead-notas" placeholder="Notas do projeto…" aria-label="Notas">${esc(a.notas || '')}</textarea>
+          <button type="button" class="ta-expand" aria-label="Expandir notas">expandir</button>
+          <span class="lead-salvo" aria-hidden="true">salvo ✓</span>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  ligarLista($('#automacoes-list'), { tabela: () => 'automacoes', dados: () => automacoes });
+  $('#au-filtro-status').addEventListener('change', (e) => { auFiltro.status = e.target.value; renderAutomacoes(); });
+  $('#au-busca').addEventListener('input', (e) => { auFiltro.q = e.target.value.trim(); renderAutomacoes(); });
 
   /* ── Diagnóstico ao vivo — companheiro da call ── */
   const DG_KEY = 'mindle_diagnostico';
