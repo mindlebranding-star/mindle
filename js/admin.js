@@ -309,6 +309,22 @@
     return String(v);
   }
 
+  /* Monta um TXT formatado das respostas de um briefing (pra copiar/colar) */
+  function briefingTexto(rec, secoes, titulo) {
+    const L = [];
+    L.push((titulo || 'Briefing').toUpperCase() + ' — ' + (rec.empresa_nome || '—'));
+    L.push('Recebido em ' + fmtData(rec.created_at) + '  ·  Status: ' + (BF_STATUS[rec.status] || rec.status || '—'));
+    L.push('');
+    secoes.forEach(([sTit, campos]) => {
+      const ls = campos
+        .map(([k, label]) => { const v = valorCampo(rec[k]); return v ? label + ': ' + v : null; })
+        .filter(Boolean);
+      if (ls.length) { L.push('── ' + sTit + ' ──'); L.push(...ls); L.push(''); }
+    });
+    if (rec.notas) { L.push('── Notas internas ──'); L.push(rec.notas); L.push(''); }
+    return L.join('\n').trim();
+  }
+
   /* Seção "Materiais e arquivos" de um card (briefing ou branding) */
   function montarSecaoArquivos(arquivos) {
     const arq = arquivos || {};
@@ -364,6 +380,7 @@
         <div class="bcard-body" hidden>${secoes}${arquivosHtml}</div>
         <div class="lead-foot">
           <button type="button" class="bcard-toggle">Ver respostas</button>
+          <button type="button" class="bcard-copiar">Copiar respostas</button>
           <select class="lead-status bf-status" aria-label="Status do briefing">
             ${Object.entries(BF_STATUS).map(([v, l]) => `<option value="${v}" ${v === b.status ? 'selected' : ''}>${l}</option>`).join('')}
           </select>
@@ -421,6 +438,13 @@
         if (!body.hidden) carregarMiniaturas(card);
         return;
       }
+      const copiar = e.target.closest('.bcard-copiar');
+      if (copiar && ctx.secoes) {
+        const card = copiar.closest('.bcard');
+        const item = ctx.dados().find((x) => x.id === card.dataset.id);
+        if (item) abrirModal((ctx.titulo || 'Briefing') + ' — ' + (item.empresa_nome || ''), briefingTexto(item, ctx.secoes, ctx.titulo));
+        return;
+      }
       const prev = e.target.closest('.fprev-btn');
       if (prev) {
         const img = prev.querySelector('.fprev-img');
@@ -467,7 +491,9 @@
 
   ligarLista($('#briefings-list'), {
     tabela: () => cfg.briefingTable || 'briefings',
-    dados: () => briefings
+    dados: () => briefings,
+    secoes: BF_SECOES,
+    titulo: 'Briefing de LP'
   });
   $('#bf-filtro-status').addEventListener('change', (e) => { bfFiltro.status = e.target.value; renderBriefings(); });
   $('#bf-busca').addEventListener('input', (e) => { bfFiltro.q = e.target.value.trim(); renderBriefings(); });
@@ -540,6 +566,7 @@
         <div class="bcard-body" hidden>${secoes}${montarSecaoArquivos(b.arquivos)}</div>
         <div class="lead-foot">
           <button type="button" class="bcard-toggle">Ver respostas</button>
+          <button type="button" class="bcard-copiar">Copiar respostas</button>
           <select class="lead-status" aria-label="Status do branding">
             ${Object.entries(BF_STATUS).map(([v, l]) => `<option value="${v}" ${v === b.status ? 'selected' : ''}>${l}</option>`).join('')}
           </select>
@@ -553,7 +580,9 @@
 
   ligarLista($('#brandings-list'), {
     tabela: () => 'brandings',
-    dados: () => brandings
+    dados: () => brandings,
+    secoes: BD_SECOES,
+    titulo: 'Briefing de branding'
   });
   $('#bd-filtro-status').addEventListener('change', (e) => { bdFiltro.status = e.target.value; renderBrandings(); });
   $('#bd-busca').addEventListener('input', (e) => { bdFiltro.q = e.target.value.trim(); renderBrandings(); });
@@ -608,6 +637,7 @@
         <div class="bcard-body" hidden>${secoes}</div>
         <div class="lead-foot">
           <button type="button" class="bcard-toggle">Ver respostas</button>
+          <button type="button" class="bcard-copiar">Copiar respostas</button>
           <select class="lead-status" aria-label="Status da automação">
             ${Object.entries(BF_STATUS).map(([v, l]) => `<option value="${v}" ${v === a.status ? 'selected' : ''}>${l}</option>`).join('')}
           </select>
@@ -619,7 +649,7 @@
     }).join('');
   }
 
-  ligarLista($('#automacoes-list'), { tabela: () => 'automacoes', dados: () => automacoes });
+  ligarLista($('#automacoes-list'), { tabela: () => 'automacoes', dados: () => automacoes, secoes: AU_SECOES, titulo: 'Briefing de automação' });
   $('#au-filtro-status').addEventListener('change', (e) => { auFiltro.status = e.target.value; renderAutomacoes(); });
   $('#au-busca').addEventListener('input', (e) => { auFiltro.q = e.target.value.trim(); renderAutomacoes(); });
 
