@@ -56,10 +56,14 @@
   /* ── Estado de tela ───────────────────────────── */
   function ajustarSticky() {
     const hdr = document.querySelector('.admin-header');
-    const tabs = document.querySelector('.tabs');
-    if (!hdr || !tabs) return;
+    const side = document.querySelector('.admin-side');
+    if (!hdr) return;
     document.documentElement.style.setProperty('--admin-hdr-h', hdr.offsetHeight + 'px');
-    document.documentElement.style.setProperty('--admin-tabs-h', tabs.offsetHeight + 'px');
+    // Menu lateral (desktop) não ocupa altura acima do conteúdo → 0.
+    // No mobile ele vira barra horizontal no topo → usa a altura dela.
+    const horizontal = window.matchMedia('(max-width: 820px)').matches;
+    const tabsH = (horizontal && side) ? side.offsetHeight : 0;
+    document.documentElement.style.setProperty('--admin-tabs-h', tabsH + 'px');
   }
   window.addEventListener('resize', ajustarSticky);
 
