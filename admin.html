@@ -58,6 +58,8 @@
     <!-- ── Painel ── -->
     <section class="app-view" id="view-app" hidden>
 
+      <div class="admin-shell">
+      <aside class="admin-side">
       <div class="tabs" role="tablist" aria-label="Seções do painel">
         <button class="tab is-on" role="tab" data-tab="leads" aria-selected="true">Leads</button>
         <button class="tab" role="tab" data-tab="briefings" aria-selected="false">Briefings <span class="tab-count" id="tab-count-briefings" hidden></span></button>
@@ -68,7 +70,9 @@
         <button class="tab" role="tab" data-tab="faturamento" aria-selected="false">Faturamento <span class="tab-count" id="tab-count-faturamento" hidden></span></button>
         <button class="tab" role="tab" data-tab="automacoes" aria-selected="false">Automações <span class="tab-count" id="tab-count-automacoes" hidden></span></button>
       </div>
+      </aside>
 
+      <div class="admin-content">
       <div class="tab-pane" id="tab-leads">
       <div class="stats" id="stats">
         <div class="stat"><span class="stat-num" id="stat-total">–</span><span class="stat-label">Total</span></div>
@@ -444,6 +448,9 @@
         <div class="leads" id="automacoes-list" aria-live="polite"></div>
         <p class="empty" id="au-empty" hidden>Nenhum briefing de automação ainda. Envie o link /briefing-automacao pro cliente preencher.</p>
       </div><!-- /tab-automacoes -->
+
+      </div><!-- /admin-content -->
+    </div><!-- /admin-shell -->
 
     </section>
 
