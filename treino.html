@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treino do agente — Mindle</title>
+  <meta name="description" content="FAQ e correções do agente de automação.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0F0F0E">
+
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%230F0F0E"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Bold.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    .tr-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: clamp(16px, 2.6vw, 24px) clamp(20px, 4vw, 40px);
+      border-bottom: 1px solid var(--color-border-subtle);
+      position: sticky; top: 0; z-index: 5;
+      background: rgba(15,15,14,0.86); backdrop-filter: blur(10px);
+    }
+    .tr-header .brand-mark { height: 24px; width: auto; color: var(--color-respiro-base); }
+    .tr-header-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep); }
+
+    .tr-main { width: min(1100px, calc(100% - 40px)); margin: clamp(28px,5vw,48px) auto clamp(120px,14vw,160px); }
+    .tr-intro { margin-bottom: clamp(2rem,4vw,3rem); }
+    .tr-intro .h2 { max-width: 22ch; }
+    .tr-lead { color: var(--color-muted); max-width: 60ch; margin-top: 10px; }
+
+    .tr-section { margin-bottom: clamp(2.5rem,5vw,3.5rem); }
+    .tr-sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+    .tr-sec-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(24px,3vw,32px); color: var(--color-respiro-base); }
+    .tr-sec-title .tx { color: var(--color-accent); }
+    .tr-sec-sub { color: var(--color-muted); font-size: var(--font-body-sm); max-width: 56ch; margin-bottom: 16px; }
+
+    .tr-head, .tr-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr 1fr 0.9fr 34px;
+      gap: 10px;
+    }
+    .tr-head {
+      font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--color-muted-deep);
+      padding: 0 12px 8px; align-items: end;
+    }
+    .tr-rows { display: grid; gap: 10px; }
+    .tr-row {
+      background: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-md); padding: 12px; align-items: start;
+    }
+    .tr-row textarea {
+      width: 100%; min-height: 62px; resize: vertical;
+      background: transparent; border: none;
+      border-bottom: 1px solid var(--color-border-default);
+      color: var(--color-respiro-base); font-family: var(--font-body);
+      font-size: var(--font-body-sm); line-height: 1.5; padding: 4px 2px;
+    }
+    .tr-row textarea::placeholder { color: var(--color-muted-deep); }
+    .tr-row textarea:focus { outline: none; border-bottom-color: var(--color-accent); }
+    .tr-del {
+      align-self: center; width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--color-border-default); background: transparent;
+      color: var(--color-muted); font-size: 16px; line-height: 1; cursor: pointer;
+      transition: color .2s, border-color .2s;
+    }
+    .tr-del:hover { color: var(--color-error); border-color: var(--color-error); }
+
+    .tr-add {
+      margin-top: 12px; font-family: var(--font-mono); font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--color-accent-light); background: transparent;
+      border: 1px dashed var(--color-border-default); border-radius: var(--radius-sm);
+      padding: 10px 16px; cursor: pointer; transition: border-color .2s, color .2s;
+    }
+    .tr-add:hover { border-color: var(--color-accent); color: var(--color-accent-bright); }
+
+    .tr-bar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+      background: rgba(15,15,14,0.92); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--color-border-subtle);
+      padding: 14px clamp(20px,4vw,40px);
+      display: flex; align-items: center; justify-content: flex-end; gap: 16px;
+    }
+    .tr-status { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; color: var(--color-muted); margin-right: auto; }
+    .tr-status.is-error { color: var(--color-error); }
+    .tr-loading { text-align: center; color: var(--color-muted-deep); font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; padding: 60px 0; }
+
+    @media (max-width: 760px) {
+      .tr-head { display: none; }
+      .tr-row { grid-template-columns: 1fr; gap: 8px; }
+      .tr-del { justify-self: end; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="tr-header">
+    <a class="brand" href="index.html" aria-label="Mindle">
+      <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+        <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H539.349V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+        <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="var(--color-accent)"/>
+      </svg>
+    </a>
+    <span class="tr-header-tag" id="tr-tag">Treino do agente</span>
+  </header>
+
+  <main class="tr-main" id="tr-main">
+    <div class="tr-loading" id="tr-loading">Carregando…</div>
+
+    <div id="tr-body" hidden>
+      <div class="tr-intro">
+        <p class="eyebrow"><span class="eyebrow-index">·</span>Treino do agente</p>
+        <h1 class="h2">O que ele responde, e o que <span class="tx">não pode dizer.</span></h1>
+        <p class="lead tr-lead">Preencha as perguntas mais comuns do dia a dia e como o agente deve responder. Quando notar que ele errou algo, registre em "Correções". Quanto mais real, melhor ele fica.</p>
+      </div>
+
+      <!-- FAQ -->
+      <section class="tr-section">
+        <div class="tr-sec-head">
+          <span class="tr-sec-title">FAQ — <span class="tx">o dia a dia</span></span>
+        </div>
+        <p class="tr-sec-sub">As perguntas que seus clientes mais fazem, com a resposta certa.</p>
+        <div class="tr-head" aria-hidden="true">
+          <span>Pergunta</span><span>Resposta</span><span>O que NÃO responder</span><span>Observação</span><span></span>
+        </div>
+        <div class="tr-rows" id="rows-faq"></div>
+        <button type="button" class="tr-add" data-add="faq">+ Adicionar pergunta</button>
+      </section>
+
+      <!-- Correções -->
+      <section class="tr-section">
+        <div class="tr-sec-head">
+          <span class="tr-sec-title">Correções — <span class="tx">o que ele errou</span></span>
+        </div>
+        <p class="tr-sec-sub">Viu o agente responder algo errado? Registre aqui a pergunta, a resposta certa e o que ele não deve dizer.</p>
+        <div class="tr-head" aria-hidden="true">
+          <span>Pergunta</span><span>Resposta certa</span><span>O que NÃO responder</span><span>Observação</span><span></span>
+        </div>
+        <div class="tr-rows" id="rows-correcao"></div>
+        <button type="button" class="tr-add" data-add="correcao">+ Adicionar correção</button>
+      </section>
+    </div>
+  </main>
+
+  <div class="tr-bar" id="tr-bar" hidden>
+    <span class="tr-status" id="tr-status"></span>
+    <button class="btn btn-primary" id="tr-salvar" type="button" data-hover>Salvar</button>
+  </div>
+
+  <template id="tpl-row">
+    <div class="tr-row">
+      <textarea data-f="pergunta" placeholder="Pergunta"></textarea>
+      <textarea data-f="resposta" placeholder="Resposta"></textarea>
+      <textarea data-f="nao_responder" placeholder="O que NÃO responder"></textarea>
+      <textarea data-f="observacao" placeholder="Observação"></textarea>
+      <button type="button" class="tr-del" aria-label="Remover linha">&times;</button>
+    </div>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="js/vendor/supabase.min.js"></script>
+  <script>
+    (function () {
+      const cfg = window.MINDLE_SUPABASE || {};
+      const sb = window.supabase.createClient(cfg.url, cfg.anonKey);
+      const id = new URLSearchParams(location.search).get('a');
+      const tpl = document.getElementById('tpl-row');
+
+      function addRow(tipo, data) {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        if (data) node.querySelectorAll('textarea').forEach((t) => { t.value = data[t.dataset.f] || ''; });
+        node.querySelector('.tr-del').addEventListener('click', () => node.remove());
+        document.getElementById('rows-' + tipo).appendChild(node);
+      }
+      function coletar(tipo) {
+        return [...document.querySelectorAll('#rows-' + tipo + ' .tr-row')].map((row) => {
+          const o = { tipo };
+          row.querySelectorAll('textarea').forEach((t) => { o[t.dataset.f] = t.value.trim(); });
+          return o;
+        }).filter((o) => o.pergunta || o.resposta || o.nao_responder || o.observacao);
+      }
+
+      if (!id) { document.getElementById('tr-loading').textContent = 'Link inválido.'; return; }
+
+      sb.rpc('treino_listar', { p_id: id }).then(({ data, error }) => {
+        if (error || !data || data.erro) {
+          document.getElementById('tr-loading').textContent = 'Não foi possível carregar. Confira o link.';
+          return;
+        }
+        document.getElementById('tr-tag').textContent = 'Treino · ' + (data.cliente || '');
+        const itens = data.itens || [];
+        itens.filter((i) => i.tipo === 'faq').forEach((i) => addRow('faq', i));
+        itens.filter((i) => i.tipo === 'correcao').forEach((i) => addRow('correcao', i));
+        // sempre deixa ao menos 1 linha em branco em cada seção
+        if (!document.querySelector('#rows-faq .tr-row')) addRow('faq');
+        if (!document.querySelector('#rows-correcao .tr-row')) addRow('correcao');
+        document.getElementById('tr-loading').hidden = true;
+        document.getElementById('tr-body').hidden = false;
+        document.getElementById('tr-bar').hidden = false;
+      });
+
+      document.querySelectorAll('.tr-add').forEach((b) => b.addEventListener('click', () => addRow(b.dataset.add)));
+
+      document.getElementById('tr-salvar').addEventListener('click', async function () {
+        const btn = this, status = document.getElementById('tr-status');
+        const itens = [...coletar('faq'), ...coletar('correcao')];
+        btn.disabled = true; btn.textContent = 'Salvando…'; status.classList.remove('is-error'); status.textContent = '';
+        const { data, error } = await sb.rpc('treino_salvar', { p_id: id, p_itens: itens });
+        btn.disabled = false; btn.textContent = 'Salvar';
+        if (error || (data && data.erro)) { status.textContent = 'Erro ao salvar. Tente de novo.'; status.classList.add('is-error'); return; }
+        status.textContent = 'Salvo ✓ ' + ((data && data.total) || 0) + ' item(ns)';
+      });
+    })();
+  </script>
+</body>
+</html>

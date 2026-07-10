@@ -642,6 +642,7 @@
         <div class="lead-foot">
           <button type="button" class="bcard-toggle">Ver respostas</button>
           <button type="button" class="bcard-copiar">Copiar respostas</button>
+          <a class="lead-view bcard-treino" href="treino.html?a=${esc(a.id)}" target="_blank" rel="noopener">FAQ / Correções &nearr;</a>
           <select class="lead-status" aria-label="Status da automação">
             ${Object.entries(BF_STATUS).map(([v, l]) => `<option value="${v}" ${v === a.status ? 'selected' : ''}>${l}</option>`).join('')}
           </select>
