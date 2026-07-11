@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atendimento que não dorme — Mindle</title>
+  <meta name="description" content="A camada de Operação do sistema Mindle: um agente no seu WhatsApp que atende com o seu tom, na hora, e passa a conversa pra você quando ela precisa de gente. Setup + mensalidade, sem fidelidade.">
+  <meta property="og:title" content="Atendimento que não dorme — Mindle">
+  <meta property="og:description" content="Um agente no seu WhatsApp que atende com o seu tom, treinado com as suas respostas reais — e que melhora todo mês.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://mindlebrand.com.br/automacao">
+  <meta property="og:site_name" content="Mindle">
+  <meta property="og:image" content="https://mindlebrand.com.br/assets/og-image.jpg">
+  <meta name="theme-color" content="#0F0F0E">
+  <link rel="canonical" href="https://mindlebrand.com.br/automacao">
+
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%230F0F0E"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/MangoGrotesque-Bold.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    .au-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: clamp(16px, 2.6vw, 24px) clamp(20px, 4vw, 40px);
+      border-bottom: 1px solid var(--color-border-subtle);
+      position: sticky; top: 0; z-index: 5;
+      background: rgba(15,15,14,0.86); backdrop-filter: blur(10px);
+    }
+    .au-header .brand-mark { height: 26px; width: auto; color: var(--color-respiro-base); }
+    .au-header-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep); }
+
+    .au-main { width: min(880px, calc(100% - 40px)); margin-inline: auto; }
+    .au-hero { padding: clamp(3.5rem, 8vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem); }
+    .au-hero .h2 { max-width: 16ch; }
+    .au-lead { color: var(--color-muted); max-width: 54ch; margin-top: 16px; }
+    .au-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 28px; }
+
+    .au-section { padding: clamp(2.5rem, 5vw, 4rem) 0; border-top: 1px solid var(--color-border-subtle); }
+    .au-section .h3-lg { margin-bottom: 12px; }
+    .au-body { color: var(--color-muted); font-size: var(--font-body-lg); line-height: 1.7; max-width: 58ch; }
+    .au-body strong { color: var(--color-respiro-base); }
+
+    .au-steps { display: grid; gap: 12px; margin-top: 24px; }
+    .au-step {
+      display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: start;
+      background: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
+      border-left: 2px solid var(--color-accent);
+      border-radius: var(--radius-md); padding: 18px 22px;
+    }
+    .au-step-num { font-family: var(--font-display); font-weight: 500; font-size: 44px; line-height: 0.9; color: var(--color-surface-03); }
+    .au-step h4 { font-family: var(--font-display); font-weight: 500; font-size: 21px; color: var(--color-respiro-base); margin-bottom: 4px; }
+    .au-step p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
+
+    .au-modelo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+    .au-modelo-card {
+      background: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg); padding: 24px;
+    }
+    .au-modelo-card .layer-tag { margin-bottom: 8px; display: block; }
+    .au-modelo-card p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
+    @media (max-width: 640px) { .au-modelo { grid-template-columns: 1fr; } .au-step { grid-template-columns: 1fr; gap: 6px; } }
+
+    .au-final { text-align: center; padding: clamp(3rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 6rem); border-top: 1px solid var(--color-border-subtle); }
+    .au-final .h2 { max-width: 20ch; margin-inline: auto; }
+    .au-footer {
+      border-top: 1px solid var(--color-border-subtle); padding: 22px 24px;
+      text-align: center; font-family: var(--font-mono); font-size: 10.5px;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep);
+    }
+    [data-demo] { display: none; }
+    [data-demo].is-on { display: inline-flex; }
+  </style>
+</head>
+<body>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="au-header">
+    <a class="brand" href="index.html" aria-label="Mindle — início">
+      <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+        <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H539.349V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+        <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="var(--color-accent)"/>
+      </svg>
+    </a>
+    <span class="au-header-tag">Camada 05 · Operação</span>
+  </header>
+
+  <main class="au-main">
+
+    <!-- HERO -->
+    <section class="au-hero">
+      <p class="eyebrow"><span class="eyebrow-index">05</span>Sistema de presença digital — Operação</p>
+      <h1 class="h2">Atendimento que não <span class="tx">dorme.</span></h1>
+      <p class="lead au-lead">O contato que o seu sistema traz chega a qualquer hora — inclusive quando você está atendendo, dirigindo ou dormindo. Um agente no seu WhatsApp responde na hora, com o seu tom, e passa a conversa pra você quando ela precisa de gente.</p>
+      <div class="au-ctas">
+        <a class="btn btn-primary" data-demo id="demo-hero" href="#" target="_blank" rel="noopener" data-hover>Converse com o nosso agente agora</a>
+        <a class="link-ghost" href="agenda.html" data-hover>Agendar diagnóstico <span class="link-arrow">&rarr;</span></a>
+      </div>
+    </section>
+
+    <!-- O VAZAMENTO -->
+    <section class="au-section">
+      <h2 class="h3-lg">O custo da demora é <span class="tx">silencioso.</span></h2>
+      <p class="au-body">O cliente indicado manda mensagem às 21h. Você responde no dia seguinte, às 10h. Nesse intervalo, ele já falou com outra pessoa — que respondeu em dois minutos. <strong>O contato não se perde por falta de qualidade; se perde por falta de hora.</strong> E esse custo não aparece em relatório: aparece na conversa que esfriou.</p>
+    </section>
+
+    <!-- COMO FUNCIONA -->
+    <section class="au-section">
+      <h2 class="h3-lg">Como <span class="tx">funciona.</span></h2>
+      <div class="au-steps">
+        <div class="au-step">
+          <span class="au-step-num">01</span>
+          <div><h4>O tom é seu, não do robô</h4><p>Antes de qualquer coisa, um briefing define como o agente fala: 1ª pessoa ou assistente, o que ele pode dizer, o que jamais responde — inclusive sobre preço. Ele soa como o seu negócio, porque foi calibrado por ele.</p></div>
+        </div>
+        <div class="au-step">
+          <span class="au-step-num">02</span>
+          <div><h4>Ele atende no seu WhatsApp</h4><p>Responde as perguntas do dia a dia na hora, a qualquer hora: horários, como funciona, onde fica, próximos passos. Sem deixar ninguém esperando.</p></div>
+        </div>
+        <div class="au-step">
+          <span class="au-step-num">03</span>
+          <div><h4>Passa pra você na hora certa</h4><p>Quando a conversa precisa de gente — um caso delicado, uma negociação, um cliente importante — o agente avisa você e sai de cena. Ele faz a triagem; quem atende é você.</p></div>
+        </div>
+        <div class="au-step">
+          <span class="au-step-num">04</span>
+          <div><h4>Melhora todo mês</h4><p>Cada pergunta nova e cada resposta que ele errou vira treino: registramos, corrigimos e o agente aprende. Um agente parado envelhece; o seu fica mais afiado a cada ciclo.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVESTIMENTO -->
+    <section class="au-section">
+      <h2 class="h3-lg">Como se <span class="tx">investe.</span></h2>
+      <p class="au-body">Dois momentos, sem fidelidade:</p>
+      <div class="au-modelo">
+        <div class="au-modelo-card">
+          <span class="layer-tag">Setup — uma vez</span>
+          <p>A construção: briefing do tom, calibração das regras, treino inicial com as suas respostas reais e a entrada no ar no seu número.</p>
+        </div>
+        <div class="au-modelo-card">
+          <span class="layer-tag">Mensalidade — operação</span>
+          <p>O que mantém o agente vivo: revisão das conversas, treino contínuo com correções e perguntas novas, ajustes de tom e monitoramento.</p>
+        </div>
+      </div>
+      <p class="au-body" style="margin-top:20px">O número certo depende do seu volume e do seu caso — e sai da primeira conversa, como tudo aqui. <strong>Diagnóstico antes de prescrição.</strong></p>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="au-final">
+      <p class="eyebrow" style="justify-content:center"><span class="eyebrow-index">&#9679;</span>Prove antes de decidir</p>
+      <h2 class="h2">A melhor prova é <span class="tx">conversar.</span></h2>
+      <p class="lead au-lead" style="margin-inline:auto">O nosso próprio atendimento roda neste sistema. Mande uma mensagem e veja como ele soa — depois imagine com o seu tom.</p>
+      <div class="au-ctas" style="justify-content:center">
+        <a class="btn btn-primary" data-demo id="demo-final" href="#" target="_blank" rel="noopener" data-hover>Falar com o nosso agente</a>
+        <a class="btn btn-header" href="agenda.html" data-hover>Agendar diagnóstico gratuito</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="au-footer">Mindle · Ponto · Linha · Sistema · <a href="index.html" style="color:var(--color-accent-light)">mindlebrand.com.br</a></footer>
+
+  <script src="config.js"></script>
+  <script>
+    // Demo viva: botão só aparece se o número do agente estiver no config
+    (function () {
+      var n = (window.MINDLE_WHATS || '').replace(/\D/g, '');
+      if (!n) return;
+      var msg = encodeURIComponent('Olá! Vim pela página da Mindle e quero ver o agente funcionando.');
+      ['demo-hero', 'demo-final'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) { el.href = 'https://wa.me/' + n + '?text=' + msg; el.classList.add('is-on'); }
+      });
+    })();
+  </script>
+</body>
+</html>

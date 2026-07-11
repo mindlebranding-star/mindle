@@ -1653,6 +1653,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     { nome: 'Briefing — Landing Page', tag: 'pro cliente', url: 'https://mindlebrand.com.br/briefing', desc: 'Pro cliente preencher antes de uma landing page.' },
     { nome: 'Briefing — Branding', tag: 'pro cliente', url: 'https://mindlebrand.com.br/branding', desc: 'Pro cliente preencher antes do branding completo.' },
     { nome: 'Briefing — Automação', tag: 'pro cliente', url: 'https://mindlebrand.com.br/briefing-automacao', desc: 'Pro cliente configurar o tom e as regras do agente de atendimento.' },
+    { nome: 'Oferta — Automação (Operação)', tag: 'pro cliente', url: 'https://mindlebrand.com.br/automacao', desc: 'A página comercial da camada 05: agente de WhatsApp, com demo.' },
     { nome: 'Painel (admin)', tag: 'interno', url: 'https://mindlebrand.com.br/admin', desc: 'Seu painel de gestão. Não enviar pro cliente.' },
   ];
   function renderLinks() {

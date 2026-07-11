@@ -582,10 +582,11 @@ html.is-light .site-header.is-scrolled {
 
 /* ── 04 · Camadas ───────────────────────────────────────── */
 .camadas-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: clamp(16px, 2vw, 24px);
   align-items: stretch;
 }
+.layer-cta { margin-top: auto; align-self: start; }
 .layer-card {
   background: var(--color-surface-01);
   border: 1px solid var(--color-border-subtle);

@@ -14,3 +14,8 @@ window.MINDLE_SUPABASE = {
 
 // Agenda do diagnóstico (Cal.com) — caminho A agenda na hora
 window.MINDLE_CAL = 'mindle-diagnostico/branding';
+
+// WhatsApp do AGENTE da Mindle (demo viva em /automacao).
+// Formato: só dígitos, com DDI e DDD — ex: '5541999998888'.
+// Vazio = o botão de demo fica oculto.
+window.MINDLE_WHATS = '';
