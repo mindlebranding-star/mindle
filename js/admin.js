@@ -1511,6 +1511,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
         ${c.links ? `<div class="cl-row">${cadLinksHTML(c.links)}</div>` : ''}
         ${c.notas ? `<p style="color:var(--color-muted);font-size:var(--font-body-sm);line-height:1.6;margin-top:6px">${esc(c.notas)}</p>` : ''}
         <div class="lead-foot">
+          <button type="button" class="lead-view cad-editar">editar</button>
           <button type="button" class="cl-excluir cad-excluir" aria-label="Excluir cliente">excluir</button>
         </div>
       </article>`;
@@ -1518,8 +1519,27 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   }
 
   const cadForm = $('#cad-form');
-  $('#cad-novo-btn').addEventListener('click', () => { cadForm.hidden = !cadForm.hidden; if (!cadForm.hidden) $('#cad-nome').focus(); });
-  $('#cad-cancelar').addEventListener('click', () => { cadForm.hidden = true; cadForm.reset(); });
+  let cadEditId = null;
+  function cadAbrirForm(c) {
+    cadEditId = c ? c.id : null;
+    $('#cad-nome').value = c ? (c.nome || '') : '';
+    $('#cad-doc').value = c ? (c.cpf_cnpj || '') : '';
+    $('#cad-email').value = c ? (c.email || '') : '';
+    $('#cad-whatsapp').value = c ? (c.whatsapp || '') : '';
+    $('#cad-valor').value = c ? (c.valor || '') : '';
+    $('#cad-links').value = c ? (c.links || '') : '';
+    $('#cad-notas').value = c ? (c.notas || '') : '';
+    const tipos = (c && c.tipos) || [];
+    cadForm.querySelectorAll('.cl-planos input').forEach((i) => { i.checked = tipos.includes(i.value); });
+    $('#cad-salvar').textContent = c ? 'Salvar alterações' : 'Salvar cliente';
+    $('#cad-form-msg').hidden = true;
+    cadForm.hidden = false;
+  }
+  $('#cad-novo-btn').addEventListener('click', () => {
+    if (cadForm.hidden) { cadAbrirForm(null); $('#cad-nome').focus(); }
+    else { cadForm.hidden = true; }
+  });
+  $('#cad-cancelar').addEventListener('click', () => { cadForm.hidden = true; cadEditId = null; });
   const cadWhats = $('#cad-whatsapp');
   if (cadWhats) cadWhats.addEventListener('input', () => {
     const d = cadWhats.value.replace(/\D/g, '').slice(0, 11);
@@ -1535,7 +1555,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const nome = $('#cad-nome').value.trim();
     if (!nome) { fmsg.textContent = 'Informe o nome do cliente.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
     const tipos = Array.from(cadForm.querySelectorAll('.cl-planos input:checked')).map((i) => i.value);
-    const novo = {
+    const dados = {
       nome,
       cpf_cnpj: $('#cad-doc').value.trim() || null,
       email: $('#cad-email').value.trim() || null,
@@ -1545,15 +1565,24 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
       links: $('#cad-links').value.trim() || null,
       notas: $('#cad-notas').value.trim() || null,
     };
-    const btn = $('#cad-salvar'); btn.disabled = true; btn.textContent = 'Salvando…';
-    const { error } = await sb.from('cadastro_clientes').insert(novo);
-    btn.disabled = false; btn.textContent = 'Salvar cliente';
+    const btn = $('#cad-salvar'); const rotulo = cadEditId ? 'Salvar alterações' : 'Salvar cliente';
+    btn.disabled = true; btn.textContent = 'Salvando…';
+    const { error } = cadEditId
+      ? await sb.from('cadastro_clientes').update(dados).eq('id', cadEditId)
+      : await sb.from('cadastro_clientes').insert(dados);
+    btn.disabled = false; btn.textContent = rotulo;
     if (error) { fmsg.textContent = 'Erro ao salvar: ' + error.message; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
-    cadForm.reset(); cadForm.hidden = true; fmsg.hidden = true;
+    cadForm.hidden = true; fmsg.hidden = true; cadEditId = null;
     carregarCadastro();
   });
 
   $('#cadastro-list').addEventListener('click', async (e) => {
+    const edit = e.target.closest('.cad-editar');
+    if (edit) {
+      const c = cadastro.find((x) => x.id === edit.closest('.lead-card').dataset.id);
+      if (c) { cadAbrirForm(c); cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#cad-nome').focus(); }
+      return;
+    }
     const del = e.target.closest('.cad-excluir');
     if (!del) return;
     const card = del.closest('.lead-card');
