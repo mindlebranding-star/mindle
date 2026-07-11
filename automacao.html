@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Atendimento que não dorme — Mindle</title>
-  <meta name="description" content="A camada de Operação do sistema Mindle: um agente no seu WhatsApp que atende com o seu tom, na hora, e passa a conversa pra você quando ela precisa de gente. Setup + mensalidade, sem fidelidade.">
-  <meta property="og:title" content="Atendimento que não dorme — Mindle">
-  <meta property="og:description" content="Um agente no seu WhatsApp que atende com o seu tom, treinado com as suas respostas reais — e que melhora todo mês.">
+  <title>Atendimento que responde em segundos — Mindle</title>
+  <meta name="description" content="A camada de Operação do sistema Mindle: um agente no seu WhatsApp que responde em segundos, com o seu tom, e passa a conversa pra você quando precisa de gente. Setup + mensalidade, sem fidelidade.">
+  <meta property="og:title" content="Atendimento que responde em segundos — Mindle">
+  <meta property="og:description" content="Quem responde primeiro, atende. Um agente no seu WhatsApp com o seu tom, treinado com as suas respostas reais — e que melhora todo mês.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:url" content="https://mindlebrand.com.br/automacao">
@@ -28,52 +28,95 @@
   <style>
     .au-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: clamp(16px, 2.6vw, 24px) clamp(20px, 4vw, 40px);
+      padding: clamp(16px, 2.6vw, 22px) clamp(20px, 4vw, 40px);
       border-bottom: 1px solid var(--color-border-subtle);
       position: sticky; top: 0; z-index: 5;
       background: rgba(15,15,14,0.86); backdrop-filter: blur(10px);
     }
-    .au-header .brand-mark { height: 26px; width: auto; color: var(--color-respiro-base); }
+    .au-header .brand-mark { height: 24px; width: auto; color: var(--color-respiro-base); }
     .au-header-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep); }
 
-    .au-main { width: min(880px, calc(100% - 40px)); margin-inline: auto; }
-    .au-hero { padding: clamp(3.5rem, 8vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem); }
-    .au-hero .h2 { max-width: 16ch; }
-    .au-lead { color: var(--color-muted); max-width: 54ch; margin-top: 16px; }
-    .au-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 28px; }
+    .au-wrap { width: min(1080px, calc(100% - 40px)); margin-inline: auto; }
+    .au-band { border-top: 1px solid var(--color-border-subtle); }
+    .au-band--fill { background: var(--color-surface-01); border-block: 1px solid var(--color-border-subtle); }
 
-    .au-section { padding: clamp(2.5rem, 5vw, 4rem) 0; border-top: 1px solid var(--color-border-subtle); }
-    .au-section .h3-lg { margin-bottom: 12px; }
-    .au-body { color: var(--color-muted); font-size: var(--font-body-lg); line-height: 1.7; max-width: 58ch; }
-    .au-body strong { color: var(--color-respiro-base); }
+    /* HERO */
+    .au-hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(32px, 5vw, 64px); align-items: center;
+      padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(2.5rem, 5vw, 4rem); }
+    .au-hero .h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 6vw, 76px); line-height: 0.98; color: var(--color-respiro-base); letter-spacing: -0.01em; }
+    .au-hero .h1 .tx { color: var(--color-accent); }
+    .au-sub { color: var(--color-muted); font-size: var(--font-lead); line-height: 1.6; max-width: 48ch; margin-top: 20px; }
+    .au-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; margin-top: 28px; }
+    .au-cta-nota { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--color-muted-deep); }
+    @media (max-width: 860px) { .au-hero { grid-template-columns: 1fr; } }
 
-    .au-steps { display: grid; gap: 12px; margin-top: 24px; }
-    .au-step {
-      display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: start;
-      background: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
-      border-left: 2px solid var(--color-accent);
-      border-radius: var(--radius-md); padding: 18px 22px;
+    /* CHAT MOCKUP */
+    .chat { display: grid; gap: 10px; }
+    .chat-janela {
+      background: var(--color-surface-02); border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; gap: 12px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
     }
-    .au-step-num { font-family: var(--font-display); font-weight: 500; font-size: 44px; line-height: 0.9; color: var(--color-surface-03); }
-    .au-step h4 { font-family: var(--font-display); font-weight: 500; font-size: 21px; color: var(--color-respiro-base); margin-bottom: 4px; }
+    .bolha { max-width: 86%; padding: 11px 15px; border-radius: 14px; font-size: 15px; line-height: 1.45; }
+    .bolha time { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.03em; margin-top: 6px; }
+    .bolha.entrada { align-self: flex-start; background: var(--color-surface-03); color: var(--color-respiro-base); border-bottom-left-radius: 4px; }
+    .bolha.entrada time { color: var(--color-muted-deep); }
+    .bolha.saida { align-self: flex-end; background: var(--color-accent); color: var(--color-territory); border-bottom-right-radius: 4px; }
+    .bolha.saida time { color: var(--color-accent-deep); }
+    .bolha.saida strong { color: var(--color-territory); }
+    .chat-legenda { text-align: right; font-family: var(--font-display); font-size: 17px; color: var(--color-muted); padding-right: 4px; }
+
+    /* MÉTRICAS */
+    .au-metricas { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 56px); padding: clamp(2rem, 4vw, 3rem) 0; }
+    .au-metricas div { max-width: 240px; }
+    .au-metricas dt { font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 60px); line-height: 1; color: var(--color-accent); }
+    .au-metricas dd { margin: 8px 0 0; font-size: var(--font-body-sm); line-height: 1.5; color: var(--color-muted); }
+    .au-metricas dd span { color: var(--color-muted-deep); }
+
+    /* SEÇÕES */
+    .au-sec { padding: clamp(2.8rem, 5vw, 4.5rem) 0; }
+    .au-sec > .eyebrow { margin-bottom: 14px; }
+    .au-sec .h2 { max-width: 20ch; }
+    .au-sec-intro { color: var(--color-muted); font-size: var(--font-body-lg); line-height: 1.7; max-width: 58ch; margin-top: 16px; }
+    .au-sec-intro strong { color: var(--color-respiro-base); }
+
+    .au-cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 28px; }
+    .au-card { background: var(--color-surface-01); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 24px; }
+    .au-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 21px; color: var(--color-respiro-base); margin-bottom: 8px; }
+    .au-card p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
+
+    .au-steps { display: grid; gap: 12px; margin-top: 28px; }
+    .au-step { display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start;
+      background: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
+      border-left: 2px solid var(--color-accent); border-radius: var(--radius-md); padding: 18px 22px; }
+    .au-step-num { font-family: var(--font-display); font-weight: 500; font-size: 40px; line-height: 0.9; color: var(--color-surface-03); }
+    .au-step h4 { font-family: var(--font-display); font-weight: 500; font-size: 20px; color: var(--color-respiro-base); margin-bottom: 4px; }
     .au-step p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
+    @media (max-width: 560px) { .au-step { grid-template-columns: 1fr; gap: 6px; } }
 
-    .au-modelo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
-    .au-modelo-card {
-      background: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-lg); padding: 24px;
-    }
-    .au-modelo-card .layer-tag { margin-bottom: 8px; display: block; }
+    .au-modelo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 26px; }
+    .au-modelo-card { background: var(--color-surface-01); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: 24px; }
+    .au-modelo-card .layer-tag { display: block; margin-bottom: 8px; }
     .au-modelo-card p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
-    @media (max-width: 640px) { .au-modelo { grid-template-columns: 1fr; } .au-step { grid-template-columns: 1fr; gap: 6px; } }
+    @media (max-width: 560px) { .au-modelo { grid-template-columns: 1fr; } }
 
-    .au-final { text-align: center; padding: clamp(3rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 6rem); border-top: 1px solid var(--color-border-subtle); }
+    /* FAQ */
+    .au-faq { margin-top: 24px; max-width: 780px; }
+    .au-faq details { border-bottom: 1px solid var(--color-border-subtle); }
+    .au-faq summary { cursor: pointer; padding: 18px 4px; font-size: 17px; color: var(--color-respiro-base); list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    .au-faq summary::-webkit-details-marker { display: none; }
+    .au-faq summary::after { content: "+"; color: var(--color-accent-light); font-family: var(--font-mono); }
+    .au-faq details[open] summary::after { content: "–"; }
+    .au-faq details p { padding: 0 4px 20px; margin: 0; color: var(--color-muted); font-size: var(--font-body-base); line-height: 1.7; max-width: 62ch; }
+
+    /* CTA FINAL */
+    .au-final { text-align: center; padding: clamp(3.5rem, 7vw, 6rem) 0; }
     .au-final .h2 { max-width: 20ch; margin-inline: auto; }
-    .au-footer {
-      border-top: 1px solid var(--color-border-subtle); padding: 22px 24px;
-      text-align: center; font-family: var(--font-mono); font-size: 10.5px;
-      letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep);
-    }
+    .au-final .au-sec-intro { margin-inline: auto; }
+    .au-final .au-ctas { justify-content: center; margin-top: 30px; }
+    .au-footer { border-top: 1px solid var(--color-border-subtle); padding: 22px 24px; text-align: center;
+      font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep); }
+
     [data-demo] { display: none; }
     [data-demo].is-on { display: inline-flex; }
   </style>
@@ -93,75 +136,122 @@
     <span class="au-header-tag">Camada 05 · Operação</span>
   </header>
 
-  <main class="au-main">
+  <main>
 
     <!-- HERO -->
-    <section class="au-hero">
-      <p class="eyebrow"><span class="eyebrow-index">05</span>Sistema de presença digital — Operação</p>
-      <h1 class="h2">Atendimento que não <span class="tx">dorme.</span></h1>
-      <p class="lead au-lead">O contato que o seu sistema traz chega a qualquer hora — inclusive quando você está atendendo, dirigindo ou dormindo. Um agente no seu WhatsApp responde na hora, com o seu tom, e passa a conversa pra você quando ela precisa de gente.</p>
-      <div class="au-ctas">
-        <a class="btn btn-primary" data-demo id="demo-hero" href="#" target="_blank" rel="noopener" data-hover>Converse com o nosso agente agora</a>
-        <a class="link-ghost" href="agenda.html" data-hover>Agendar diagnóstico <span class="link-arrow">&rarr;</span></a>
-      </div>
-    </section>
+    <div class="au-wrap">
+      <section class="au-hero">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-index">05</span>Sistema de presença digital — Operação</p>
+          <h1 class="h1">Quem responde primeiro, <span class="tx">atende.</span></h1>
+          <p class="au-sub">O cliente indicado te chama às 22h, no sábado, no meio do seu atendimento. Um agente no seu WhatsApp responde na hora, com o seu tom — e te passa a conversa quando ela precisa de gente.</p>
+          <div class="au-ctas">
+            <a class="btn btn-primary" data-demo id="demo-hero" href="#" target="_blank" rel="noopener" data-hover>Converse com o nosso agente</a>
+            <a class="link-ghost" href="agenda.html" data-hover>Agendar diagnóstico <span class="link-arrow">&rarr;</span></a>
+          </div>
+          <p class="au-cta-nota" data-demo id="nota-hero" style="margin-top:14px">Repare: quem te responde é o nosso próprio agente.</p>
+        </div>
+        <div class="chat" aria-label="Exemplo: cliente pergunta às 22h47 se há horário essa semana; o agente responde em 8 segundos com dois horários e confirma o agendamento.">
+          <div class="chat-janela">
+            <div class="bolha entrada">Oi! Vocês foram indicados pra mim. Consegue me encaixar essa semana?<time>22:47</time></div>
+            <div class="bolha saida">Consigo! Tenho <strong>quinta às 15h</strong> ou <strong>sexta às 10h</strong>. Qual fica melhor pra você?<time>22:47 · respondido em 8 segundos</time></div>
+            <div class="bolha entrada">Quinta 15h é perfeito.<time>22:48</time></div>
+            <div class="bolha saida">Fechado, quinta às 15h. Confirmo com você na quarta — qualquer coisa, é só chamar por aqui.<time>22:48</time></div>
+          </div>
+          <p class="chat-legenda">E você estava em outro atendimento.</p>
+        </div>
+      </section>
+    </div>
 
-    <!-- O VAZAMENTO -->
-    <section class="au-section">
-      <h2 class="h3-lg">O custo da demora é <span class="tx">silencioso.</span></h2>
-      <p class="au-body">O cliente indicado manda mensagem às 21h. Você responde no dia seguinte, às 10h. Nesse intervalo, ele já falou com outra pessoa — que respondeu em dois minutos. <strong>O contato não se perde por falta de qualidade; se perde por falta de hora.</strong> E esse custo não aparece em relatório: aparece na conversa que esfriou.</p>
-    </section>
+    <!-- MÉTRICAS -->
+    <div class="au-band--fill">
+      <div class="au-wrap">
+        <dl class="au-metricas">
+          <div><dt>21×</dt><dd>mais chance de qualificar um contato respondendo em 5 minutos <span>(Harvard Business Review)</span></dd></div>
+          <div><dt>80%</dt><dd>do atendimento no Brasil acontece pelo WhatsApp</dd></div>
+          <div><dt>&minus;40%</dt><dd>de faltas quando a confirmação do horário é automática</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- O PROBLEMA -->
+    <div class="au-band">
+      <div class="au-wrap">
+        <section class="au-sec">
+          <p class="eyebrow"><span class="eyebrow-index">01</span>O vazamento</p>
+          <h2 class="h2">O contato não se perde por falta de qualidade. Se perde por falta de <span class="tx">hora.</span></h2>
+          <p class="au-sec-intro">O indicado te chama fora do horário. Você responde no dia seguinte — e ele já falou com quem respondeu em dois minutos. <strong>Esse custo não aparece em relatório: aparece na conversa que esfriou.</strong></p>
+          <div class="au-cards3">
+            <article class="au-card"><h3>Chega fora de hora</h3><p>Boa parte das mensagens cai à noite, no fim de semana, no feriado — justamente quando você não está no telefone.</p></article>
+            <article class="au-card"><h3>Espera esfria</h3><p>Cada hora de silêncio é uma chance a menos. O cliente indicado não avisa que desistiu; ele só fecha com outro.</p></article>
+            <article class="au-card"><h3>Some no meio</h3><p>Conversa perdida no meio de mil outras, orçamento sem retorno, horário que ninguém confirmou. Vaza sem ninguém ver.</p></article>
+          </div>
+        </section>
+      </div>
+    </div>
 
     <!-- COMO FUNCIONA -->
-    <section class="au-section">
-      <h2 class="h3-lg">Como <span class="tx">funciona.</span></h2>
-      <div class="au-steps">
-        <div class="au-step">
-          <span class="au-step-num">01</span>
-          <div><h4>O tom é seu, não do robô</h4><p>Antes de qualquer coisa, um briefing define como o agente fala: 1ª pessoa ou assistente, o que ele pode dizer, o que jamais responde — inclusive sobre preço. Ele soa como o seu negócio, porque foi calibrado por ele.</p></div>
-        </div>
-        <div class="au-step">
-          <span class="au-step-num">02</span>
-          <div><h4>Ele atende no seu WhatsApp</h4><p>Responde as perguntas do dia a dia na hora, a qualquer hora: horários, como funciona, onde fica, próximos passos. Sem deixar ninguém esperando.</p></div>
-        </div>
-        <div class="au-step">
-          <span class="au-step-num">03</span>
-          <div><h4>Passa pra você na hora certa</h4><p>Quando a conversa precisa de gente — um caso delicado, uma negociação, um cliente importante — o agente avisa você e sai de cena. Ele faz a triagem; quem atende é você.</p></div>
-        </div>
-        <div class="au-step">
-          <span class="au-step-num">04</span>
-          <div><h4>Melhora todo mês</h4><p>Cada pergunta nova e cada resposta que ele errou vira treino: registramos, corrigimos e o agente aprende. Um agente parado envelhece; o seu fica mais afiado a cada ciclo.</p></div>
-        </div>
+    <div class="au-band--fill">
+      <div class="au-wrap">
+        <section class="au-sec">
+          <p class="eyebrow"><span class="eyebrow-index">02</span>Como funciona</p>
+          <h2 class="h2">Um agente com o seu tom — não um <span class="tx">robô genérico.</span></h2>
+          <div class="au-steps">
+            <div class="au-step"><span class="au-step-num">01</span><div><h4>O tom é seu</h4><p>Um briefing define como ele fala: 1ª pessoa ou assistente, o que pode dizer, o que jamais responde — inclusive sobre preço. Ele soa como o seu negócio porque foi calibrado por ele.</p></div></div>
+            <div class="au-step"><span class="au-step-num">02</span><div><h4>Atende no seu WhatsApp</h4><p>No seu número atual, com o seu histórico. Responde as perguntas do dia a dia na hora, a qualquer hora, e você continua podendo assumir a conversa quando quiser.</p></div></div>
+            <div class="au-step"><span class="au-step-num">03</span><div><h4>Passa pra você na hora certa</h4><p>Quando a conversa pede gente — um caso delicado, uma negociação, um cliente importante — ele avisa você e sai de cena. Faz a triagem; quem atende é você.</p></div></div>
+            <div class="au-step"><span class="au-step-num">04</span><div><h4>Melhora todo mês</h4><p>Cada pergunta nova e cada resposta que ele errou vira treino. Um agente parado envelhece; o seu fica mais afiado a cada ciclo.</p></div></div>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
 
     <!-- INVESTIMENTO -->
-    <section class="au-section">
-      <h2 class="h3-lg">Como se <span class="tx">investe.</span></h2>
-      <p class="au-body">Dois momentos, sem fidelidade:</p>
-      <div class="au-modelo">
-        <div class="au-modelo-card">
-          <span class="layer-tag">Setup — uma vez</span>
-          <p>A construção: briefing do tom, calibração das regras, treino inicial com as suas respostas reais e a entrada no ar no seu número.</p>
-        </div>
-        <div class="au-modelo-card">
-          <span class="layer-tag">Mensalidade — operação</span>
-          <p>O que mantém o agente vivo: revisão das conversas, treino contínuo com correções e perguntas novas, ajustes de tom e monitoramento.</p>
-        </div>
+    <div class="au-band">
+      <div class="au-wrap">
+        <section class="au-sec">
+          <p class="eyebrow"><span class="eyebrow-index">03</span>Como se investe</p>
+          <h2 class="h2">Dois momentos, sem <span class="tx">fidelidade.</span></h2>
+          <div class="au-modelo">
+            <div class="au-modelo-card"><span class="layer-tag">Setup — uma vez</span><p>A construção: briefing do tom, calibração das regras, treino inicial com as suas respostas reais e a entrada no ar no seu número.</p></div>
+            <div class="au-modelo-card"><span class="layer-tag">Mensalidade — operação</span><p>O que mantém o agente vivo: revisão das conversas, treino contínuo com correções e perguntas novas, ajustes de tom e monitoramento.</p></div>
+          </div>
+          <p class="au-sec-intro" style="margin-top:20px">O número certo depende do seu volume e do seu caso — e sai da primeira conversa, como tudo aqui. <strong>Diagnóstico antes de prescrição.</strong></p>
+        </section>
       </div>
-      <p class="au-body" style="margin-top:20px">O número certo depende do seu volume e do seu caso — e sai da primeira conversa, como tudo aqui. <strong>Diagnóstico antes de prescrição.</strong></p>
-    </section>
+    </div>
+
+    <!-- FAQ -->
+    <div class="au-band--fill">
+      <div class="au-wrap">
+        <section class="au-sec">
+          <p class="eyebrow"><span class="eyebrow-index">04</span>Antes que você pergunte</p>
+          <h2 class="h2">Perguntas de quem chegou até <span class="tx">aqui.</span></h2>
+          <div class="au-faq">
+            <details><summary>O agente parece robô? O cliente percebe?</summary><p>Ele responde com o tom do seu negócio, não com voz de robô genérico. E é honesto: quando a conversa precisa de gente, ele não inventa — passa pra você. É treinado com as suas respostas reais, então soa como o seu melhor atendimento soaria.</p></details>
+            <details><summary>Funciona no meu número atual do WhatsApp?</summary><p>Funciona. A instalação usa o seu número, mantém o seu histórico, e você continua podendo assumir a conversa manualmente quando quiser.</p></details>
+            <details><summary>Preciso ter o resto do sistema pra ter só o agente?</summary><p>A automação é a camada de Operação — ela rende mais sobre uma base bem-feita (uma presença que já traz contato). Mas dá pra entrar por aqui. O que faz sentido no seu caso sai do diagnóstico, sem empurrar o que você não precisa.</p></details>
+            <details><summary>Quanto custa?</summary><p>Setup mais uma mensalidade, sem fidelidade — não passamos número solto porque ele muda conforme o seu volume e o seu escopo. O valor fechado sai do diagnóstico gratuito, por escrito, antes de qualquer coisa começar.</p></details>
+            <details><summary>Quanto tempo pra entrar no ar?</summary><p>Semanas, não meses. O prazo exato vai por escrito na proposta.</p></details>
+          </div>
+        </section>
+      </div>
+    </div>
 
     <!-- CTA FINAL -->
-    <section class="au-final">
-      <p class="eyebrow" style="justify-content:center"><span class="eyebrow-index">&#9679;</span>Prove antes de decidir</p>
-      <h2 class="h2">A melhor prova é <span class="tx">conversar.</span></h2>
-      <p class="lead au-lead" style="margin-inline:auto">O nosso próprio atendimento roda neste sistema. Mande uma mensagem e veja como ele soa — depois imagine com o seu tom.</p>
-      <div class="au-ctas" style="justify-content:center">
-        <a class="btn btn-primary" data-demo id="demo-final" href="#" target="_blank" rel="noopener" data-hover>Falar com o nosso agente</a>
-        <a class="btn btn-header" href="agenda.html" data-hover>Agendar diagnóstico gratuito</a>
+    <div class="au-band">
+      <div class="au-wrap">
+        <section class="au-sec au-final">
+          <p class="eyebrow" style="justify-content:center"><span class="eyebrow-index">&#9679;</span>Prove antes de decidir</p>
+          <h2 class="h2">A melhor prova é <span class="tx">conversar.</span></h2>
+          <p class="au-sec-intro">O nosso próprio atendimento roda neste sistema. Mande uma mensagem e veja como ele soa — depois imagine com o seu tom, no seu número.</p>
+          <div class="au-ctas">
+            <a class="btn btn-primary" data-demo id="demo-final" href="#" target="_blank" rel="noopener" data-hover>Falar com o nosso agente</a>
+            <a class="btn btn-header" href="agenda.html" data-hover>Agendar diagnóstico gratuito</a>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
 
   </main>
 
@@ -169,7 +259,7 @@
 
   <script src="config.js"></script>
   <script>
-    // Demo viva: botão só aparece se o número do agente estiver no config
+    // Demo viva: os botões e a nota só aparecem se o número do agente estiver no config
     (function () {
       var n = (window.MINDLE_WHATS || '').replace(/\D/g, '');
       if (!n) return;
@@ -178,6 +268,8 @@
         var el = document.getElementById(id);
         if (el) { el.href = 'https://wa.me/' + n + '?text=' + msg; el.classList.add('is-on'); }
       });
+      var nota = document.getElementById('nota-hero');
+      if (nota) nota.classList.add('is-on');
     })();
   </script>
 </body>
