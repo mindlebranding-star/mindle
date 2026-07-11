@@ -352,13 +352,29 @@
 
         <form class="cl-form" id="cl-form" hidden>
           <div class="cl-form-grid">
+            <div class="dg-field">
+              <label class="field-label" for="cl-responsavel">Quem está fazendo?</label>
+              <select class="field-input" id="cl-responsavel" required>
+                <option value="">— selecionar —</option>
+                <option value="Rodrigo">Rodrigo</option>
+                <option value="Maria">Maria</option>
+              </select>
+            </div>
             <div class="dg-field"><label class="field-label" for="cl-nome">Nome</label><input class="field-input" id="cl-nome" required></div>
             <div class="dg-field"><label class="field-label" for="cl-email">E-mail</label><input class="field-input" id="cl-email" type="email" placeholder="cliente@email.com"></div>
             <div class="dg-field"><label class="field-label" for="cl-whatsapp">WhatsApp</label><input class="field-input" id="cl-whatsapp" type="tel" inputmode="numeric" maxlength="16" placeholder="(41) 99999-9999"></div>
             <div class="dg-field"><label class="field-label" for="cl-valor">Valor mensal (R$)</label><input class="field-input" id="cl-valor" type="number" min="0" step="50" placeholder="0"></div>
             <div class="dg-field"><label class="field-label" for="cl-dia">Dia de renovação</label><input class="field-input" id="cl-dia" type="number" min="1" max="31" placeholder="1–31"></div>
           </div>
-          <fieldset class="cl-planos">
+          <fieldset class="cl-planos" id="cl-tipos">
+            <legend class="field-label">O que foi entregue (define a oferta de recorrência)</legend>
+            <label class="dg-check"><input type="checkbox" value="Site"><span></span>Site</label>
+            <label class="dg-check"><input type="checkbox" value="Automação"><span></span>Automação</label>
+            <label class="dg-check"><input type="checkbox" value="Sistema"><span></span>Sistema</label>
+            <label class="dg-check"><input type="checkbox" value="Branding"><span></span>Branding</label>
+            <label class="dg-check"><input type="checkbox" value="SEO/GMN"><span></span>SEO / Google Meu Negócio</label>
+          </fieldset>
+          <fieldset class="cl-planos" id="cl-planos-set">
             <legend class="field-label">Planos ativos</legend>
             <label class="dg-check"><input type="checkbox" value="manutencao"><span></span>Manutenção</label>
             <label class="dg-check"><input type="checkbox" value="reputacao"><span></span>Reputação de busca</label>
@@ -432,6 +448,17 @@
               </select>
             </div>
             <div class="dg-field"><label class="field-label" for="pr-cliente">Cliente / empresa</label><input class="field-input" id="pr-cliente" required></div>
+            <div class="dg-field">
+              <label class="field-label" for="pr-tipo">Tipo de trabalho</label>
+              <select class="field-input" id="pr-tipo" required>
+                <option value="">— selecionar —</option>
+                <option value="Site">Site</option>
+                <option value="Landing Page">Landing Page</option>
+                <option value="Branding">Branding</option>
+                <option value="Automação">Automação</option>
+                <option value="Sistema">Sistema</option>
+              </select>
+            </div>
             <div class="dg-field"><label class="field-label" for="pr-valor">Valor (opcional)</label><input class="field-input" id="pr-valor" placeholder="Ex: 7000 → vira R$ 7.000"></div>
           </div>
           <div class="dg-field">

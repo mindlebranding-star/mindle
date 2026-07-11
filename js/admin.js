@@ -1076,6 +1076,8 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
           <span class="lead-data">${brl(c.valor_mensal)}/mês</span>
         </div>
         <dl class="lead-grid">
+          ${c.responsavel ? `<div class="lead-field"><dt>Responsável</dt><dd>${esc(c.responsavel)}</dd></div>` : ''}
+          ${(c.tipos && c.tipos.length) ? `<div class="lead-field"><dt>Entrega</dt><dd>${esc(c.tipos.join(', '))}</dd></div>` : ''}
           ${c.email ? `<div class="lead-field"><dt>E-mail</dt><dd>${esc(c.email)}</dd></div>` : ''}
           ${c.whatsapp ? `<div class="lead-field"><dt>WhatsApp</dt><dd>${esc(c.whatsapp)}</dd></div>` : ''}
           ${c.contato ? `<div class="lead-field"><dt>Contato</dt><dd>${esc(c.contato)}</dd></div>` : ''}
@@ -1085,7 +1087,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
         <div class="cl-row">
           ${planos}
           <a class="lead-view cl-relatorio" href="relatorio-reputacao.html?cliente=${encodeURIComponent(c.nome)}" target="_blank" rel="noopener">Relatório de reputação &nearr;</a>
-          <button type="button" class="lead-view cl-retentor">Oferta de retentor</button>
+          <button type="button" class="lead-view cl-retentor">Oferta de recorrência</button>
         </div>
         <div class="lead-foot">
           <select class="lead-status cl-status" aria-label="Status do cliente">
@@ -1103,13 +1105,49 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   function clRetentorTexto(c) {
     const primeiro = (c.nome || '').split(' ')[0];
     const valor = c.valor_mensal ? brl(c.valor_mensal) : 'R$ [valor]';
+    const tipo = (c.tipos && c.tipos[0]) || 'Site';
+    const fecho = 'São ' + valor + '/mês, sem fidelidade. Quer que eu deixe ativo a partir de [dd/mm]?';
+
+    if (tipo === 'Automação') {
+      return primeiro + ', o agente está no ar e atendendo do jeito que a gente calibrou.\n\n' +
+        'Só que agente bom é agente treinado: todo mês chegam perguntas novas e situações que ele ainda não viu. ' +
+        'Se quiser, eu continuo cuidando disso pra ele ficar melhor a cada mês:\n\n' +
+        '• revisão mensal das conversas (o que ele acertou, o que escorregou)\n' +
+        '• treino com as correções e perguntas novas do seu dia a dia\n' +
+        '• ajustes de tom e de regras quando o seu negócio mudar\n' +
+        '• monitoramento de que está tudo no ar e respondendo\n\n' + fecho;
+    }
+    if (tipo === 'Branding') {
+      return primeiro + ', a marca está entregue e documentada — exatamente como a gente alinhou.\n\n' +
+        'O que mantém uma marca forte é a consistência depois da entrega. Se quiser, eu continuo cuidando disso:\n\n' +
+        '• aplicação da marca em cada material novo que você precisar\n' +
+        '• um olhar mensal na sua presença: o que aparece quando pesquisam o seu nome\n' +
+        '• pequenos ajustes de identidade e comunicação quando surgir novidade\n\n' + fecho;
+    }
+    if (tipo === 'Sistema') {
+      return primeiro + ', o sistema está no ar: página, busca e atendimento funcionando juntos.\n\n' +
+        'Sistema funciona enquanto é operado. Se quiser, eu sigo na operação pra você nunca mais precisar pensar nisso:\n\n' +
+        '• monitoramento de que está tudo no ar, rápido e respondendo\n' +
+        '• treino mensal do agente com as perguntas reais que chegarem\n' +
+        '• ajustes na página e nos textos quando precisar\n' +
+        '• um olhar mensal nos contatos que chegam e no que aparece quando pesquisam o seu nome\n\n' + fecho;
+    }
+    if (tipo === 'SEO/GMN') {
+      return primeiro + ', o seu Google está arrumado — perfil completo e informação certa.\n\n' +
+        'Reputação de busca não é foto, é filme: o que aparece quando pesquisam o seu nome muda todo mês. ' +
+        'Se quiser, eu continuo de olho:\n\n' +
+        '• monitoramento mensal do que aparece na busca pelo seu nome\n' +
+        '• Google Meu Negócio sempre atualizado (fotos, horários, novidades)\n' +
+        '• acompanhamento das avaliações e resposta às novas\n' +
+        '• um relatório simples por mês: o que mudou e o que fazer\n\n' + fecho;
+    }
+    // Site / Landing Page (padrão)
     return primeiro + ', o site está no ar e ficou exatamente como a gente alinhou.\n\n' +
       'Os seus 30 dias de ajustes incluídos vão até [dd/mm]. Depois disso, se quiser, eu continuo ' +
       'cuidando da sua presença pra você nunca mais precisar pensar nisso:\n\n' +
       '• pequenos ajustes quando precisar (trocar um texto, uma foto, adicionar um prêmio ou novidade)\n' +
       '• monitoramento de que está tudo no ar e rápido\n' +
-      '• um olhar mensal nos contatos que chegam pelo site\n\n' +
-      'São ' + valor + '/mês, sem fidelidade. Quer que eu deixe ativo a partir de [dd/mm]?';
+      '• um olhar mensal nos contatos que chegam pelo site\n\n' + fecho;
   }
 
   async function salvarCliente(id, patch, card) {
@@ -1143,9 +1181,12 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const fmsg = $('#cl-form-msg');
     const nome = $('#cl-nome').value.trim();
     if (!nome) { fmsg.textContent = 'Informe o nome do cliente.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
-    const planos = Array.from(clForm.querySelectorAll('.cl-planos input:checked')).map((i) => i.value);
+    const planos = Array.from(clForm.querySelectorAll('#cl-planos-set input:checked')).map((i) => i.value);
+    const tipos = Array.from(clForm.querySelectorAll('#cl-tipos input:checked')).map((i) => i.value);
     const novo = {
       nome,
+      responsavel: $('#cl-responsavel').value || null,
+      tipos,
       email: $('#cl-email').value.trim() || null,
       whatsapp: $('#cl-whatsapp').value.trim() || null,
       valor_mensal: Number($('#cl-valor').value) || 0,
@@ -1179,7 +1220,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     if (ret) {
       const card = ret.closest('.lead-card');
       const c = clientes.find((x) => x.id === card.dataset.id);
-      if (c) abrirModal('Oferta de retentor — ' + c.nome, clRetentorTexto(c));
+      if (c) abrirModal('Oferta de recorrência — ' + c.nome, clRetentorTexto(c));
       return;
     }
     const btn = e.target.closest('.cl-excluir');
@@ -1246,11 +1287,17 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     $('#propostas-list').innerHTML = lista.map((p) => {
       const link = prLink(p);
       const aprovada = p.status === 'aprovada';
+      // proposta enviada e sem resposta há 7+ dias → sinaliza follow-up
+      const diasParada = p.status === 'enviada' && p.criado_em
+        ? Math.floor((Date.now() - new Date(p.criado_em).getTime()) / 864e5) : 0;
+      const parada = diasParada >= 7;
       return `
-      <article class="lead-card${aprovada ? ' is-ok' : ''}" data-id="${esc(p.id)}">
+      <article class="lead-card${aprovada ? ' is-ok' : ''}${parada ? ' is-atrasado' : ''}" data-id="${esc(p.id)}">
         <div class="lead-top">
           <span class="badge badge-status">${esc(PR_STATUS[p.status] || p.status)}</span>
+          ${parada ? `<span class="badge badge-sla">Sem resposta há ${diasParada}d — faça o follow-up</span>` : ''}
           ${p.pago ? '<span class="badge badge-b">Pago</span>' : ''}
+          ${p.tipo ? `<span class="badge badge-b">${esc(p.tipo)}</span>` : ''}
           <span class="lead-nome">${esc(p.cliente)}</span>
           <span class="lead-data">${p.valor ? esc(p.valor) : ''}</span>
         </div>
@@ -1309,11 +1356,12 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     e.preventDefault();
     const responsavel = $('#pr-responsavel').value;
     const cliente = $('#pr-cliente').value.trim();
+    const tipo = $('#pr-tipo').value;
     const valor = prValorFmt($('#pr-valor').value.trim());
     const file = $('#pr-pdf').files[0];
     const fmsg = $('#pr-form-msg');
     fmsg.hidden = true; fmsg.classList.remove('is-error');
-    if (!responsavel || !cliente || !file) { fmsg.textContent = 'Selecione o responsável, o cliente e o PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+    if (!responsavel || !cliente || !tipo || !file) { fmsg.textContent = 'Selecione o responsável, o cliente, o tipo e o PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
     if (file.type !== 'application/pdf') { fmsg.textContent = 'O arquivo precisa ser um PDF.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
 
     const btn = $('#pr-salvar'); btn.disabled = true; btn.textContent = 'Enviando…';
@@ -1323,7 +1371,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const up = await sb.storage.from('propostas').upload(pdf_path, file, { contentType: 'application/pdf', upsert: false });
     if (up.error) { fmsg.textContent = 'Erro ao subir o PDF: ' + up.error.message; fmsg.classList.add('is-error'); fmsg.hidden = false; btn.disabled = false; btn.textContent = 'Gerar proposta'; return; }
 
-    const { error } = await sb.from('propostas').insert({ codigo, cliente, valor, pdf_path, status: 'enviada', responsavel });
+    const { error } = await sb.from('propostas').insert({ codigo, cliente, valor, pdf_path, status: 'enviada', responsavel, tipo });
     if (error) {
       await sb.storage.from('propostas').remove([pdf_path]); // desfaz o upload órfão
       fmsg.textContent = 'Erro ao salvar: ' + error.message; fmsg.classList.add('is-error'); fmsg.hidden = false;

@@ -161,6 +161,7 @@
 
       <button class="btn btn-primary prop-btn" id="prop-aceitar" type="button" data-hover>Aceitar proposta</button>
       <p class="prop-micro">Um comprovante carimbado é enviado por e-mail</p>
+      <p class="prop-micro" id="prop-validade" hidden></p>
     </div>
 
     <div class="prop-approved" id="prop-approved">
@@ -198,6 +199,11 @@
           dados = d;
           if (tag) tag.textContent = 'Proposta · ' + (d.cliente || '');
           if (dl && d.pdfUrl) dl.href = d.pdfUrl;
+          if (d.validade) {
+            const v = document.getElementById('prop-validade');
+            v.textContent = 'Proposta válida até ' + d.validade;
+            v.hidden = false;
+          }
           if (d.status === 'aprovada') { mostrarJaAprovada(); }
           if (d.pdfUrl) renderPdf(d.pdfUrl); else cont.innerHTML = '<p class="prop-loading">PDF indisponível.</p>';
         })
