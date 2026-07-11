@@ -266,6 +266,7 @@
       $('#tab-faturamento').hidden = tab.dataset.tab !== 'faturamento';
       $('#tab-automacoes').hidden = tab.dataset.tab !== 'automacoes';
       $('#tab-cadastro').hidden = tab.dataset.tab !== 'cadastro';
+      $('#tab-links').hidden = tab.dataset.tab !== 'links';
     });
   });
 
@@ -1596,6 +1597,38 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     renderCadastro();
   });
   $('#cad-busca').addEventListener('input', (e) => { cadFiltro.q = e.target.value.trim(); renderCadastro(); });
+
+  /* ── Links da Mindle (central pra copiar/enviar) ── */
+  const MINDLE_LINKS = [
+    { nome: 'Site da Mindle', tag: '', url: 'https://mindlebrand.com.br', desc: 'A página principal — o sistema completo de presença digital.' },
+    { nome: 'Agendar diagnóstico', tag: 'pro cliente', url: 'https://mindlebrand.com.br/agenda', desc: 'Link direto pro cliente escolher o horário da conversa de 30 min.' },
+    { nome: 'Briefing — Landing Page', tag: 'pro cliente', url: 'https://mindlebrand.com.br/briefing', desc: 'Pro cliente preencher antes de uma landing page.' },
+    { nome: 'Briefing — Branding', tag: 'pro cliente', url: 'https://mindlebrand.com.br/branding', desc: 'Pro cliente preencher antes do branding completo.' },
+    { nome: 'Briefing — Automação', tag: 'pro cliente', url: 'https://mindlebrand.com.br/briefing-automacao', desc: 'Pro cliente configurar o tom e as regras do agente de atendimento.' },
+    { nome: 'Painel (admin)', tag: 'interno', url: 'https://mindlebrand.com.br/admin', desc: 'Seu painel de gestão. Não enviar pro cliente.' },
+  ];
+  function renderLinks() {
+    const el = $('#links-list'); if (!el) return;
+    el.innerHTML = MINDLE_LINKS.map((l) => `
+      <article class="lead-card">
+        <div class="lead-top">
+          <span class="lead-nome">${esc(l.nome)}</span>
+          ${l.tag ? `<span class="badge${l.tag === 'interno' ? '' : ' badge-b'}">${esc(l.tag)}</span>` : ''}
+        </div>
+        <p style="color:var(--color-muted);font-size:var(--font-body-sm);line-height:1.5;margin:2px 0 4px">${esc(l.desc)}</p>
+        <div class="cl-row">
+          <input class="field-input pr-link-input" readonly value="${esc(l.url)}" aria-label="Link">
+          <button type="button" class="lead-view links-copiar" data-copy="${esc(l.url)}">copiar</button>
+          <a class="lead-view" href="${esc(l.url)}" target="_blank" rel="noopener">abrir &nearr;</a>
+        </div>
+      </article>`).join('');
+  }
+  renderLinks();
+  $('#links-list').addEventListener('click', async (e) => {
+    const b = e.target.closest('.links-copiar');
+    if (!b) return;
+    try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'copiado ✓'; setTimeout(() => { b.textContent = 'copiar'; }, 1500); } catch (err) {}
+  });
 
   /* ── Boot ─────────────────────────────────────── */
   sb.auth.onAuthStateChange((event) => {

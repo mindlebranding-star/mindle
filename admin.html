@@ -70,6 +70,7 @@
         <button class="tab" role="tab" data-tab="cadastro" aria-selected="false">Clientes <span class="tab-count" id="tab-count-cadastro" hidden></span></button>
         <button class="tab" role="tab" data-tab="clientes" aria-selected="false">Recorrência <span class="tab-count" id="tab-count-clientes" hidden></span></button>
         <button class="tab" role="tab" data-tab="faturamento" aria-selected="false">Faturamento <span class="tab-count" id="tab-count-faturamento" hidden></span></button>
+        <button class="tab" role="tab" data-tab="links" aria-selected="false">Links</button>
       </div>
       </aside>
 
@@ -487,7 +488,11 @@
         <p class="empty" id="au-empty" hidden>Nenhum briefing de automação ainda. Envie o link /briefing-automacao pro cliente preencher.</p>
       </div><!-- /tab-automacoes -->
 
-      </div><!-- /admin-content -->
+      <!-- ── Links da Mindle ── -->
+      <div class="tab-pane" id="tab-links" hidden>
+        <p class="admin-msg" id="links-intro" role="status" style="margin-bottom:6px">Links prontos pra copiar e enviar. Os marcados como <strong>interno</strong> são só pra você.</p>
+        <div class="leads" id="links-list" aria-live="polite"></div>
+      </div><!-- /tab-links -->
     </div><!-- /admin-shell -->
 
     </section>
