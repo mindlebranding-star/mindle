@@ -28,7 +28,7 @@
 .admin-sair { margin-left: auto; }
 
 .admin-main {
-  max-width: 1080px; margin-inline: auto;
+  max-width: 1360px; margin-inline: auto;
   padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 48px) 96px;
 }
 
@@ -357,7 +357,7 @@
 
 /* ── Diagnóstico ao vivo ───────────────────────── */
 .dg-grid {
-  display: grid; grid-template-columns: 240px minmax(0, 1fr) 320px;
+  display: grid; grid-template-columns: 360px minmax(0, 1fr) 340px;
   gap: 16px; align-items: start;
 }
 .dg-main { display: grid; gap: 14px; min-width: 0; }
