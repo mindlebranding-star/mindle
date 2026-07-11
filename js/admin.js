@@ -139,6 +139,7 @@
     carregarClientes();
     carregarPropostas();
     carregarAutomacoes();
+    carregarCadastro();
     dgPopularLeads();
   }
 
@@ -264,6 +265,7 @@
       $('#tab-propostas').hidden = tab.dataset.tab !== 'propostas';
       $('#tab-faturamento').hidden = tab.dataset.tab !== 'faturamento';
       $('#tab-automacoes').hidden = tab.dataset.tab !== 'automacoes';
+      $('#tab-cadastro').hidden = tab.dataset.tab !== 'cadastro';
     });
   });
 
@@ -1459,6 +1461,112 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   });
   $('#ft-filtro-resp').addEventListener('change', (e) => { ftFiltro.resp = e.target.value; renderFaturamento(); });
   $('#ft-busca').addEventListener('input', (e) => { ftFiltro.q = e.target.value.trim(); renderFaturamento(); });
+
+  /* ── Clientes (cadastro geral) ────────────────── */
+  let cadastro = [];
+  const cadFiltro = { q: '' };
+
+  async function carregarCadastro() {
+    const { data, error } = await sb.from('cadastro_clientes').select('*').order('created_at', { ascending: false });
+    const msg = $('#cad-msg');
+    if (error) {
+      msg.textContent = 'Erro ao carregar clientes: ' + error.message +
+        (/does not exist|schema cache/i.test(error.message) ? ' — rode o cadastro-clientes.sql no SQL Editor.' : '');
+      msg.classList.add('is-error'); msg.hidden = false; return;
+    }
+    msg.hidden = true;
+    cadastro = data || [];
+    const count = $('#tab-count-cadastro');
+    count.textContent = cadastro.length; count.hidden = cadastro.length === 0;
+    renderCadastro();
+  }
+
+  function cadLinksHTML(txt) {
+    if (!txt) return '';
+    return txt.split(/\n+/).map((s) => s.trim()).filter(Boolean).map((url) => {
+      const href = /^https?:\/\//i.test(url) ? url : 'https://' + url;
+      return `<a class="lead-view" href="${esc(href)}" target="_blank" rel="noopener">${esc(url)} &nearr;</a>`;
+    }).join('');
+  }
+
+  function renderCadastro() {
+    const q = cadFiltro.q.toLowerCase();
+    const lista = cadastro.filter((c) => !q || [c.nome, c.email, c.cpf_cnpj, c.whatsapp, c.notas].some((v) => v && v.toLowerCase().includes(q)));
+    $('#cad-empty').hidden = cadastro.length > 0;
+    $('#cadastro-list').innerHTML = lista.map((c) => {
+      const tipos = (c.tipos || []).map((t) => `<span class="badge badge-b">${esc(t)}</span>`).join('');
+      return `
+      <article class="lead-card" data-id="${esc(c.id)}">
+        <div class="lead-top">
+          <span class="lead-nome">${esc(c.nome)}</span>
+          <span class="lead-data">${c.valor ? esc(c.valor) : ''}</span>
+        </div>
+        <dl class="lead-grid">
+          ${c.email ? `<div class="lead-field"><dt>E-mail</dt><dd>${esc(c.email)}</dd></div>` : ''}
+          ${c.whatsapp ? `<div class="lead-field"><dt>WhatsApp</dt><dd>${esc(c.whatsapp)}</dd></div>` : ''}
+          ${c.cpf_cnpj ? `<div class="lead-field"><dt>CPF/CNPJ</dt><dd>${esc(c.cpf_cnpj)}</dd></div>` : ''}
+          <div class="lead-field"><dt>Cadastrado</dt><dd>${esc(fmtData(c.created_at))}</dd></div>
+        </dl>
+        ${tipos ? `<div class="cl-row">${tipos}</div>` : ''}
+        ${c.links ? `<div class="cl-row">${cadLinksHTML(c.links)}</div>` : ''}
+        ${c.notas ? `<p style="color:var(--color-muted);font-size:var(--font-body-sm);line-height:1.6;margin-top:6px">${esc(c.notas)}</p>` : ''}
+        <div class="lead-foot">
+          <button type="button" class="cl-excluir cad-excluir" aria-label="Excluir cliente">excluir</button>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  const cadForm = $('#cad-form');
+  $('#cad-novo-btn').addEventListener('click', () => { cadForm.hidden = !cadForm.hidden; if (!cadForm.hidden) $('#cad-nome').focus(); });
+  $('#cad-cancelar').addEventListener('click', () => { cadForm.hidden = true; cadForm.reset(); });
+  const cadWhats = $('#cad-whatsapp');
+  if (cadWhats) cadWhats.addEventListener('input', () => {
+    const d = cadWhats.value.replace(/\D/g, '').slice(0, 11);
+    cadWhats.value = d.length <= 2 ? (d ? '(' + d : '')
+      : d.length <= 6 ? '(' + d.slice(0, 2) + ') ' + d.slice(2)
+      : d.length <= 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6)
+      : '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  });
+
+  cadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fmsg = $('#cad-form-msg');
+    const nome = $('#cad-nome').value.trim();
+    if (!nome) { fmsg.textContent = 'Informe o nome do cliente.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+    const tipos = Array.from(cadForm.querySelectorAll('.cl-planos input:checked')).map((i) => i.value);
+    const novo = {
+      nome,
+      cpf_cnpj: $('#cad-doc').value.trim() || null,
+      email: $('#cad-email').value.trim() || null,
+      whatsapp: $('#cad-whatsapp').value.trim() || null,
+      valor: prValorFmt($('#cad-valor').value.trim()),
+      tipos,
+      links: $('#cad-links').value.trim() || null,
+      notas: $('#cad-notas').value.trim() || null,
+    };
+    const btn = $('#cad-salvar'); btn.disabled = true; btn.textContent = 'Salvando…';
+    const { error } = await sb.from('cadastro_clientes').insert(novo);
+    btn.disabled = false; btn.textContent = 'Salvar cliente';
+    if (error) { fmsg.textContent = 'Erro ao salvar: ' + error.message; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+    cadForm.reset(); cadForm.hidden = true; fmsg.hidden = true;
+    carregarCadastro();
+  });
+
+  $('#cadastro-list').addEventListener('click', async (e) => {
+    const del = e.target.closest('.cad-excluir');
+    if (!del) return;
+    const card = del.closest('.lead-card');
+    const c = cadastro.find((x) => x.id === card.dataset.id);
+    if (!c) return;
+    if (!confirm('Excluir o cliente "' + c.nome + '"?')) return;
+    const { error } = await sb.from('cadastro_clientes').delete().eq('id', c.id);
+    if (error) { $('#cad-msg').textContent = 'Erro ao excluir: ' + error.message; $('#cad-msg').classList.add('is-error'); $('#cad-msg').hidden = false; return; }
+    cadastro = cadastro.filter((x) => x.id !== c.id);
+    const count = $('#tab-count-cadastro'); count.textContent = cadastro.length; count.hidden = cadastro.length === 0;
+    renderCadastro();
+  });
+  $('#cad-busca').addEventListener('input', (e) => { cadFiltro.q = e.target.value.trim(); renderCadastro(); });
 
   /* ── Boot ─────────────────────────────────────── */
   sb.auth.onAuthStateChange((event) => {

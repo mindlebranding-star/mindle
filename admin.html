@@ -62,13 +62,14 @@
       <aside class="admin-side">
       <div class="tabs" role="tablist" aria-label="Seções do painel">
         <button class="tab is-on" role="tab" data-tab="leads" aria-selected="true">Leads</button>
-        <button class="tab" role="tab" data-tab="briefings" aria-selected="false">Briefings <span class="tab-count" id="tab-count-briefings" hidden></span></button>
+        <button class="tab" role="tab" data-tab="briefings" aria-selected="false">Landing page <span class="tab-count" id="tab-count-briefings" hidden></span></button>
         <button class="tab" role="tab" data-tab="brandings" aria-selected="false">Branding <span class="tab-count" id="tab-count-brandings" hidden></span></button>
+        <button class="tab" role="tab" data-tab="automacoes" aria-selected="false">Automação <span class="tab-count" id="tab-count-automacoes" hidden></span></button>
         <button class="tab" role="tab" data-tab="diagnostico" aria-selected="false">Diagnóstico</button>
-        <button class="tab" role="tab" data-tab="clientes" aria-selected="false">Clientes <span class="tab-count" id="tab-count-clientes" hidden></span></button>
         <button class="tab" role="tab" data-tab="propostas" aria-selected="false">Propostas <span class="tab-count" id="tab-count-propostas" hidden></span></button>
+        <button class="tab" role="tab" data-tab="cadastro" aria-selected="false">Clientes <span class="tab-count" id="tab-count-cadastro" hidden></span></button>
+        <button class="tab" role="tab" data-tab="clientes" aria-selected="false">Recorrência <span class="tab-count" id="tab-count-clientes" hidden></span></button>
         <button class="tab" role="tab" data-tab="faturamento" aria-selected="false">Faturamento <span class="tab-count" id="tab-count-faturamento" hidden></span></button>
-        <button class="tab" role="tab" data-tab="automacoes" aria-selected="false">Automações <span class="tab-count" id="tab-count-automacoes" hidden></span></button>
       </div>
       </aside>
 
@@ -374,6 +375,43 @@
         <div class="leads" id="clientes-list" aria-live="polite"></div>
         <p class="empty" id="cl-empty" hidden>Nenhum cliente ainda. Comece adicionando o primeiro pós-entrega.</p>
       </div><!-- /tab-clientes -->
+
+      <!-- ── Clientes (cadastro geral) ── -->
+      <div class="tab-pane" id="tab-cadastro" hidden>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="cad-novo-btn" type="button">+ Novo cliente</button>
+          <input class="field-input toolbar-busca" type="search" id="cad-busca" placeholder="Buscar nome, e-mail, CPF/CNPJ&hellip;" aria-label="Buscar clientes">
+        </div>
+
+        <form class="cl-form" id="cad-form" hidden>
+          <div class="cl-form-grid">
+            <div class="dg-field"><label class="field-label" for="cad-nome">Nome / empresa</label><input class="field-input" id="cad-nome" required></div>
+            <div class="dg-field"><label class="field-label" for="cad-doc">CPF / CNPJ</label><input class="field-input" id="cad-doc" placeholder="de quem contrata"></div>
+            <div class="dg-field"><label class="field-label" for="cad-email">E-mail</label><input class="field-input" id="cad-email" type="email" placeholder="cliente@email.com"></div>
+            <div class="dg-field"><label class="field-label" for="cad-whatsapp">WhatsApp</label><input class="field-input" id="cad-whatsapp" type="tel" inputmode="numeric" maxlength="16" placeholder="(41) 99999-9999"></div>
+            <div class="dg-field"><label class="field-label" for="cad-valor">Valor</label><input class="field-input" id="cad-valor" placeholder="Ex: 7000 → vira R$ 7.000"></div>
+          </div>
+          <fieldset class="cl-planos">
+            <legend class="field-label">Tipo de trabalho</legend>
+            <label class="dg-check"><input type="checkbox" value="Site"><span></span>Site</label>
+            <label class="dg-check"><input type="checkbox" value="Landing Page"><span></span>Landing Page</label>
+            <label class="dg-check"><input type="checkbox" value="Branding"><span></span>Branding</label>
+            <label class="dg-check"><input type="checkbox" value="Automação"><span></span>Automação</label>
+            <label class="dg-check"><input type="checkbox" value="Sistema"><span></span>Sistema</label>
+          </fieldset>
+          <div class="dg-field"><label class="field-label" for="cad-links">Links (um por linha)</label><textarea class="field-input dg-ta" id="cad-links" placeholder="Site no ar, Drive, Instagram, painel de anúncios, agenda&hellip;"></textarea></div>
+          <div class="dg-field"><label class="field-label" for="cad-notas">Notas</label><textarea class="field-input dg-ta" id="cad-notas" placeholder="Observações do cliente&hellip;"></textarea></div>
+          <div class="cl-form-acoes">
+            <button class="btn btn-primary" id="cad-salvar" type="submit">Salvar cliente</button>
+            <button class="btn cl-cancelar" id="cad-cancelar" type="button">Cancelar</button>
+            <p class="admin-msg" id="cad-form-msg" role="alert" hidden></p>
+          </div>
+        </form>
+
+        <p class="admin-msg" id="cad-msg" role="status" hidden></p>
+        <div class="leads" id="cadastro-list" aria-live="polite"></div>
+        <p class="empty" id="cad-empty" hidden>Nenhum cliente cadastrado ainda.</p>
+      </div><!-- /tab-cadastro -->
 
       <!-- ── Propostas (aceite eletrônico) ── -->
       <div class="tab-pane" id="tab-propostas" hidden>
