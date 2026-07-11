@@ -88,6 +88,8 @@
       padding: 14px clamp(20px,4vw,40px);
       display: flex; align-items: center; justify-content: flex-end; gap: 16px;
     }
+    .tr-copy-btn { border: 1px solid var(--color-border-default); color: var(--color-accent-light); }
+    .tr-copy-btn:hover { border-color: var(--color-accent); color: var(--color-accent-bright); }
     .tr-status { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; color: var(--color-muted); margin-right: auto; }
     .tr-status.is-error { color: var(--color-error); }
     .tr-loading { text-align: center; color: var(--color-muted-deep); font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; padding: 60px 0; }
@@ -154,6 +156,7 @@
 
   <div class="tr-bar" id="tr-bar" hidden>
     <span class="tr-status" id="tr-status"></span>
+    <button class="btn tr-copy-btn" id="tr-copiar" type="button" data-hover>Copiar p/ Claude</button>
     <button class="btn btn-primary" id="tr-salvar" type="button" data-hover>Salvar</button>
   </div>
 
@@ -175,6 +178,7 @@
       const sb = window.supabase.createClient(cfg.url, cfg.anonKey);
       const id = new URLSearchParams(location.search).get('a');
       const tpl = document.getElementById('tpl-row');
+      let cliente = '';
 
       function addRow(tipo, data) {
         const node = tpl.content.firstElementChild.cloneNode(true);
@@ -197,7 +201,8 @@
           document.getElementById('tr-loading').textContent = 'Não foi possível carregar. Confira o link.';
           return;
         }
-        document.getElementById('tr-tag').textContent = 'Treino · ' + (data.cliente || '');
+        cliente = data.cliente || '';
+        document.getElementById('tr-tag').textContent = 'Treino · ' + cliente;
         const itens = data.itens || [];
         itens.filter((i) => i.tipo === 'faq').forEach((i) => addRow('faq', i));
         itens.filter((i) => i.tipo === 'correcao').forEach((i) => addRow('correcao', i));
@@ -219,6 +224,44 @@
         btn.disabled = false; btn.textContent = 'Salvar';
         if (error || (data && data.erro)) { status.textContent = 'Erro ao salvar. Tente de novo.'; status.classList.add('is-error'); return; }
         status.textContent = 'Salvo ✓ ' + ((data && data.total) || 0) + ' item(ns)';
+      });
+
+      // ── Exportar em Markdown pro Claude ──
+      function exportarClaude() {
+        const L = [];
+        L.push('# Treino do agente de atendimento — ' + (cliente || ''));
+        L.push('');
+        L.push('Contexto: estou configurando um agente de atendimento no WhatsApp para este negócio. Abaixo estão as perguntas frequentes (com a resposta desejada e o que ele NÃO deve dizer) e as correções (respostas que o agente errou e como deveria responder). Use isto para escrever ou ajustar o comportamento do agente.');
+        const bloco = (titulo, itens, labelResp) => {
+          L.push(''); L.push('## ' + titulo);
+          if (!itens.length) { L.push(''); L.push('_(nenhum item)_'); return; }
+          itens.forEach((it, n) => {
+            L.push('');
+            L.push('### ' + (n + 1) + '. ' + (it.pergunta || '(sem pergunta)'));
+            if (it.resposta) L.push('- ' + labelResp + ': ' + it.resposta);
+            if (it.nao_responder) L.push('- NÃO responder: ' + it.nao_responder);
+            if (it.observacao) L.push('- Observação: ' + it.observacao);
+          });
+        };
+        bloco('FAQ — perguntas do dia a dia', coletar('faq'), 'Resposta');
+        bloco('Correções — o que o agente errou', coletar('correcao'), 'Resposta certa');
+        return L.join('\n');
+      }
+
+      document.getElementById('tr-copiar').addEventListener('click', async function () {
+        const txt = exportarClaude();
+        const ok = () => { this.textContent = 'Copiado ✓'; setTimeout(() => { this.textContent = 'Copiar p/ Claude'; }, 1800); };
+        try {
+          await navigator.clipboard.writeText(txt);
+          ok();
+        } catch (e) {
+          // fallback: seleciona num textarea temporário
+          const ta = document.createElement('textarea');
+          ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); ok(); } catch (_) {}
+          ta.remove();
+        }
       });
     })();
   </script>
