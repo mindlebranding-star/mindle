@@ -123,17 +123,16 @@
 
 .binput {
   width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--color-border-default);
-  border-radius: 0;
-  padding: 8px 2px 12px;
+  background: var(--color-surface-01);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
   font-family: var(--font-body); font-size: 16.5px;
   color: var(--color-respiro-base);
   caret-color: var(--color-accent-light);
-  transition: border-color 0.3s;
+  transition: border-color 0.25s, background 0.25s;
 }
-.binput:focus { outline: none; border-bottom-color: var(--color-accent-light); }
+.binput:focus { outline: none; border-color: var(--color-accent-light); background: var(--color-surface-02); }
 .binput::placeholder { color: var(--color-muted-deep); }
 
 .btextarea {
