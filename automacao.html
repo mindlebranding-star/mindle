@@ -105,13 +105,25 @@
     .au-sec-intro strong { color: var(--color-respiro-base); }
 
     .au-cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 28px; }
-    .au-card { background: var(--color-surface-01); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 24px; }
+    .au-card { background-color: var(--color-surface-01); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 24px; }
     .au-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 21px; color: var(--color-respiro-base); margin-bottom: 8px; }
     .au-card p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
 
+    /* Fundos temáticos dos cards (véu escuro à esquerda p/ legibilidade) */
+    .au-step, .au-card { background-repeat: no-repeat; background-position: right center; background-size: cover; }
+    .au-step { --veu: linear-gradient(90deg, rgba(26,26,24,0.97) 0%, rgba(26,26,24,0.82) 45%, rgba(26,26,24,0.5) 100%); }
+    .au-card { --veu: linear-gradient(180deg, rgba(26,26,24,0.94) 0%, rgba(26,26,24,0.7) 100%); }
+    .au-step--tom     { background-image: var(--veu), url(assets/card-tom.webp); }
+    .au-step--whats   { background-image: var(--veu), url(assets/card-whats.webp); }
+    .au-step--passa   { background-image: var(--veu), url(assets/card-passa.webp); }
+    .au-step--melhora { background-image: var(--veu), url(assets/card-melhora.webp); }
+    .au-card--forahora { background-image: var(--veu), url(assets/card-forahora.webp); }
+    .au-card--espera   { background-image: var(--veu), url(assets/card-espera.webp); }
+    .au-card--some     { background-image: var(--veu), url(assets/card-some.webp); }
+
     .au-steps { display: grid; gap: 12px; margin-top: 28px; }
     .au-step { display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start;
-      background: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
+      background-color: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
       border-left: 2px solid var(--color-accent); border-radius: var(--radius-md); padding: 18px 22px; }
     .au-step-num { font-family: var(--font-display); font-weight: 500; font-size: 40px; line-height: 0.9; color: var(--color-surface-03); }
     .au-step h4 { font-family: var(--font-display); font-weight: 500; font-size: 20px; color: var(--color-respiro-base); margin-bottom: 4px; }
@@ -214,9 +226,9 @@
           <h2 class="h2">O contato não se perde por falta de qualidade. Se perde por falta de <span class="tx">hora.</span></h2>
           <p class="au-sec-intro">O indicado te chama fora do horário. Você responde no dia seguinte — e ele já falou com quem respondeu em dois minutos. <strong>Esse custo não aparece em relatório: aparece na conversa que esfriou.</strong></p>
           <div class="au-cards3">
-            <article class="au-card"><h3>Chega fora de hora</h3><p>Boa parte das mensagens cai à noite, no fim de semana, no feriado — justamente quando você não está no telefone.</p></article>
-            <article class="au-card"><h3>Espera esfria</h3><p>Cada hora de silêncio é uma chance a menos. O cliente indicado não avisa que desistiu; ele só fecha com outro.</p></article>
-            <article class="au-card"><h3>Some no meio</h3><p>Conversa perdida no meio de mil outras, orçamento sem retorno, horário que ninguém confirmou. Vaza sem ninguém ver.</p></article>
+            <article class="au-card au-card--forahora"><h3>Chega fora de hora</h3><p>Boa parte das mensagens cai à noite, no fim de semana, no feriado — justamente quando você não está no telefone.</p></article>
+            <article class="au-card au-card--espera"><h3>Espera esfria</h3><p>Cada hora de silêncio é uma chance a menos. O cliente indicado não avisa que desistiu; ele só fecha com outro.</p></article>
+            <article class="au-card au-card--some"><h3>Some no meio</h3><p>Conversa perdida no meio de mil outras, orçamento sem retorno, horário que ninguém confirmou. Vaza sem ninguém ver.</p></article>
           </div>
         </section>
       </div>
@@ -229,10 +241,10 @@
           <p class="eyebrow"><span class="eyebrow-index">02</span>Como funciona</p>
           <h2 class="h2">Um agente com o seu tom — não um <span class="tx">robô genérico.</span></h2>
           <div class="au-steps">
-            <div class="au-step"><span class="au-step-num">01</span><div><h4>O tom é seu</h4><p>Um briefing define como ele fala: 1ª pessoa ou assistente, o que pode dizer, o que jamais responde — inclusive sobre preço. Ele soa como o seu negócio porque foi calibrado por ele.</p></div></div>
-            <div class="au-step"><span class="au-step-num">02</span><div><h4>Atende no seu WhatsApp</h4><p>No seu número atual, com o seu histórico. Responde as perguntas do dia a dia na hora, a qualquer hora, e você continua podendo assumir a conversa quando quiser.</p></div></div>
-            <div class="au-step"><span class="au-step-num">03</span><div><h4>Passa pra você na hora certa</h4><p>Quando a conversa pede gente — um caso delicado, uma negociação, um cliente importante — ele avisa você e sai de cena. Faz a triagem; quem atende é você.</p></div></div>
-            <div class="au-step"><span class="au-step-num">04</span><div><h4>Melhora todo mês</h4><p>Cada pergunta nova e cada resposta que ele errou vira treino. Um agente parado envelhece; o seu fica mais afiado a cada ciclo.</p></div></div>
+            <div class="au-step au-step--tom"><span class="au-step-num">01</span><div><h4>O tom é seu</h4><p>Um briefing define como ele fala: 1ª pessoa ou assistente, o que pode dizer, o que jamais responde — inclusive sobre preço. Ele soa como o seu negócio porque foi calibrado por ele.</p></div></div>
+            <div class="au-step au-step--whats"><span class="au-step-num">02</span><div><h4>Atende no seu WhatsApp</h4><p>No seu número atual, com o seu histórico. Responde as perguntas do dia a dia na hora, a qualquer hora, e você continua podendo assumir a conversa quando quiser.</p></div></div>
+            <div class="au-step au-step--passa"><span class="au-step-num">03</span><div><h4>Passa pra você na hora certa</h4><p>Quando a conversa pede gente — um caso delicado, uma negociação, um cliente importante — ele avisa você e sai de cena. Faz a triagem; quem atende é você.</p></div></div>
+            <div class="au-step au-step--melhora"><span class="au-step-num">04</span><div><h4>Melhora todo mês</h4><p>Cada pergunta nova e cada resposta que ele errou vira treino. Um agente parado envelhece; o seu fica mais afiado a cada ciclo.</p></div></div>
           </div>
         </section>
       </div>
