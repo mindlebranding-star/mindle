@@ -55,21 +55,40 @@
     .au-cta-nota { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--color-muted-deep); }
     @media (max-width: 860px) { .au-hero { grid-template-columns: 1fr; } }
 
-    /* CHAT MOCKUP */
-    .chat { display: grid; gap: 10px; }
-    .chat-janela {
-      background: var(--color-surface-02); border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; gap: 12px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    /* CHAT MOCKUP — moldura de celular */
+    .chat { display: grid; gap: 12px; justify-items: center; }
+    .phone {
+      width: min(342px, 100%); position: relative;
+      background: #0B0B0C; border: 1px solid var(--color-border-default);
+      border-radius: 46px; padding: 12px;
+      box-shadow: 0 34px 70px rgba(0,0,0,0.55);
     }
-    .bolha { max-width: 86%; padding: 11px 15px; border-radius: 14px; font-size: 15px; line-height: 1.45; }
+    .phone::before {
+      content: ""; position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+      width: 106px; height: 26px; background: #000; border-radius: 14px; z-index: 3;
+    }
+    .phone-screen {
+      background: linear-gradient(180deg, var(--color-surface-02), var(--color-surface-01));
+      border-radius: 34px; overflow: hidden;
+    }
+    .phone-top {
+      padding: 42px 18px 12px; display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .phone-top .av { width: 34px; height: 34px; border-radius: 50%; background: var(--color-accent);
+      flex: none; display: grid; place-items: center; color: var(--color-territory);
+      font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+    .phone-top .nm { font-size: 14px; color: var(--color-respiro-base); font-weight: 700; line-height: 1.2; }
+    .phone-top .st { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-light); }
+    .phone-msgs { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .bolha { max-width: 88%; padding: 11px 15px; border-radius: 14px; font-size: 15px; line-height: 1.45; }
     .bolha time { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.03em; margin-top: 6px; }
     .bolha.entrada { align-self: flex-start; background: var(--color-surface-03); color: var(--color-respiro-base); border-bottom-left-radius: 4px; }
     .bolha.entrada time { color: var(--color-muted-deep); }
     .bolha.saida { align-self: flex-end; background: var(--color-accent); color: var(--color-territory); border-bottom-right-radius: 4px; }
     .bolha.saida time { color: var(--color-accent-deep); }
     .bolha.saida strong { color: var(--color-territory); }
-    .chat-legenda { text-align: right; font-family: var(--font-display); font-size: 17px; color: var(--color-muted); padding-right: 4px; }
+    .chat-legenda { text-align: center; font-family: var(--font-display); font-size: 17px; color: var(--color-muted); }
 
     /* MÉTRICAS */
     .au-metricas { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 56px); padding: clamp(2rem, 4vw, 3rem) 0; }
@@ -157,11 +176,19 @@
           <p class="au-cta-nota" data-demo id="nota-hero" style="margin-top:14px">Repare: quem te responde é o nosso próprio agente.</p>
         </div>
         <div class="chat" aria-label="Exemplo: cliente pergunta às 22h47 se há horário essa semana; o agente responde em 8 segundos com dois horários e confirma o agendamento.">
-          <div class="chat-janela">
-            <div class="bolha entrada">Oi! Vocês foram indicados pra mim. Consegue me encaixar essa semana?<time>22:47</time></div>
-            <div class="bolha saida">Consigo! Tenho <strong>quinta às 15h</strong> ou <strong>sexta às 10h</strong>. Qual fica melhor pra você?<time>22:47 · respondido em 8 segundos</time></div>
-            <div class="bolha entrada">Quinta 15h é perfeito.<time>22:48</time></div>
-            <div class="bolha saida">Fechado, quinta às 15h. Confirmo com você na quarta — qualquer coisa, é só chamar por aqui.<time>22:48</time></div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-top">
+                <span class="av">M</span>
+                <span><span class="nm">Atendimento</span><br><span class="st">online agora</span></span>
+              </div>
+              <div class="phone-msgs">
+                <div class="bolha entrada">Oi! Vocês foram indicados pra mim. Consegue me encaixar essa semana?<time>22:47</time></div>
+                <div class="bolha saida">Consigo! Tenho <strong>quinta às 15h</strong> ou <strong>sexta às 10h</strong>. Qual fica melhor pra você?<time>22:47 · respondido em 8 segundos</time></div>
+                <div class="bolha entrada">Quinta 15h é perfeito.<time>22:48</time></div>
+                <div class="bolha saida">Fechado, quinta às 15h. Confirmo com você na quarta — qualquer coisa, é só chamar por aqui.<time>22:48</time></div>
+              </div>
+            </div>
           </div>
           <p class="chat-legenda">E você estava em outro atendimento.</p>
         </div>
