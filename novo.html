@@ -273,7 +273,10 @@
     .peca:nth-child(even) .peca-fig { order: -1; }
     @media (max-width: 900px) {
       .peca { grid-template-columns: 1fr; }
-      .peca:nth-child(even) .peca-fig { order: -1; }
+      /* No mobile a imagem vem sempre primeiro (a alternação de desktop conta
+         .sec-head como irmão de .peca, o que desalinha a paridade par/ímpar
+         aqui: sem isso a Peça 02 saía com a foto embaixo). */
+      .peca-fig { order: -1; }
     }
 
     .peca-num {
