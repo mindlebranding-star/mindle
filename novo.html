@@ -267,10 +267,14 @@
       }
       .trilho-dica::after { content: '→'; animation: dica 1.6s infinite; }
 
-      /* Com JS ativo o trilho é guiado pelo scroll da página: a seção "estica"
-         (altura definida via JS), o miolo gruda na tela e o avanço vertical vira
-         deslocamento horizontal dos cards. Sem JS, fica o swipe manual acima. */
+      /* Com JS ativo o trilho é guiado pelo scroll da página: .pecas-stage é o
+         contêiner de referência do miolo grudado (.wrap), com altura calculada
+         via JS = altura do miolo + espaço extra de rolagem. O fecho fica FORA
+         do stage (irmão dele, ainda dentro de .pecas pro fundo continuar),
+         então nunca é contado no espaço em que o miolo pode ficar grudado, e
+         nunca renderiza por baixo dele. Sem JS, fica o swipe manual acima. */
       html.js .trilho-dica { display: none; }
+      html.js .pecas-stage { position: relative; }
       html.js .pecas .wrap {
         position: sticky; top: 64px;
         min-height: calc(100svh - 64px);
@@ -483,6 +487,7 @@
 
     <!-- ============ AS TRÊS PEÇAS ============ -->
     <section class="pecas bleed" id="pecas">
+      <div class="pecas-stage">
       <div class="wrap">
         <div class="sec-head">
           <p class="eyebrow rv">A solução da Mindle</p>
@@ -534,6 +539,7 @@
           </figure>
         </div>
         </div>
+      </div>
       </div>
 
       <div class="pecas-fecho rv">
@@ -674,26 +680,30 @@
     revela();
 
     // Trilho das peças (mobile): o scroll vertical desloca os cards na horizontal.
+    // .pecas-stage é o contêiner de referência do miolo grudado; sua altura
+    // (miolo + espaço extra) é quem decide até onde o miolo pode ficar preso.
+    // O fecho é irmão do stage, não filho, então nunca entra nessa conta e
+    // nunca aparece por baixo dos cards ainda fixos.
     const palco = document.querySelector('.pecas');
-    const pinado = palco.querySelector('.wrap');
-    const trilho = palco.querySelector('.pecas-trilho');
+    const estagio = palco.querySelector('.pecas-stage');
+    const pinado = estagio.querySelector('.wrap');
+    const trilho = estagio.querySelector('.pecas-trilho');
     const mqTrilho = matchMedia('(max-width: 900px)');
 
     function extraTrilho() { return Math.max(0, trilho.scrollWidth - trilho.clientWidth); }
     function moverTrilho() {
       if (!mqTrilho.matches) return;
       const extra = extraTrilho();
-      const percurso = palco.offsetHeight - pinado.offsetHeight;
-      if (extra <= 0 || percurso <= 0) return;
-      const p = Math.min(1, Math.max(0, (topbar.offsetHeight - palco.getBoundingClientRect().top) / percurso));
+      if (extra <= 0) return;
+      const p = Math.min(1, Math.max(0, (topbar.offsetHeight - estagio.getBoundingClientRect().top) / extra));
       trilho.scrollLeft = p * extra;
     }
     function medirTrilho() {
-      if (!mqTrilho.matches) { palco.style.height = ''; pinado.style.top = ''; pinado.style.minHeight = ''; return; }
+      if (!mqTrilho.matches) { estagio.style.height = ''; pinado.style.top = ''; pinado.style.minHeight = ''; return; }
       const alturaTopo = topbar.offsetHeight;
       pinado.style.top = alturaTopo + 'px';
       pinado.style.minHeight = 'calc(100svh - ' + alturaTopo + 'px)';
-      palco.style.height = (pinado.offsetHeight + extraTrilho()) + 'px';
+      estagio.style.height = (pinado.offsetHeight + extraTrilho()) + 'px';
       moverTrilho();
     }
     addEventListener('scroll', moverTrilho, { passive: true });
