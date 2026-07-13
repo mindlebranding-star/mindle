@@ -208,7 +208,6 @@
     .sec-head .h2 { margin: 14px 0 18px; }
 
     .cenas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2vw, 28px); }
-    @media (max-width: 900px) { .cenas-grid { grid-template-columns: 1fr; } }
     .cena {
       background: var(--card); border-radius: var(--radius); overflow: hidden;
       box-shadow: var(--shadow); display: flex; flex-direction: column;
@@ -220,6 +219,29 @@
     .cena-body .h3 { font-size: clamp(24px, 2.2vw, 30px); margin-bottom: 10px; }
     .cena-body p { color: var(--ink-soft); font-size: 16.5px; }
     .cena-hora { font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: 0.1em; color: var(--terra); text-transform: uppercase; margin-bottom: 8px; }
+    .cenas-dica { display: none; }
+
+    /* Mobile: as três cenas viram um carrossel de swipe */
+    @media (max-width: 900px) {
+      .cenas-grid {
+        display: flex; gap: 14px;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        margin: 0 calc(-1 * var(--pad));
+        padding: 6px var(--pad) 12px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .cenas-grid::-webkit-scrollbar { display: none; }
+      .cena { flex: 0 0 min(82vw, 360px); scroll-snap-align: center; }
+      .cenas-dica {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--teal-deep);
+        margin: -8px 0 16px;
+      }
+      .cenas-dica::after { content: '→'; animation: dica 1.6s infinite; }
+    }
+    @keyframes dica { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 
     .cenas-fecho { margin-top: clamp(36px, 4vw, 54px); text-align: center; }
     .cenas-fecho p { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: clamp(26px, 3.4vw, 44px); line-height: 1.02; }
@@ -233,57 +255,10 @@
     }
     .peca + .peca { border-top: 1px solid rgba(23,23,21,0.09); }
     .peca:nth-child(even) .peca-fig { order: -1; }
-    .pecas-trilho { display: contents; }
-    .trilho-dica { display: none; }
-
-    /* Mobile: as três peças viram um trilho horizontal com swipe */
     @media (max-width: 900px) {
-      .pecas-trilho {
-        display: flex; gap: 14px;
-        overflow-x: auto; scroll-snap-type: x mandatory;
-        margin: 0 calc(-1 * var(--pad));
-        padding: 6px var(--pad) 12px;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-      }
-      .pecas-trilho::-webkit-scrollbar { display: none; }
-      .pecas-trilho .peca {
-        display: flex; flex-direction: column;
-        flex: 0 0 min(82vw, 360px);
-        scroll-snap-align: center;
-        background: var(--card); border-radius: var(--radius);
-        box-shadow: var(--shadow); border-top: 0;
-        padding: 0 0 24px; overflow: hidden;
-      }
-      .pecas-trilho .peca-fig { order: -1; }
-      .pecas-trilho .peca-fig img { border-radius: 0; box-shadow: none; }
-      .pecas-trilho .peca > div:not(.peca-fig) { padding: 18px 20px 0; }
-      .pecas-trilho .peca p { max-width: none; }
-      .trilho-dica {
-        display: flex; align-items: center; gap: 8px;
-        font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
-        text-transform: uppercase; color: var(--teal-deep);
-        margin: -14px 0 16px;
-      }
-      .trilho-dica::after { content: '→'; animation: dica 1.6s infinite; }
-
-      /* Com JS ativo o trilho é guiado pelo scroll da página: .pecas-stage é o
-         contêiner de referência do miolo grudado (.wrap), com altura calculada
-         via JS = altura do miolo + espaço extra de rolagem. O fecho fica FORA
-         do stage (irmão dele, ainda dentro de .pecas pro fundo continuar),
-         então nunca é contado no espaço em que o miolo pode ficar grudado, e
-         nunca renderiza por baixo dele. Sem JS, fica o swipe manual acima. */
-      html.js .trilho-dica { display: none; }
-      html.js .pecas-stage { position: relative; }
-      html.js .pecas .wrap {
-        position: sticky; top: 64px;
-        min-height: calc(100svh - 64px);
-        display: flex; flex-direction: column; justify-content: center;
-      }
-      html.js .pecas .sec-head { margin-bottom: 20px; }
-      html.js .pecas-trilho { overflow-x: hidden; scroll-snap-type: none; }
+      .peca { grid-template-columns: 1fr; }
+      .peca:nth-child(even) .peca-fig { order: -1; }
     }
-    @keyframes dica { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 
     .peca-num {
       font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: 0.16em;
@@ -450,6 +425,7 @@
           <p class="lead rv rv-d2">Não é falta de esforço. Quase todo negócio bom perde venda nos mesmos três lugares.</p>
         </div>
 
+        <p class="cenas-dica rv">Arraste pro lado</p>
         <div class="cenas-grid">
           <article class="cena rv">
             <img src="assets/novo/cena-noite.webp" alt="Celular sobre a mesa à noite com mensagens não lidas" loading="lazy">
@@ -487,7 +463,6 @@
 
     <!-- ============ AS TRÊS PEÇAS ============ -->
     <section class="pecas bleed" id="pecas">
-      <div class="pecas-stage">
       <div class="wrap">
         <div class="sec-head">
           <p class="eyebrow rv">A solução da Mindle</p>
@@ -495,8 +470,6 @@
           <p class="lead rv rv-d2">Não é "um site". Não é "um app". É o conjunto: cada peça cobre um dos três buracos.</p>
         </div>
 
-        <p class="trilho-dica rv">Arraste pro lado</p>
-        <div class="pecas-trilho">
         <div class="peca">
           <div class="rv">
             <span class="peca-num">Peça 01 · Traz o cliente</span>
@@ -538,8 +511,6 @@
             <img src="assets/novo/peca-automacao.webp" alt="Celular na mesa de cabeceira respondendo um cliente sozinho durante a noite" loading="lazy">
           </figure>
         </div>
-        </div>
-      </div>
       </div>
 
       <div class="pecas-fecho rv">
@@ -678,39 +649,6 @@
     addEventListener('resize', revela, { passive: true });
     addEventListener('load', revela);
     revela();
-
-    // Trilho das peças (mobile): o scroll vertical desloca os cards na horizontal.
-    // .pecas-stage é o contêiner de referência do miolo grudado; sua altura
-    // (miolo + espaço extra) é quem decide até onde o miolo pode ficar preso.
-    // O fecho é irmão do stage, não filho, então nunca entra nessa conta e
-    // nunca aparece por baixo dos cards ainda fixos.
-    const palco = document.querySelector('.pecas');
-    const estagio = palco.querySelector('.pecas-stage');
-    const pinado = estagio.querySelector('.wrap');
-    const trilho = estagio.querySelector('.pecas-trilho');
-    const mqTrilho = matchMedia('(max-width: 900px)');
-
-    function extraTrilho() { return Math.max(0, trilho.scrollWidth - trilho.clientWidth); }
-    function moverTrilho() {
-      if (!mqTrilho.matches) return;
-      const extra = extraTrilho();
-      if (extra <= 0) return;
-      const p = Math.min(1, Math.max(0, (topbar.offsetHeight - estagio.getBoundingClientRect().top) / extra));
-      trilho.scrollLeft = p * extra;
-    }
-    function medirTrilho() {
-      if (!mqTrilho.matches) { estagio.style.height = ''; pinado.style.top = ''; pinado.style.minHeight = ''; return; }
-      const alturaTopo = topbar.offsetHeight;
-      pinado.style.top = alturaTopo + 'px';
-      pinado.style.minHeight = 'calc(100svh - ' + alturaTopo + 'px)';
-      estagio.style.height = (pinado.offsetHeight + extraTrilho()) + 'px';
-      moverTrilho();
-    }
-    addEventListener('scroll', moverTrilho, { passive: true });
-    addEventListener('resize', medirTrilho, { passive: true });
-    addEventListener('load', medirTrilho);
-    mqTrilho.addEventListener('change', medirTrilho);
-    medirTrilho();
   </script>
 </body>
 </html>
