@@ -232,9 +232,42 @@
       align-items: center; padding: clamp(28px, 3.4vw, 52px) 0;
     }
     .peca + .peca { border-top: 1px solid rgba(23,23,21,0.09); }
-    @media (max-width: 900px) { .peca { grid-template-columns: 1fr; } .peca-fig { order: -1; } }
     .peca:nth-child(even) .peca-fig { order: -1; }
-    @media (max-width: 900px) { .peca:nth-child(even) .peca-fig { order: -1; } }
+    .pecas-trilho { display: contents; }
+    .trilho-dica { display: none; }
+
+    /* Mobile: as três peças viram um trilho horizontal com swipe */
+    @media (max-width: 900px) {
+      .pecas-trilho {
+        display: flex; gap: 14px;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        margin: 0 calc(-1 * var(--pad));
+        padding: 6px var(--pad) 12px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .pecas-trilho::-webkit-scrollbar { display: none; }
+      .pecas-trilho .peca {
+        display: flex; flex-direction: column;
+        flex: 0 0 min(82vw, 360px);
+        scroll-snap-align: center;
+        background: var(--card); border-radius: var(--radius);
+        box-shadow: var(--shadow); border-top: 0;
+        padding: 0 0 24px; overflow: hidden;
+      }
+      .pecas-trilho .peca-fig { order: -1; }
+      .pecas-trilho .peca-fig img { border-radius: 0; box-shadow: none; }
+      .pecas-trilho .peca > div:not(.peca-fig) { padding: 18px 20px 0; }
+      .pecas-trilho .peca p { max-width: none; }
+      .trilho-dica {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
+        text-transform: uppercase; color: var(--teal-deep);
+        margin: -14px 0 16px;
+      }
+      .trilho-dica::after { content: '→'; animation: dica 1.6s infinite; }
+    }
+    @keyframes dica { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 
     .peca-num {
       font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: 0.16em;
@@ -445,6 +478,8 @@
           <p class="lead rv rv-d2">Não é "um site". Não é "um app". É o conjunto: cada peça cobre um dos três buracos.</p>
         </div>
 
+        <p class="trilho-dica rv">Arraste pro lado</p>
+        <div class="pecas-trilho">
         <div class="peca">
           <div class="rv">
             <span class="peca-num">Peça 01 · Traz o cliente</span>
@@ -485,6 +520,7 @@
           <figure class="peca-fig rv rv-d1">
             <img src="assets/novo/peca-automacao.webp" alt="Celular na mesa de cabeceira respondendo um cliente sozinho durante a noite" loading="lazy">
           </figure>
+        </div>
         </div>
       </div>
 
