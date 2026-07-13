@@ -266,6 +266,18 @@
         margin: -14px 0 16px;
       }
       .trilho-dica::after { content: '→'; animation: dica 1.6s infinite; }
+
+      /* Com JS ativo o trilho é guiado pelo scroll da página: a seção "estica"
+         (altura definida via JS), o miolo gruda na tela e o avanço vertical vira
+         deslocamento horizontal dos cards. Sem JS, fica o swipe manual acima. */
+      html.js .trilho-dica { display: none; }
+      html.js .pecas .wrap {
+        position: sticky; top: 64px;
+        min-height: calc(100svh - 64px);
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      html.js .pecas .sec-head { margin-bottom: 20px; }
+      html.js .pecas-trilho { overflow-x: hidden; scroll-snap-type: none; }
     }
     @keyframes dica { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 
@@ -660,6 +672,35 @@
     addEventListener('resize', revela, { passive: true });
     addEventListener('load', revela);
     revela();
+
+    // Trilho das peças (mobile): o scroll vertical desloca os cards na horizontal.
+    const palco = document.querySelector('.pecas');
+    const pinado = palco.querySelector('.wrap');
+    const trilho = palco.querySelector('.pecas-trilho');
+    const mqTrilho = matchMedia('(max-width: 900px)');
+
+    function extraTrilho() { return Math.max(0, trilho.scrollWidth - trilho.clientWidth); }
+    function moverTrilho() {
+      if (!mqTrilho.matches) return;
+      const extra = extraTrilho();
+      const percurso = palco.offsetHeight - pinado.offsetHeight;
+      if (extra <= 0 || percurso <= 0) return;
+      const p = Math.min(1, Math.max(0, (topbar.offsetHeight - palco.getBoundingClientRect().top) / percurso));
+      trilho.scrollLeft = p * extra;
+    }
+    function medirTrilho() {
+      if (!mqTrilho.matches) { palco.style.height = ''; pinado.style.top = ''; pinado.style.minHeight = ''; return; }
+      const alturaTopo = topbar.offsetHeight;
+      pinado.style.top = alturaTopo + 'px';
+      pinado.style.minHeight = 'calc(100svh - ' + alturaTopo + 'px)';
+      palco.style.height = (pinado.offsetHeight + extraTrilho()) + 'px';
+      moverTrilho();
+    }
+    addEventListener('scroll', moverTrilho, { passive: true });
+    addEventListener('resize', medirTrilho, { passive: true });
+    addEventListener('load', medirTrilho);
+    mqTrilho.addEventListener('change', medirTrilho);
+    medirTrilho();
   </script>
 </body>
 </html>
