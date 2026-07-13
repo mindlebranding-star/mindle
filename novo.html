@@ -240,6 +240,22 @@
         margin: -8px 0 16px;
       }
       .cenas-dica::after { content: '→'; animation: dica 1.6s infinite; }
+
+      /* Com JS ativo o scroll vertical passa a guiar o trilho: .cenas-stage é
+         o contêiner de referência do miolo grudado (.wrap), com altura via JS
+         = altura do miolo + espaço extra de rolagem. O fecho fica FORA do
+         stage (fora até de .cenas-stage, num .wrap irmão), então nunca entra
+         nessa conta e nunca aparece por baixo dos cards ainda fixos. Sem JS,
+         fica o swipe manual acima. */
+      html.js .cenas-dica { display: none; }
+      html.js .cenas-stage { position: relative; }
+      html.js .cenas-stage .wrap {
+        position: sticky; top: 64px;
+        min-height: calc(100svh - 64px);
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      html.js .cenas-stage .sec-head { margin-bottom: 20px; }
+      html.js .cenas-grid { overflow-x: hidden; scroll-snap-type: none; }
     }
     @keyframes dica { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 
@@ -418,6 +434,7 @@
 
     <!-- ============ CENAS ============ -->
     <section id="cenas">
+      <div class="cenas-stage">
       <div class="wrap">
         <div class="sec-head">
           <p class="eyebrow rv">A gente aposta que você conhece essas cenas</p>
@@ -454,7 +471,10 @@
             </div>
           </article>
         </div>
+      </div>
+      </div>
 
+      <div class="wrap">
         <div class="cenas-fecho rv">
           <p>Nenhuma dessas cenas é falta de esforço.<br>É falta de <span class="tx">sistema</span>.</p>
         </div>
@@ -649,6 +669,39 @@
     addEventListener('resize', revela, { passive: true });
     addEventListener('load', revela);
     revela();
+
+    // Cenas (mobile): o scroll vertical desloca os cards na horizontal.
+    // .cenas-stage é o contêiner de referência do miolo grudado; sua altura
+    // (miolo + espaço extra) é quem decide até onde ele pode ficar preso.
+    // O fecho é filho de um .wrap irmão do stage, nunca entra nessa conta e
+    // nunca aparece por baixo dos cards ainda fixos.
+    const cenasSecao = document.querySelector('#cenas');
+    const cenasEstagio = cenasSecao.querySelector('.cenas-stage');
+    const cenasPinado = cenasEstagio.querySelector('.wrap');
+    const cenasTrilho = cenasEstagio.querySelector('.cenas-grid');
+    const mqCenas = matchMedia('(max-width: 900px)');
+
+    function extraCenas() { return Math.max(0, cenasTrilho.scrollWidth - cenasTrilho.clientWidth); }
+    function moverCenas() {
+      if (!mqCenas.matches) return;
+      const extra = extraCenas();
+      if (extra <= 0) return;
+      const p = Math.min(1, Math.max(0, (topbar.offsetHeight - cenasEstagio.getBoundingClientRect().top) / extra));
+      cenasTrilho.scrollLeft = p * extra;
+    }
+    function medirCenas() {
+      if (!mqCenas.matches) { cenasEstagio.style.height = ''; cenasPinado.style.top = ''; cenasPinado.style.minHeight = ''; return; }
+      const alturaTopo = topbar.offsetHeight;
+      cenasPinado.style.top = alturaTopo + 'px';
+      cenasPinado.style.minHeight = 'calc(100svh - ' + alturaTopo + 'px)';
+      cenasEstagio.style.height = (cenasPinado.offsetHeight + extraCenas()) + 'px';
+      moverCenas();
+    }
+    addEventListener('scroll', moverCenas, { passive: true });
+    addEventListener('resize', medirCenas, { passive: true });
+    addEventListener('load', medirCenas);
+    mqCenas.addEventListener('change', medirCenas);
+    medirCenas();
   </script>
 </body>
 </html>
