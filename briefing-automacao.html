@@ -130,21 +130,37 @@
         <div class="bfields">
           <div class="bfield" data-required>
             <label class="blabel" for="f-voz">Ele fala em 1ª pessoa (como você, o dono) ou como um assistente do negócio? <span class="req" aria-hidden="true"></span></label>
-            <p class="bhint"><strong>Recomendação Mindle:</strong> 1ª pessoa — soa mais próximo e pessoal.</p>
-            <input class="binput" type="text" id="f-voz" name="voz" placeholder="Sua resposta">
+            <p class="bhint"><strong>Recomendação Mindle:</strong> 1ª pessoa, soa mais próximo e pessoal.</p>
+            <select class="binput bselect" id="f-voz" name="voz">
+              <option value="">Selecione uma opção</option>
+              <option value="1ª pessoa (como você, o dono)">1ª pessoa (como você, o dono)</option>
+              <option value="Como um assistente do negócio">Como um assistente do negócio</option>
+            </select>
             <span class="berr">Este campo é obrigatório</span>
           </div>
           <div class="bfield" data-required>
             <label class="blabel" for="f-robo">Se um cliente perguntar "isso é um robô?", como você quer que ele responda? <span class="req" aria-hidden="true"></span></label>
-            <p class="bhint"><strong>Recomendação Mindle:</strong> ser honesto — a triagem inicial é automática, mas o atendimento é seu de verdade.</p>
+            <p class="bhint"><strong>Recomendação Mindle:</strong> ser honesto, a triagem inicial é automática, mas o atendimento é seu de verdade.</p>
             <textarea class="binput btextarea" id="f-robo" name="resposta_robo"></textarea>
             <span class="berr">Este campo é obrigatório</span>
           </div>
           <div class="bfield" data-required>
-            <label class="blabel" for="f-preco">Sobre preço: o agente pode falar valor, dar uma faixa, ou nunca fala preço no chat? <span class="req" aria-hidden="true"></span></label>
-            <p class="bhint"><strong>Recomendação Mindle:</strong> não falar preço no chat — deixar pra proposta / conversa.</p>
-            <input class="binput" type="text" id="f-preco" name="politica_preco" placeholder="Sua resposta">
+            <label class="blabel" for="f-preco-opcao">Sobre preço: o agente pode falar valor, dar uma faixa, ou nunca fala preço no chat? <span class="req" aria-hidden="true"></span></label>
+            <p class="bhint"><strong>Recomendação Mindle:</strong> não falar preço no chat, deixar pra proposta / conversa.</p>
+            <select class="binput bselect" id="f-preco-opcao" data-toggle="cond-preco" data-toggle-values="valor,faixa">
+              <option value="">Selecione uma opção</option>
+              <option value="valor">Fala o valor exato</option>
+              <option value="faixa">Dá uma faixa de valor</option>
+              <option value="nunca">Nunca fala preço no chat</option>
+            </select>
+            <input type="hidden" id="f-preco" name="politica_preco">
             <span class="berr">Este campo é obrigatório</span>
+          </div>
+          <div class="bcond" id="cond-preco">
+            <div class="bfield">
+              <label class="blabel" for="f-preco-numero">Qual valor?</label>
+              <input class="binput" type="text" inputmode="numeric" id="f-preco-numero" placeholder="Ex: 350">
+            </div>
           </div>
           <div class="bfield">
             <label class="blabel" for="f-estilo">Tem algum estilo que você NÃO quer? <em>opcional</em></label>
@@ -233,6 +249,38 @@
       }
       sel.addEventListener('change', sincronizar);
       custom.addEventListener('input', sincronizar);
+
+      // Política de preço: mesma ideia, só que aqui DUAS opções ("Fala o
+      // valor exato" e "Dá uma faixa de valor") revelam o campo de número,
+      // não só uma ("outro"). O texto final some as duas peças num valor
+      // legível só, pra não mudar o formato da coluna politica_preco.
+      var selP = document.getElementById('f-preco-opcao');
+      var hidP = document.getElementById('f-preco');
+      var numP = document.getElementById('f-preco-numero');
+      if (selP && hidP && numP) {
+        var ROTULOS = { valor: 'Fala o valor exato', faixa: 'Dá uma faixa de valor', nunca: 'Nunca fala preço no chat' };
+        if (hidP.value) {
+          Object.keys(ROTULOS).some(function (k) {
+            if (hidP.value.indexOf(ROTULOS[k]) !== 0) return false;
+            selP.value = k;
+            if (k !== 'nunca') {
+              numP.value = hidP.value.slice(ROTULOS[k].length).replace(/^:\s*/, '');
+              var condP = document.getElementById('cond-preco');
+              if (condP) condP.classList.add('is-open');
+            }
+            return true;
+          });
+        }
+        function sincronizarPreco() {
+          var k = selP.value;
+          if (!k) { hidP.value = ''; return; }
+          hidP.value = k === 'nunca'
+            ? ROTULOS[k]
+            : ROTULOS[k] + (numP.value.trim() ? ': ' + numP.value.trim() : '');
+        }
+        selP.addEventListener('change', sincronizarPreco);
+        numP.addEventListener('input', sincronizarPreco);
+      }
     });
   </script>
 </body>

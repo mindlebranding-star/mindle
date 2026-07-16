@@ -157,9 +157,16 @@
       const alvo = document.getElementById(t.dataset.toggle);
       if (!alvo) return;
       // checkbox/radio: revela quando marcado. select: revela quando o
-      // valor escolhido é "outro" (não tem .checked, então não dá pra
-      // reusar a mesma lógica direto).
-      const aberto = t.matches('select') ? t.value === 'outro' : t.checked;
+      // valor escolhido está na lista de gatilho (não tem .checked, então
+      // não dá pra reusar a mesma lógica direto). Por padrão a lista é só
+      // "outro"; data-toggle-values="a,b" permite mais de um gatilho.
+      let aberto;
+      if (t.matches('select')) {
+        const valores = (t.dataset.toggleValues || 'outro').split(',');
+        aberto = valores.includes(t.value);
+      } else {
+        aberto = t.checked;
+      }
       alvo.classList.toggle('is-open', aberto);
     });
   });
@@ -298,7 +305,7 @@
   /* ── Rascunho (localStorage) ──────────────────── */
   function salvarRascunho() {
     const dados = { _step: atual, _checks: {} };
-    $$('input[name], textarea[name]').forEach((el) => {
+    $$('input[name], textarea[name], select[name]').forEach((el) => {
       if (el.type === 'checkbox') {
         if (el.checked) (dados._checks[el.name] = dados._checks[el.name] || []).push(el.value);
       } else {
@@ -311,7 +318,7 @@
     let dados;
     try { dados = JSON.parse(localStorage.getItem(DRAFT_KEY)); } catch (e) { return; }
     if (!dados) return;
-    $$('input[name], textarea[name]').forEach((el) => {
+    $$('input[name], textarea[name], select[name]').forEach((el) => {
       if (el.type === 'checkbox') {
         const lista = dados._checks && dados._checks[el.name];
         el.checked = !!(lista && lista.includes(el.value));
@@ -336,7 +343,7 @@
   /* ── Envio ────────────────────────────────────── */
   function coletar() {
     const dados = {};
-    $$('input[name], textarea[name]').forEach((el) => {
+    $$('input[name], textarea[name], select[name]').forEach((el) => {
       if (el.type === 'checkbox') return;
       const v = el.value.trim();
       dados[el.name] = v || null;
