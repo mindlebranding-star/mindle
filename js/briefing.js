@@ -130,6 +130,11 @@
   document.addEventListener('change', (e) => {
     const g = e.target.closest('[data-required-group]');
     if (g && g.querySelector('input:checked')) g.classList.remove('has-error');
+    // select não dispara 'input', só 'change' — limpa o erro aqui também.
+    if (e.target.matches('select')) {
+      const f = e.target.closest('.bfield');
+      if (f) f.classList.remove('has-error');
+    }
   });
 
   /* ── Navegação ────────────────────────────────── */
@@ -150,7 +155,12 @@
   $$('[data-toggle]').forEach((t) => {
     t.addEventListener('change', () => {
       const alvo = document.getElementById(t.dataset.toggle);
-      if (alvo) alvo.classList.toggle('is-open', t.checked);
+      if (!alvo) return;
+      // checkbox/radio: revela quando marcado. select: revela quando o
+      // valor escolhido é "outro" (não tem .checked, então não dá pra
+      // reusar a mesma lógica direto).
+      const aberto = t.matches('select') ? t.value === 'outro' : t.checked;
+      alvo.classList.toggle('is-open', aberto);
     });
   });
 

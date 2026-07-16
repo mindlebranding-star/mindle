@@ -135,6 +135,17 @@
 .binput:focus { outline: none; border-color: var(--color-accent-light); background: var(--color-surface-02); }
 .binput::placeholder { color: var(--color-muted-deep); }
 
+.bselect {
+  appearance: none; -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%239A9890' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 7.5 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.bselect option { background: var(--color-surface-01); color: var(--color-respiro-base); }
+.bfield.has-error .bselect { border-color: var(--color-error); }
+
 .btextarea {
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-sm);

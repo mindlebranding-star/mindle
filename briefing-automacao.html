@@ -98,9 +98,24 @@
             </div>
           </div>
           <div class="bfield" data-required>
-            <label class="blabel" for="f-horarios">Horários de atendimento <span class="req" aria-hidden="true"></span></label>
-            <input class="binput" type="text" id="f-horarios" name="horarios" placeholder="Ex: seg a sex, 9h às 18h">
+            <label class="blabel" for="f-horarios-opcao">Horários de atendimento <span class="req" aria-hidden="true"></span></label>
+            <select class="binput bselect" id="f-horarios-opcao" data-toggle="cond-horarios">
+              <option value="">Selecione uma opção</option>
+              <option value="Segunda a sexta, 9h às 18h">Segunda a sexta, 9h às 18h</option>
+              <option value="Segunda a sexta, 8h às 18h">Segunda a sexta, 8h às 18h</option>
+              <option value="Segunda a sábado, 9h às 18h">Segunda a sábado, 9h às 18h</option>
+              <option value="Segunda a sábado, 9h às 19h">Segunda a sábado, 9h às 19h</option>
+              <option value="Todos os dias, 9h às 20h">Todos os dias, 9h às 20h</option>
+              <option value="outro">Outro (escrever manualmente)</option>
+            </select>
+            <input type="hidden" id="f-horarios" name="horarios">
             <span class="berr">Este campo é obrigatório</span>
+          </div>
+          <div class="bcond" id="cond-horarios">
+            <div class="bfield">
+              <label class="blabel" for="f-horarios-custom">Descreva seus horários</label>
+              <input class="binput" type="text" id="f-horarios-custom" placeholder="Ex: seg a sex, 9h às 18h, sáb até meio-dia">
+            </div>
           </div>
         </div>
       </section>
@@ -190,5 +205,35 @@
 
   <script src="js/vendor/gsap.min.js" defer></script>
   <script src="js/briefing.js" defer></script>
+  <script>
+    // Horários de atendimento: o select é só a interface; quem viaja no
+    // formulário (e no rascunho salvo) é o input oculto #f-horarios.
+    // Espera o DOMContentLoaded (não defer, roda mesmo em script inline)
+    // pra garantir que o briefing.js já restaurou o rascunho antes.
+    document.addEventListener('DOMContentLoaded', function () {
+      var sel = document.getElementById('f-horarios-opcao');
+      var hid = document.getElementById('f-horarios');
+      var custom = document.getElementById('f-horarios-custom');
+      if (!sel || !hid || !custom) return;
+
+      if (hid.value) {
+        var bate = Array.prototype.some.call(sel.options, function (o) { return o.value === hid.value; });
+        if (bate) {
+          sel.value = hid.value;
+        } else {
+          sel.value = 'outro';
+          custom.value = hid.value;
+          var cond = document.getElementById('cond-horarios');
+          if (cond) cond.classList.add('is-open');
+        }
+      }
+
+      function sincronizar() {
+        hid.value = sel.value === 'outro' ? custom.value.trim() : sel.value;
+      }
+      sel.addEventListener('change', sincronizar);
+      custom.addEventListener('input', sincronizar);
+    });
+  </script>
 </body>
 </html>
