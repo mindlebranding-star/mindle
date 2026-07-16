@@ -168,24 +168,31 @@
     wrap.innerHTML = lista.map((l) => {
       const atrasado = l.status === 'novo' && slaEstourado(l.created_at);
       const origem = [l.utm_source, l.utm_medium, l.utm_campaign].filter(Boolean).join(' · ');
+      const canal = l.canal || 'site';
+      const CANAL_LABEL = { site: 'Site', whatsapp: 'WhatsApp', instagram: 'Instagram', agenda: 'Agenda direto' };
+      const foneDigits = (l.telefone || '').replace(/\D/g, '');
       return `
       <article class="lead-card${atrasado ? ' is-atrasado' : ''}" data-id="${esc(l.id)}">
         <div class="lead-top">
           <span class="badge ${l.caminho === 'A' ? 'badge-a' : 'badge-b'}">Caminho ${esc(l.caminho)}</span>
           <span class="badge badge-status">${esc(l.status || 'novo')}</span>
+          ${canal !== 'site' ? `<span class="badge badge-canal">${esc(CANAL_LABEL[canal] || canal)}</span>` : ''}
           ${atrasado ? '<span class="badge badge-sla">Responder hoje</span>' : ''}
           <span class="lead-nome">${esc(l.nome)}</span>
           <span class="lead-data">${esc(fmtData(l.created_at))}</span>
         </div>
         <dl class="lead-grid">
           <div class="lead-field"><dt>E-mail</dt><dd><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></dd></div>
-          <div class="lead-field"><dt>Profissão</dt><dd>${esc(l.profissao)}</dd></div>
+          ${l.telefone ? `<div class="lead-field"><dt>Telefone</dt><dd><a href="https://wa.me/${esc(foneDigits)}" target="_blank" rel="noopener noreferrer">${esc(l.telefone)}</a></dd></div>` : ''}
+          <div class="lead-field"><dt>Profissão</dt><dd>${esc(l.profissao || '—')}</dd></div>
           <div class="lead-field"><dt>Link</dt><dd>${l.link && /^https?:\/\//i.test(l.link)
             ? `<a href="${esc(l.link)}" target="_blank" rel="noopener noreferrer">${esc(l.link)}</a>`
             : esc(l.link || '—')}</dd></div>
-          <div class="lead-field"><dt>Serviço</dt><dd>${esc(l.servico)}</dd></div>
+          <div class="lead-field"><dt>Serviço</dt><dd>${esc(l.servico || '—')}</dd></div>
+          ${canal === 'site' ? `
           <div class="lead-field"><dt>Situação</dt><dd>${esc(l.situacao)} — ${esc(SITUACOES[l.situacao] || '')}</dd></div>
           <div class="lead-field"><dt>Investimento</dt><dd>${esc(INVESTIMENTOS[l.investimento] || l.investimento)}</dd></div>
+          ` : ''}
           ${(origem || l.referrer) ? `<div class="lead-field"><dt>Origem</dt><dd>${esc(origem || 'direto')}${l.referrer ? `<span class="lead-ref">${esc(l.referrer)}</span>` : ''}</dd></div>` : ''}
         </dl>
         ${(l.email_rascunho || l.proposta_prompt) ? `<div class="lead-views">

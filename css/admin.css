@@ -145,6 +145,11 @@
   border: 1px solid rgba(196, 91, 74, 0.5);
   background: var(--color-error-bg);
 }
+.badge-canal {
+  color: var(--color-accent-light);
+  border: 1px solid rgba(61, 180, 182, 0.4);
+  background: rgba(61, 180, 182, 0.08);
+}
 .lead-card.is-atrasado { border-left: 3px solid var(--color-error); }
 .stat-num.is-alerta { color: var(--color-error); }
 .lead-ref {
