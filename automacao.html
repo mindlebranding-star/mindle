@@ -152,16 +152,66 @@
     .bleed { margin: 0 clamp(0px, 2vw, 32px); }
 
     /* ── Hero ───────────────────────────────────────────── */
-    .hero { padding-top: clamp(40px, 6vw, 76px); }
-    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
-    .hero h1 { font-size: var(--h1); margin: 18px 0 22px; }
+    .hero { position: relative; padding: clamp(48px, 7vw, 96px) 0 clamp(56px, 7vw, 100px); }
+    .hero-grid > div { max-width: 640px; }
+
+    /* Mesma foto (peca-automacao.webp) no desktop e no mobile, como fundo
+       full-bleed da seção — igual à técnica do hero do index.html, só que
+       com uma imagem só para as duas larguras. */
+    @media (min-width: 901px) {
+      .hero {
+        display: flex; align-items: center;
+        min-height: calc(100svh - 64px);
+        background-image:
+          linear-gradient(90deg,
+            rgba(244,241,234,0.97) 0%,
+            rgba(244,241,234,0.88) 34%,
+            rgba(244,241,234,0.45) 60%,
+            rgba(244,241,234,0.05) 84%),
+          url('assets/novo/peca-automacao.webp');
+        background-size: cover;
+        background-position: center right;
+        background-repeat: no-repeat;
+      }
+      .hero-grid { flex: 1; }
+    }
+
+    .hero h1 { font-size: var(--h1); margin: 18px 0 26px; }
     .hero h1 .tx { color: var(--teal); }
     .hero .lead { max-width: 50ch; }
     .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 30px; }
     .hero-nota { font-size: 14px; color: var(--muted); margin-top: 16px; }
-    @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
 
-    /* ── Chat mockup ────────────────────────────────────── */
+    .hero-badge {
+      position: absolute; right: clamp(20px, 5vw, 72px); bottom: clamp(20px, 3.5vw, 40px);
+      background: var(--card); border-radius: 14px; box-shadow: var(--shadow);
+      padding: 13px 18px; display: flex; align-items: center; gap: 12px;
+      font-size: 14.5px; font-weight: 700; color: var(--ink);
+    }
+    .hero-badge .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal-bright); box-shadow: 0 0 0 5px rgba(61,180,182,0.22); animation: pulse 2.4s infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 4px rgba(61,180,182,0.22); } 50% { box-shadow: 0 0 0 9px rgba(61,180,182,0.08); } }
+
+    @media (max-width: 900px) {
+      .hero {
+        background-image:
+          linear-gradient(180deg,
+            rgba(244,241,234,0.96) 0%,
+            rgba(244,241,234,0.78) 30%,
+            rgba(244,241,234,0.30) 55%,
+            rgba(244,241,234,0) 72%,
+            rgba(244,241,234,0) 86%,
+            rgba(244,241,234,0.9) 100%),
+          url('assets/novo/peca-automacao.webp');
+        background-size: cover;
+        background-position: center bottom;
+        background-repeat: no-repeat;
+        padding-bottom: min(320px, 42vh);
+      }
+      .hero-badge { right: 16px; bottom: 18px; }
+      .hero .btn-ghost { background: rgba(244,241,234,0.82); border-color: rgba(23,23,21,0.25); }
+    }
+
+    /* ── Exemplo (chat mockup) ──────────────────────────── */
     .chat { display: grid; gap: 14px; justify-items: center; }
     .phone {
       width: min(320px, 100%); position: relative;
@@ -192,25 +242,20 @@
     .metricas-grid dd { margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
     .metricas-grid dd span { color: var(--muted); }
 
-    /* ── Vazamento (cards com foto) ─────────────────────── */
-    .card3-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 24px); }
-    @media (max-width: 860px) { .card3-grid { grid-template-columns: 1fr; } }
-    .card-foto {
-      border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
-      min-height: 260px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-end;
-      background-repeat: no-repeat; background-position: center; background-size: cover;
-      position: relative; color: #fff;
+    /* ── Vazamento (cards com foto, mesmo layout do .cena da home) ── */
+    .vaz-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2vw, 28px); }
+    @media (max-width: 860px) { .vaz-grid { grid-template-columns: 1fr; } }
+    .vaz-card {
+      background: var(--card); border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow); display: flex; flex-direction: column;
+      transition: transform 0.45s var(--ease);
     }
-    .card-foto::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(18,33,31,0.15) 0%, rgba(18,33,31,0.88) 100%);
-    }
-    .card-foto h3, .card-foto p { position: relative; z-index: 1; }
-    .card-foto h3 { font-size: 21px; font-family: var(--display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 8px; }
-    .card-foto p { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.86); }
-    .card-foto--forahora { background-image: url(assets/card-forahora.webp); }
-    .card-foto--espera { background-image: url(assets/card-espera.webp); }
-    .card-foto--some { background-image: url(assets/card-some.webp); }
+    .vaz-card:hover { transform: translateY(-6px); }
+    .vaz-card img { aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
+    .vaz-body { padding: 26px 26px 30px; }
+    .vaz-body .h3 { font-size: clamp(24px, 2.2vw, 30px); margin-bottom: 10px; }
+    .vaz-body p { color: var(--ink-soft); font-size: 16.5px; }
+    .vaz-tag { font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: 0.1em; color: var(--terra); text-transform: uppercase; margin-bottom: 8px; }
 
     /* ── Como funciona (dark, igual .fluxo do index) ────── */
     .fluxo { background: var(--dark); color: #EDEBE4; border-radius: clamp(24px, 4vw, 48px); }
@@ -302,7 +347,18 @@
           </div>
           <p class="hero-nota rv rv-d3">30 minutos de diagnóstico · online · sem compromisso</p>
         </div>
-        <div class="chat rv rv-d2" aria-label="Exemplo: cliente pergunta às 22h47 se há horário essa semana; o agente responde em segundos com dois horários e confirma o agendamento.">
+      </div>
+      <div class="hero-badge rv rv-d3"><span class="dot"></span> Atendendo agora, mesmo de madrugada</div>
+    </section>
+
+    <!-- ============ EXEMPLO (chat) ============ -->
+    <section id="exemplo">
+      <div class="wrap">
+        <div class="sec-head" style="margin-inline:auto; text-align:center;">
+          <p class="eyebrow rv" style="justify-content:center">Na prática</p>
+          <h2 class="h2 display rv rv-d1">Um exemplo real de conversa</h2>
+        </div>
+        <div class="chat rv rv-d1" aria-label="Exemplo: cliente pergunta às 22h47 se há horário essa semana; o agente responde em segundos com dois horários e confirma o agendamento.">
           <div class="phone">
             <div class="phone-screen">
               <div class="phone-top">
@@ -341,10 +397,31 @@
           <h2 class="h2 display rv rv-d1">O contato não se perde por falta de qualidade. Se perde por falta de <span class="tx" style="color:var(--teal)">hora.</span></h2>
           <p class="lead rv rv-d2">O indicado te chama fora do horário. Você responde no dia seguinte, e ele já falou com quem respondeu em dois minutos. Esse custo não aparece em relatório: aparece na conversa que esfriou.</p>
         </div>
-        <div class="card3-grid">
-          <article class="card-foto card-foto--forahora rv"><h3>Chega fora de hora</h3><p>Boa parte das mensagens cai à noite, no fim de semana, no feriado, justamente quando você não está no telefone.</p></article>
-          <article class="card-foto card-foto--espera rv rv-d1"><h3>Espera esfria</h3><p>Cada hora de silêncio é uma chance a menos. O cliente indicado não avisa que desistiu, ele só fecha com outro.</p></article>
-          <article class="card-foto card-foto--some rv rv-d2"><h3>Some no meio</h3><p>Conversa perdida no meio de mil outras, orçamento sem retorno, horário que ninguém confirmou. Vaza sem ninguém ver.</p></article>
+        <div class="vaz-grid">
+          <article class="vaz-card rv">
+            <img src="assets/card-forahora.webp" alt="Celular com mensagens não lidas fora do horário comercial" loading="lazy">
+            <div class="vaz-body">
+              <p class="vaz-tag">Fora do horário</p>
+              <h3 class="h3 display">Chega fora de hora</h3>
+              <p>Boa parte das mensagens cai à noite, no fim de semana, no feriado, justamente quando você não está no telefone.</p>
+            </div>
+          </article>
+          <article class="vaz-card rv rv-d1">
+            <img src="assets/card-espera.webp" alt="Relógio marcando o tempo de espera de uma resposta" loading="lazy">
+            <div class="vaz-body">
+              <p class="vaz-tag">Silêncio que custa</p>
+              <h3 class="h3 display">Espera esfria</h3>
+              <p>Cada hora de silêncio é uma chance a menos. O cliente indicado não avisa que desistiu, ele só fecha com outro.</p>
+            </div>
+          </article>
+          <article class="vaz-card rv rv-d2">
+            <img src="assets/card-some.webp" alt="Conversa perdida no meio de várias outras mensagens" loading="lazy">
+            <div class="vaz-body">
+              <p class="vaz-tag">Perdido no meio</p>
+              <h3 class="h3 display">Some no meio</h3>
+              <p>Conversa perdida no meio de mil outras, orçamento sem retorno, horário que ninguém confirmou. Vaza sem ninguém ver.</p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
