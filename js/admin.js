@@ -205,6 +205,7 @@
           </select>
           <textarea class="lead-notas" placeholder="Notas de follow-up…" aria-label="Notas">${esc(l.notas || '')}</textarea>
           <button type="button" class="ta-expand" aria-label="Expandir notas">expandir</button>
+          <button type="button" class="cl-excluir lead-excluir" aria-label="Excluir lead">excluir</button>
           <span class="lead-salvo" aria-hidden="true">salvo ✓</span>
         </div>
       </article>`;
@@ -243,6 +244,17 @@
     const lead = leads.find((l) => l.id === card.dataset.id);
     const valor = e.target.value.trim() || null;
     if (lead && (lead.notas || null) !== valor) salvar(card.dataset.id, { notas: valor }, card);
+  });
+  $('#leads-list').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.lead-excluir');
+    if (!btn) return;
+    const card = btn.closest('.lead-card');
+    const lead = leads.find((l) => l.id === card.dataset.id);
+    if (!confirm('Excluir o lead "' + (lead ? lead.nome : '') + '" definitivamente?')) return;
+    const { error } = await sb.from('leads').delete().eq('id', card.dataset.id);
+    if (error) { alert('Erro ao excluir: ' + error.message); return; }
+    leads = leads.filter((l) => l.id !== card.dataset.id);
+    render();
   });
 
   /* ── Filtros ──────────────────────────────────── */
