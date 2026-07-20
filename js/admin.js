@@ -412,6 +412,7 @@
           </select>
           <textarea class="lead-notas bf-notas" placeholder="Notas do projeto…" aria-label="Notas">${esc(b.notas || '')}</textarea>
           <button type="button" class="ta-expand" aria-label="Expandir notas">expandir</button>
+          <button type="button" class="cl-excluir lead-excluir" aria-label="Excluir">excluir</button>
           <span class="lead-salvo" aria-hidden="true">salvo ✓</span>
         </div>
       </article>`;
@@ -475,6 +476,21 @@
       if (prev) {
         const img = prev.querySelector('.fprev-img');
         if (img.dataset.url) window.open(img.dataset.url, '_blank', 'noopener');
+        return;
+      }
+      const excluir = e.target.closest('.lead-excluir');
+      if (excluir) {
+        const card = excluir.closest('.bcard');
+        const dados = ctx.dados();
+        const item = dados.find((x) => x.id === card.dataset.id);
+        if (!confirm('Excluir o briefing de "' + (item ? item.empresa_nome : '') + '" definitivamente?')) return;
+        const { error } = await sb.from(ctx.tabela()).delete().eq('id', card.dataset.id);
+        if (error) { alert('Erro ao excluir: ' + error.message); return; }
+        const idx = dados.findIndex((x) => x.id === card.dataset.id);
+        if (idx > -1) dados.splice(idx, 1);
+        card.remove();
+        const count = document.getElementById('tab-count-' + ctx.tabela());
+        if (count) { count.textContent = dados.length; count.hidden = dados.length === 0; }
         return;
       }
       const chip = e.target.closest('.fchip');
@@ -598,6 +614,7 @@
           </select>
           <textarea class="lead-notas" placeholder="Notas do projeto…" aria-label="Notas">${esc(b.notas || '')}</textarea>
           <button type="button" class="ta-expand" aria-label="Expandir notas">expandir</button>
+          <button type="button" class="cl-excluir lead-excluir" aria-label="Excluir">excluir</button>
           <span class="lead-salvo" aria-hidden="true">salvo ✓</span>
         </div>
       </article>`;
@@ -670,6 +687,7 @@
           </select>
           <textarea class="lead-notas" placeholder="Notas do projeto…" aria-label="Notas">${esc(a.notas || '')}</textarea>
           <button type="button" class="ta-expand" aria-label="Expandir notas">expandir</button>
+          <button type="button" class="cl-excluir lead-excluir" aria-label="Excluir">excluir</button>
           <span class="lead-salvo" aria-hidden="true">salvo ✓</span>
         </div>
       </article>`;
