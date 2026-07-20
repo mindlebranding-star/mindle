@@ -212,27 +212,9 @@
       .hero .btn-ghost { background: rgba(244,241,234,0.82); border-color: rgba(23,23,21,0.25); }
     }
 
-    /* ── Exemplo (chat mockup) ──────────────────────────── */
-    .chat { display: grid; gap: 14px; justify-items: center; }
-    .phone {
-      width: min(320px, 100%); position: relative;
-      background: var(--dark); border-radius: 42px; padding: 12px;
-      box-shadow: var(--shadow);
-    }
-    .phone::before {
-      content: ""; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-      width: 96px; height: 22px; background: #000; border-radius: 12px; z-index: 3;
-    }
-    .phone-screen { background: var(--cream); border-radius: 32px; overflow: hidden; }
-    .phone-top { padding: 38px 16px 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(23,23,21,0.08); }
-    .phone-top .av { width: 32px; height: 32px; border-radius: 50%; background: var(--teal); flex: none; display: grid; place-items: center; color: #fff; font-family: var(--display); font-weight: 700; font-size: 15px; }
-    .phone-top .nm { font-size: 13.5px; color: var(--ink); font-weight: 700; line-height: 1.2; }
-    .phone-top .st { font-size: 11px; color: var(--teal-deep); font-weight: 700; }
-    .phone-msgs { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-    .bolha { max-width: 88%; padding: 10px 14px; border-radius: 14px; font-size: 14.5px; line-height: 1.4; }
-    .bolha time { display: block; font-size: 10.5px; margin-top: 5px; opacity: 0.7; }
-    .bolha.entrada { align-self: flex-start; background: var(--card); color: var(--ink); border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(23,23,21,0.06); }
-    .bolha.saida { align-self: flex-end; background: var(--teal-deep); color: #fff; border-bottom-right-radius: 4px; }
+    /* ── Exemplo (foto) ─────────────────────────────────── */
+    .chat { display: grid; gap: 18px; justify-items: center; }
+    .chat img { max-width: 340px; width: 100%; border-radius: var(--radius); box-shadow: var(--shadow); }
     .chat-legenda { font-size: 15px; color: var(--muted); text-align: center; }
 
     /* ── Métricas ───────────────────────────────────────── */
@@ -359,21 +341,8 @@
           <p class="eyebrow rv" style="justify-content:center">Na prática</p>
           <h2 class="h2 display rv rv-d1">Um exemplo real de conversa</h2>
         </div>
-        <div class="chat rv rv-d1" aria-label="Exemplo: cliente pergunta às 22h47 se há horário essa semana; o agente responde em segundos com dois horários e confirma o agendamento.">
-          <div class="phone">
-            <div class="phone-screen">
-              <div class="phone-top">
-                <span class="av">M</span>
-                <span><span class="nm">Atendimento</span><br><span class="st">online agora</span></span>
-              </div>
-              <div class="phone-msgs">
-                <div class="bolha entrada">Oi! Vocês foram indicados pra mim. Consegue me encaixar essa semana?<time>22:47</time></div>
-                <div class="bolha saida">Consigo! Tenho quinta às 15h ou sexta às 10h. Qual fica melhor pra você?<time>22:47 · respondido em 8 segundos</time></div>
-                <div class="bolha entrada">Quinta 15h é perfeito.<time>22:48</time></div>
-                <div class="bolha saida">Fechado, quinta às 15h. Confirmo com você na quarta, qualquer coisa é só chamar por aqui.<time>22:48</time></div>
-              </div>
-            </div>
-          </div>
+        <div class="chat rv rv-d1">
+          <img src="assets/novo/exemplo-chat.webp" alt="Celular sobre o balcão de um café mostrando uma conversa de WhatsApp: um cliente pergunta às 22h47 se há horário essa semana, o agente responde em segundos com dois horários livres, o cliente escolhe quinta às 15h e o agente confirma o agendamento." loading="lazy">
           <p class="chat-legenda">E você estava em outro atendimento.</p>
         </div>
       </div>
