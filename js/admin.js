@@ -736,14 +736,20 @@
   }
 
   function dgSinais() {
-    const m = { lp: [], br: [], br1: [], rc: [], rc5: [] };
+    const m = { site: [], sistema: [], automacao: [], rc: [], rc5: [] };
     $$('#tab-diagnostico input[data-sig]:checked').forEach((el) => m[el.dataset.sig].push(el.value));
     return m;
   }
 
+  const DG_PECA_NOME = { site: 'Site', sistema: 'Sistema', automacao: 'Automação' };
+  const DG_PECA_DESC = {
+    site: 'um site que traz cliente — vitrine que convence quem pesquisa antes de chamar',
+    sistema: 'um sistema que organiza — cada cliente, conversa e pagamento num painel só',
+    automacao: 'uma automação que atende na hora — responde no WhatsApp mesmo fora do horário',
+  };
+
   function dgVeredito() {
     const s = dgSinais();
-    const brTotal = s.br1.length + s.br.length;
 
     if (s.rc.length) return { tipo: 'recusa', titulo: 'Recusar, com elegância',
       txt:
@@ -766,42 +772,38 @@
         'por intermediário. Faz mais sentido marcarmos 30 minutos com [quem decide] presente, para ' +
         'eu devolver a leitura direto a quem vai aprovar." Reagende ali mesmo, com data e hora.' };
 
-    if (s.br1.length || brTotal >= 2) return { tipo: 'branding', titulo: 'Branding completo',
-      txt:
-        '<strong>Por quê:</strong> o fundamento não está de pé. ' +
-        (s.br1.length ? 'O sinal decisivo apareceu: o cliente trava ao explicar o próprio diferencial, ' +
-          'público ou oferta. ' : 'Os sinais se acumularam: ' + s.br.join('; ') + '. ') +
-        'Quando a base é confusa ou cada ponto de contato comunica uma coisa, uma página seria ' +
-        'construída sobre areia: ficaria bonita e continuaria não convertendo, porque o problema ' +
-        'é anterior ao layout. Vender uma página aqui repetiria o erro das peças soltas que ele já comprou.<br><br>' +
-        '<strong>Para fechar:</strong> ancore na frustração que ele te contou. "Uma página agora ' +
-        'seria fachada sem fundação, e você já viveu isso: pagou por pedaços que não sustentaram nada. ' +
-        'O caminho no seu caso é reconstruir a base, na ordem: diagnóstico e posicionamento, identidade ' +
-        'verbal e visual, design system documentado e só então a página integrada. É mais investimento, ' +
-        'mas é o único que você não vai precisar refazer depois." Nada avança sem aprovação por etapa, ' +
-        'isso desarma o medo de gastar de novo.' };
+    const pecas = ['site', 'sistema', 'automacao'].filter((k) => s[k].length);
 
-    if (brTotal === 1 && s.lp.length >= 1) return { tipo: 'pagina-mais', titulo: 'Página agora, branding no horizonte',
-      txt:
-        '<strong>Por quê:</strong> a oferta está madura o bastante para uma página entregar resultado ' +
-        'já, mas apareceu um sinal de que o problema é mais fundo (a marca ainda não é um sistema coeso). ' +
-        'Forçar o branding agora seria empurrar; ignorar o sinal seria deixar dinheiro na mesa depois.<br><br>' +
-        '<strong>Para fechar:</strong> "Começamos pela página, que resolve o que está te custando cliente ' +
-        'agora. Mas vou ser honesto: o que vi sugere que, em algum momento, você vai precisar estruturar ' +
-        'a marca inteira, e a página já vai ser construída de um jeito que conversa com esse próximo passo, ' +
-        'sem retrabalho." Planta a semente do branding sem pressionar, e registra o sinal nas notas para o follow-up.' };
+    if (pecas.length >= 2) {
+      const nomes = pecas.map((k) => DG_PECA_NOME[k]);
+      const ultima = nomes.pop();
+      const lista = nomes.length ? nomes.join(', ') + ' e ' + ultima : ultima;
+      return { tipo: 'combo', titulo: pecas.length === 3 ? 'As três peças' : lista,
+        txt:
+          '<strong>Por quê:</strong> os sinais não apontam pra um buraco só. ' +
+          pecas.map((k) => DG_PECA_NOME[k] + ': ' + s[k].join('; ')).join(' — ') + '. ' +
+          'Resolver uma peça e deixar as outras furadas é o mesmo erro das peças soltas que a maioria ' +
+          'já tentou: melhora um pedaço e o negócio continua vazando pelos outros dois.<br><br>' +
+          '<strong>Para fechar:</strong> "Pelo que você me contou, não é um problema só — são ' +
+          (pecas.length === 3 ? 'as três peças' : 'essas duas peças') + ' puxando o negócio pra trás ao mesmo tempo. ' +
+          'A gente monta ' + (pecas.length === 3 ? 'o conjunto' : lista.toLowerCase()) + ': ' +
+          pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. Cada peça entra com aprovação em etapa, ' +
+          'e você não paga por nada que ainda não precisa." Se o orçamento apertar, ofereça começar pela ' +
+          'peça mais urgente com o resto no roadmap — nunca empurre as três de uma vez sem essa saída.' };
+    }
 
-    if (s.lp.length >= 2) return { tipo: 'pagina', titulo: 'Página de vendas',
-      txt:
-        '<strong>Por quê:</strong> a oferta existe e está clara, você respondeu sem hesitar o que vende, ' +
-        'para quem e por quanto. O que falha não é o negócio, é a vitrine: a presença atual não está à ' +
-        'altura do que você entrega. Esse é exatamente o cenário da página de entrada, e tentar vender ' +
-        'branding completo aqui seria empurrar escopo que o caso não pede.<br><br>' +
-        '<strong>Para fechar:</strong> "O seu problema não é de estratégia, é de representação. Sua oferta ' +
-        'já convence na conversa; ela só não está convencendo quem pesquisa seu nome antes de te procurar. ' +
-        'A página resolve isso em 7 dias, construída a partir do fundamento da sua oferta, não um template ' +
-        'com o nome trocado, e com 30 dias de ajustes. Nada avança sem a sua aprovação a cada etapa." ' +
-        'Feche pedindo a data de início ainda na call.' };
+    if (pecas.length === 1) {
+      const k = pecas[0];
+      return { tipo: 'so-' + k, titulo: 'Comece pelo ' + DG_PECA_NOME[k],
+        txt:
+          '<strong>Por quê:</strong> só uma peça acumulou sinal — as outras duas parecem estar de pé. ' +
+          'Forçar o combo completo aqui seria vender escopo que o caso não pede; ignorar o sinal e ' +
+          'oferecer menos do que ele precisa seria deixar o buraco aberto.<br><br>' +
+          '<strong>Para fechar:</strong> "O seu caso não pede o conjunto inteiro agora — pede ' +
+          DG_PECA_DESC[k] + '. É isso que vai resolver o que está te custando cliente hoje. ' +
+          'Se mais pra frente aparecer sinal nas outras peças, a gente conversa; não tem porque vender ' +
+          'agora o que você ainda não precisa." Feche pedindo a data de início ainda na call.' };
+    }
 
     return { tipo: 'incompleto', titulo: 'Diagnóstico em andamento',
       txt: 'Marque os sinais durante a conversa. O veredito e o argumento de fechamento aparecem aqui assim que houver leitura suficiente.' };
@@ -868,20 +870,29 @@ Incoerências devolvidas:
 ${incos.map((t, i) => (i + 1) + '. ' + t).join('\n') || '—'}
 Oferta/negócio: ${g('dg-oferta') || '—'}
 Dor/gatilho: ${g('dg-dor') || '—'}
-Sinais página: ${s.lp.join('; ') || '—'}
-Sinais branding: ${s.br1.concat(s.br).join('; ') || '—'}
+Sinais site: ${s.site.join('; ') || '—'}
+Sinais sistema: ${s.sistema.join('; ') || '—'}
+Sinais automação: ${s.automacao.join('; ') || '—'}
 Sinais recusa: ${s.rc.concat(s.rc5).join('; ') || '—'}
 VEREDITO: ${v.titulo.toUpperCase()}
 Próximo passo: proposta enviada em ___ (mesmo dia).`;
 
+    const DG_PECA_BLOCO = {
+      site: 'um site que traz cliente: sua vitrine construída a partir do fundamento da sua oferta, não um template com o nome trocado',
+      sistema: 'um sistema que organiza: cada cliente, conversa e pagamento num painel só, com as etapas do SEU negócio',
+      automacao: 'uma automação que atende na hora: responde no seu WhatsApp em segundos, com o seu tom, mesmo fora do horário',
+    };
+    const pecasV = ['site', 'sistema', 'automacao'].filter((k) => s[k].length);
+
     let bloco;
-    if (v.tipo === 'branding') {
-      bloco = 'Pelo que vimos na conversa, uma página agora seria construir fachada sem fundação — você pagaria duas vezes. O caminho certo no seu caso é o processo completo de branding: diagnóstico e posicionamento, identidade verbal e visual, design system documentado e a página integrada no final. Nada avança sem a sua aprovação na etapa anterior.\n\nInvestimento: R$ _____ · Início: _____';
-    } else if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
+    if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
       bloco = '(Caso de recusa ou reagendamento — adapte: "o que você precisa é ___, e não é o que fazemos; quem faz isso bem é ___." Indicar caminho é parte do diagnóstico.)';
+    } else if (pecasV.length >= 2) {
+      bloco = 'Pelo que vimos na conversa, o seu caso não é de uma peça só: são ' + pecasV.map((k) => DG_PECA_NOME[k]).join(' + ') + ' puxando o negócio pra trás ao mesmo tempo. A gente monta o conjunto: ' + pecasV.map((k) => DG_PECA_BLOCO[k]).join('; ') + '. Cada peça entra com a sua aprovação na etapa anterior.\n\nInvestimento: R$ _____ · Início: _____';
+    } else if (pecasV.length === 1) {
+      bloco = 'O seu caso não pede o conjunto inteiro agora: pede ' + DG_PECA_BLOCO[pecasV[0]] + '. É isso que resolve o que está te custando cliente hoje.\n\nInvestimento: R$ _____ · Início: _____';
     } else {
-      bloco = 'O seu caso é o cenário exato da página de vendas: a oferta existe e está clara — o que falta é uma presença à altura dela. A página é construída a partir do fundamento da sua oferta, com identidade visual própria e copy estruturado. Entrega em 7 dias, com 30 dias de ajustes incluídos — e nada avança sem a sua aprovação na etapa anterior.\n\nInvestimento: R$ _____ · Início: _____'
-        + (v.tipo === 'pagina-mais' ? '\n\n(Obs. interna — remover antes de enviar: sinal de branding registrado; upsell natural na entrega.)' : '');
+      bloco = '(Diagnóstico incompleto — marque os sinais na call antes de gerar esta proposta.)';
     }
 
     $('#dg-proposta').value =
@@ -896,22 +907,27 @@ ${bloco}
 
 Qualquer dúvida, respondo por aqui — e travamos sua data de início.
 
-Mindle — ponto · linha · sistema`;
+Mindle — sites, sistemas e automação`;
 
     /* Escopo da proposta conforme o veredito */
+    const DG_PECA_ESCOPO = {
+      site: 'SITE: construído a partir do fundamento da oferta, com identidade visual própria e copy estruturado (não um template com o nome trocado)',
+      sistema: 'SISTEMA: painel sob medida com as etapas do negócio do cliente — clientes, conversas e pagamentos num lugar só',
+      automacao: 'AUTOMAÇÃO: agente de WhatsApp com o tom do cliente, treinado com respostas reais, com triagem pra gente quando a conversa pede',
+    };
     let escopo;
-    if (v.tipo === 'branding') {
-      escopo = 'BRANDING COMPLETO: diagnóstico e posicionamento; identidade verbal e visual; design system documentado; página integrada. Processo sequencial com aprovação a cada etapa. Caminho natural de quem percebe que o problema é mais fundo que uma página.';
-    } else if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
+    if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
       escopo = '(Caso de recusa/reagendamento — normalmente não se gera proposta. Em vez disso, indique a direção certa para o cliente.)';
+    } else if (pecasV.length) {
+      escopo = pecasV.map((k) => DG_PECA_ESCOPO[k]).join('. ') + '. Processo com aprovação a cada etapa, sem pagar por peça que ainda não precisa.';
     } else {
-      escopo = 'PÁGINA DE VENDAS COM IDENTIDADE PRÓPRIA: construída a partir do fundamento da oferta, com identidade visual própria e copy estruturado (não um template com o nome trocado). Entrega em 7 dias, com 30 dias de ajustes incluídos. Processo com aprovação a cada etapa.'
-        + (v.tipo === 'pagina-mais' ? ' Sinalizar que o branding completo é o passo natural depois.' : '');
+      escopo = '(Diagnóstico incompleto — marque os sinais na call antes de definir o escopo.)';
     }
 
     /* Prompt pronto p/ colar no Claude e gerar a proposta desenhada */
     $('#dg-prompt').value =
-`Você é redator e designer de propostas comerciais da Mindle — estúdio de branding digital.
+`Você é redator e designer de propostas comerciais da Mindle — estúdio que monta site, sistema e
+automação de atendimento para negócios que atendem gente.
 Gere uma PROPOSTA visual pronta para enviar, como um artefato HTML de página única, no estilo
 da Mindle: fundo escuro (#0F0F0E), acento teal (#2E8B8E), off-white para texto (#F0EDE6),
 tipografia de display marcante + corpo legível, muito respiro, sóbrio e editorial.
