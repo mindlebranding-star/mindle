@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atendimento que responde em segundos — Mindle</title>
-  <meta name="description" content="A camada de Operação do sistema Mindle: um agente no seu WhatsApp que responde em segundos, com o seu tom, e passa a conversa pra você quando precisa de gente. Setup + mensalidade, sem fidelidade.">
+  <meta name="description" content="A peça de Automação da Mindle: um agente no seu WhatsApp que responde em segundos, com o seu tom, e passa a conversa pra você quando precisa de gente. Setup + mensalidade, sem fidelidade.">
   <meta property="og:title" content="Atendimento que responde em segundos — Mindle">
   <meta property="og:description" content="Quem responde primeiro, atende. Um agente no seu WhatsApp com o seu tom, treinado com as suas respostas reais — e que melhora todo mês.">
   <meta property="og:type" content="website">
@@ -17,177 +17,292 @@
   <meta property="og:image:alt" content="Mindle — Quem responde primeiro, atende.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://mindlebrand.com.br/assets/og-automacao.jpg">
-  <meta name="theme-color" content="#0F0F0E">
+  <meta name="theme-color" content="#F4F1EA">
   <link rel="canonical" href="https://mindlebrand.com.br/automacao">
 
-  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%230F0F0E"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%23F4F1EA"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="preload" href="assets/fonts/MangoGrotesque-Medium.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/MangoGrotesque-Bold.woff2" as="font" type="font/woff2" crossorigin>
-
-  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
   <style>
-    .au-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: clamp(16px, 2.6vw, 22px) clamp(20px, 4vw, 40px);
-      border-bottom: 1px solid var(--color-border-subtle);
-      position: sticky; top: 0; z-index: 5;
-      background: rgba(15,15,14,0.86); backdrop-filter: blur(10px);
+    /* ════════════════════════════════════════════════════════
+       MINDLE / AUTOMAÇÃO — mesmo sistema visual do index.html.
+       Paleta: creme + teal + terracota. Página independente,
+       não depende de styles.css.
+       ════════════════════════════════════════════════════════ */
+    @font-face {
+      font-family: 'Mango Grotesque';
+      src: url('assets/fonts/MangoGrotesque-Medium.woff2') format('woff2');
+      font-weight: 500; font-style: normal; font-display: swap;
     }
-    .au-header .brand-mark { height: 24px; width: auto; color: var(--color-respiro-base); }
-    .au-header-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep); }
+    @font-face {
+      font-family: 'Mango Grotesque';
+      src: url('assets/fonts/MangoGrotesque-Bold.woff2') format('woff2');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
 
-    .au-wrap { width: min(1080px, calc(100% - 40px)); margin-inline: auto; }
-    .au-band { border-top: 1px solid var(--color-border-subtle); }
-    .au-band--fill { background: var(--color-surface-01); border-block: 1px solid var(--color-border-subtle); }
+    :root {
+      --cream:      #F4F1EA;
+      --cream-soft: #ECE8DF;
+      --card:       #FFFFFF;
+      --ink:        #171715;
+      --ink-soft:   #4C4B46;
+      --muted:      #7B7A73;
 
-    /* HERO */
-    .au-hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(32px, 5vw, 64px); align-items: center;
-      padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(2.5rem, 5vw, 4rem); }
-    .au-hero .h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 6vw, 76px); line-height: 0.98; color: var(--color-respiro-base); letter-spacing: -0.01em; }
-    .au-hero .h1 .tx { color: var(--color-accent); }
-    .au-sub { color: var(--color-muted); font-size: var(--font-lead); line-height: 1.6; max-width: 48ch; margin-top: 20px; }
-    .au-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; margin-top: 28px; }
-    .au-cta-nota { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--color-muted-deep); }
-    @media (max-width: 860px) { .au-hero { grid-template-columns: 1fr; } }
+      --teal:        #2E8B8E;
+      --teal-deep:   #00494A;
+      --teal-bright: #3DB4B6;
+      --terra:       #C9713D;
+      --terra-soft:  #F3DFCE;
 
-    /* CHAT MOCKUP — moldura de celular */
-    .chat { display: grid; gap: 12px; justify-items: center; }
+      --dark:       #12211F;
+      --dark-2:     #1A2E2B;
+
+      --display: 'Mango Grotesque', 'Arial Narrow', sans-serif;
+      --body: 'Lato', sans-serif;
+
+      --h1: clamp(44px, 7vw, 96px);
+      --h2: clamp(36px, 4.6vw, 62px);
+      --h3: clamp(24px, 2.4vw, 32px);
+
+      --pad: clamp(20px, 4vw, 64px);
+      --radius: 20px;
+      --shadow: 0 12px 40px rgba(23, 23, 21, 0.08);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body);
+      background: var(--cream);
+      color: var(--ink);
+      font-size: 17.5px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--pad); }
+    section { padding: clamp(56px, 7vw, 104px) 0; }
+    .sec-head { max-width: 720px; margin-bottom: clamp(32px, 3.6vw, 48px); }
+    .sec-head .h2 { margin: 14px 0 16px; }
+
+    .display { font-family: var(--display); font-weight: 700; line-height: 0.95; letter-spacing: 0.02em; text-transform: uppercase; }
+    .h2 { font-size: var(--h2); }
+    .h3 { font-size: var(--h3); line-height: 1.05; font-weight: 500; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--teal-deep);
+    }
+    .eyebrow::before {
+      content: ''; width: 22px; height: 13px; flex: none;
+      background:
+        linear-gradient(var(--teal) 0 0) top left / 100% 5.5px no-repeat,
+        linear-gradient(var(--teal) 0 0) bottom left / 100% 5.5px no-repeat;
+    }
+
+    .lead { font-size: clamp(18px, 1.6vw, 22px); color: var(--ink-soft); }
+
+    html.js .rv { opacity: 0; transform: translateY(26px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+    html.js .rv.on { opacity: 1; transform: none; }
+    html.js .rv-d1 { transition-delay: 0.08s; } html.js .rv-d2 { transition-delay: 0.16s; } html.js .rv-d3 { transition-delay: 0.24s; }
+    @media (prefers-reduced-motion: reduce) { html.js .rv { opacity: 1; transform: none; transition: none; } }
+
+    /* ── Header ─────────────────────────────────────────── */
+    .top {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(244, 241, 234, 0.88);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      transition: box-shadow 0.4s;
+    }
+    .top.scrolled { box-shadow: 0 1px 0 rgba(23,23,21,0.08), 0 8px 30px rgba(23,23,21,0.06); }
+    .top-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px var(--pad); max-width: 1240px; margin: 0 auto; }
+    .brand-mark { height: 30px; width: auto; color: var(--ink); }
+    .top-nav { display: flex; gap: 28px; font-size: 15px; font-weight: 700; }
+    .top-nav a { text-decoration: none; color: var(--ink-soft); transition: color 0.25s; }
+    .top-nav a:hover { color: var(--teal-deep); }
+    @media (max-width: 980px) { .top-nav { display: none; } }
+
+    .btn {
+      display: inline-block; text-decoration: none; font-weight: 700;
+      border-radius: 999px; padding: 14px 28px; font-size: 16px;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s, background 0.3s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-solid { background: var(--teal-deep); color: #fff; box-shadow: 0 8px 24px rgba(0, 73, 74, 0.25); }
+    .btn-solid:hover { background: var(--teal); }
+    .btn-ghost { border: 2px solid rgba(23,23,21,0.18); color: var(--ink); }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal-deep); }
+    .btn-sm { padding: 10px 22px; font-size: 15px; }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    footer { padding: clamp(40px, 5vw, 64px) 0; }
+    .foot-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
+    .foot-inner .brand-mark { height: 24px; color: var(--ink); }
+    .foot-inner p { font-size: 14px; color: var(--muted); }
+    .foot-inner a { color: var(--teal-deep); font-weight: 700; text-decoration: none; }
+
+    .bleed { margin: 0 clamp(0px, 2vw, 32px); }
+
+    /* ── Hero ───────────────────────────────────────────── */
+    .hero { padding-top: clamp(40px, 6vw, 76px); }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+    .hero h1 { font-size: var(--h1); margin: 18px 0 22px; }
+    .hero h1 .tx { color: var(--teal); }
+    .hero .lead { max-width: 50ch; }
+    .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 30px; }
+    .hero-nota { font-size: 14px; color: var(--muted); margin-top: 16px; }
+    @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+
+    /* ── Chat mockup ────────────────────────────────────── */
+    .chat { display: grid; gap: 14px; justify-items: center; }
     .phone {
-      width: min(342px, 100%); position: relative;
-      background: #0B0B0C; border: 1px solid var(--color-border-default);
-      border-radius: 46px; padding: 12px;
-      box-shadow: 0 34px 70px rgba(0,0,0,0.55);
+      width: min(320px, 100%); position: relative;
+      background: var(--dark); border-radius: 42px; padding: 12px;
+      box-shadow: var(--shadow);
     }
     .phone::before {
-      content: ""; position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
-      width: 106px; height: 26px; background: #000; border-radius: 14px; z-index: 3;
+      content: ""; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+      width: 96px; height: 22px; background: #000; border-radius: 12px; z-index: 3;
     }
-    .phone-screen {
-      background: linear-gradient(180deg, var(--color-surface-02), var(--color-surface-01));
-      border-radius: 34px; overflow: hidden;
+    .phone-screen { background: var(--cream); border-radius: 32px; overflow: hidden; }
+    .phone-top { padding: 38px 16px 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(23,23,21,0.08); }
+    .phone-top .av { width: 32px; height: 32px; border-radius: 50%; background: var(--teal); flex: none; display: grid; place-items: center; color: #fff; font-family: var(--display); font-weight: 700; font-size: 15px; }
+    .phone-top .nm { font-size: 13.5px; color: var(--ink); font-weight: 700; line-height: 1.2; }
+    .phone-top .st { font-size: 11px; color: var(--teal-deep); font-weight: 700; }
+    .phone-msgs { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .bolha { max-width: 88%; padding: 10px 14px; border-radius: 14px; font-size: 14.5px; line-height: 1.4; }
+    .bolha time { display: block; font-size: 10.5px; margin-top: 5px; opacity: 0.7; }
+    .bolha.entrada { align-self: flex-start; background: var(--card); color: var(--ink); border-bottom-left-radius: 4px; box-shadow: 0 2px 8px rgba(23,23,21,0.06); }
+    .bolha.saida { align-self: flex-end; background: var(--teal-deep); color: #fff; border-bottom-right-radius: 4px; }
+    .chat-legenda { font-size: 15px; color: var(--muted); text-align: center; }
+
+    /* ── Métricas ───────────────────────────────────────── */
+    .metricas { background: var(--cream-soft); border-radius: clamp(24px, 4vw, 48px); }
+    .metricas-grid { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 56px); padding: clamp(2rem, 4vw, 3rem) 0; }
+    .metricas-grid div { max-width: 260px; }
+    .metricas-grid dt { font-family: var(--display); font-weight: 700; font-size: clamp(38px, 4.6vw, 56px); line-height: 1; color: var(--teal-deep); }
+    .metricas-grid dd { margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-soft); }
+    .metricas-grid dd span { color: var(--muted); }
+
+    /* ── Vazamento (cards com foto) ─────────────────────── */
+    .card3-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 24px); }
+    @media (max-width: 860px) { .card3-grid { grid-template-columns: 1fr; } }
+    .card-foto {
+      border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
+      min-height: 260px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-end;
+      background-repeat: no-repeat; background-position: center; background-size: cover;
+      position: relative; color: #fff;
     }
-    .phone-top {
-      padding: 42px 18px 12px; display: flex; align-items: center; gap: 10px;
-      border-bottom: 1px solid var(--color-border-subtle);
+    .card-foto::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(18,33,31,0.15) 0%, rgba(18,33,31,0.88) 100%);
     }
-    .phone-top .av { width: 34px; height: 34px; border-radius: 50%; background: var(--color-accent);
-      flex: none; display: grid; place-items: center; color: var(--color-territory);
-      font-family: var(--font-display); font-weight: 700; font-size: 17px; }
-    .phone-top .nm { font-size: 14px; color: var(--color-respiro-base); font-weight: 700; line-height: 1.2; }
-    .phone-top .st { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-light); }
-    .phone-msgs { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-    .bolha { max-width: 88%; padding: 11px 15px; border-radius: 14px; font-size: 15px; line-height: 1.45; }
-    .bolha time { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.03em; margin-top: 6px; }
-    .bolha.entrada { align-self: flex-start; background: var(--color-surface-03); color: var(--color-respiro-base); border-bottom-left-radius: 4px; }
-    .bolha.entrada time { color: var(--color-muted-deep); }
-    .bolha.saida { align-self: flex-end; background: var(--color-accent); color: var(--color-territory); border-bottom-right-radius: 4px; }
-    .bolha.saida time { color: var(--color-accent-deep); }
-    .bolha.saida strong { color: var(--color-territory); }
-    .chat-legenda { text-align: center; font-family: var(--font-display); font-size: 17px; color: var(--color-muted); }
+    .card-foto h3, .card-foto p { position: relative; z-index: 1; }
+    .card-foto h3 { font-size: 21px; font-family: var(--display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 8px; }
+    .card-foto p { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.86); }
+    .card-foto--forahora { background-image: url(assets/card-forahora.webp); }
+    .card-foto--espera { background-image: url(assets/card-espera.webp); }
+    .card-foto--some { background-image: url(assets/card-some.webp); }
 
-    /* MÉTRICAS */
-    .au-metricas { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 56px); padding: clamp(2rem, 4vw, 3rem) 0; }
-    .au-metricas div { max-width: 240px; }
-    .au-metricas dt { font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 60px); line-height: 1; color: var(--color-accent); }
-    .au-metricas dd { margin: 8px 0 0; font-size: var(--font-body-sm); line-height: 1.5; color: var(--color-muted); }
-    .au-metricas dd span { color: var(--color-muted-deep); }
+    /* ── Como funciona (dark, igual .fluxo do index) ────── */
+    .fluxo { background: var(--dark); color: #EDEBE4; border-radius: clamp(24px, 4vw, 48px); }
+    .fluxo .eyebrow { color: var(--teal-bright); }
+    .fluxo .eyebrow::before { background:
+        linear-gradient(var(--teal-bright) 0 0) top left / 100% 5.5px no-repeat,
+        linear-gradient(var(--teal-bright) 0 0) bottom left / 100% 5.5px no-repeat; }
+    .fluxo .sec-head .lead { color: rgba(237,235,228,0.72); }
 
-    /* SEÇÕES */
-    .au-sec { padding: clamp(2.8rem, 5vw, 4.5rem) 0; }
-    .au-sec > .eyebrow { margin-bottom: 14px; }
-    .au-sec .h2 { max-width: 20ch; }
-    .au-sec-intro { color: var(--color-muted); font-size: var(--font-body-lg); line-height: 1.7; max-width: 58ch; margin-top: 16px; }
-    .au-sec-intro strong { color: var(--color-respiro-base); }
+    .passos { display: grid; gap: 0; max-width: 860px; }
+    .passo { display: grid; grid-template-columns: 64px 1fr; gap: 22px; position: relative; padding-bottom: clamp(28px, 3vw, 42px); }
+    .passo:last-child { padding-bottom: 0; }
+    .passo::before {
+      content: ''; position: absolute; left: 31px; top: 58px; bottom: 6px; width: 2px;
+      background: linear-gradient(rgba(61,180,182,0.5), rgba(61,180,182,0.08));
+    }
+    .passo:last-child::before { display: none; }
+    .passo-n {
+      width: 64px; height: 64px; border-radius: 50%; flex: none;
+      background: var(--dark-2); border: 2px solid rgba(61,180,182,0.4);
+      display: grid; place-items: center;
+      font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--teal-bright);
+    }
+    .passo h4 { font-family: var(--display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; font-size: clamp(21px, 2vw, 27px); line-height: 1.04; margin: 16px 0 8px; }
+    .passo p { color: rgba(237,235,228,0.72); max-width: 56ch; font-size: 16px; }
+    .passo strong { color: #fff; }
 
-    .au-cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 28px; }
-    .au-card { background-color: var(--color-surface-01); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 24px; }
-    .au-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 21px; color: var(--color-respiro-base); margin-bottom: 8px; }
-    .au-card p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
+    /* ── Investimento ───────────────────────────────────── */
+    .modelo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    @media (max-width: 700px) { .modelo-grid { grid-template-columns: 1fr; } }
+    .modelo-card { background: var(--card); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+    .modelo-card .tag { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teal-deep); background: rgba(46,139,142,0.10); padding: 6px 14px; border-radius: 999px; margin-bottom: 14px; }
+    .modelo-card p { color: var(--ink-soft); font-size: 16px; }
+    .modelo-nota { color: var(--ink-soft); max-width: 62ch; margin-top: 22px; }
+    .modelo-nota strong { color: var(--ink); }
 
-    /* Fundos temáticos dos cards (véu escuro à esquerda p/ legibilidade) */
-    .au-step, .au-card { background-repeat: no-repeat; background-position: right center; background-size: cover; }
-    .au-step { --veu: linear-gradient(90deg, rgba(26,26,24,0.97) 0%, rgba(26,26,24,0.82) 45%, rgba(26,26,24,0.5) 100%); }
-    .au-card { --veu: linear-gradient(180deg, rgba(26,26,24,0.94) 0%, rgba(26,26,24,0.7) 100%); }
-    .au-step--tom     { background-image: var(--veu), url(assets/card-tom.webp); }
-    .au-step--whats   { background-image: var(--veu), url(assets/card-whats.webp); }
-    .au-step--passa   { background-image: var(--veu), url(assets/card-passa.webp); }
-    .au-step--melhora { background-image: var(--veu), url(assets/card-melhora.webp); }
-    .au-card--forahora { background-image: var(--veu), url(assets/card-forahora.webp); }
-    .au-card--espera   { background-image: var(--veu), url(assets/card-espera.webp); }
-    .au-card--some     { background-image: var(--veu), url(assets/card-some.webp); }
+    /* ── FAQ ────────────────────────────────────────────── */
+    .faq { margin-top: 8px; max-width: 780px; }
+    .faq details { border-bottom: 1px solid rgba(23,23,21,0.1); }
+    .faq summary { cursor: pointer; padding: 20px 4px; font-size: 17px; font-weight: 700; color: var(--ink); list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after { content: "+"; color: var(--teal); font-family: var(--display); font-size: 20px; }
+    .faq details[open] summary::after { content: "–"; }
+    .faq details p { padding: 0 4px 22px; margin: 0; color: var(--ink-soft); font-size: 16px; line-height: 1.7; max-width: 62ch; }
 
-    .au-steps { display: grid; gap: 12px; margin-top: 28px; }
-    .au-step { display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start;
-      background-color: var(--color-surface-01); border: 1px solid var(--color-border-subtle);
-      border-left: 2px solid var(--color-accent); border-radius: var(--radius-md); padding: 18px 22px; }
-    .au-step-num { font-family: var(--font-display); font-weight: 500; font-size: 40px; line-height: 0.9; color: var(--color-surface-03); }
-    .au-step h4 { font-family: var(--font-display); font-weight: 500; font-size: 20px; color: var(--color-respiro-base); margin-bottom: 4px; }
-    .au-step p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
-    @media (max-width: 560px) { .au-step { grid-template-columns: 1fr; gap: 6px; } }
-
-    .au-modelo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 26px; }
-    .au-modelo-card { background: var(--color-surface-01); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: 24px; }
-    .au-modelo-card .layer-tag { display: block; margin-bottom: 8px; }
-    .au-modelo-card p { color: var(--color-muted); font-size: var(--font-body-sm); line-height: 1.6; }
-    @media (max-width: 560px) { .au-modelo { grid-template-columns: 1fr; } }
-
-    /* FAQ */
-    .au-faq { margin-top: 24px; max-width: 780px; }
-    .au-faq details { border-bottom: 1px solid var(--color-border-subtle); }
-    .au-faq summary { cursor: pointer; padding: 18px 4px; font-size: 17px; color: var(--color-respiro-base); list-style: none; display: flex; justify-content: space-between; gap: 16px; }
-    .au-faq summary::-webkit-details-marker { display: none; }
-    .au-faq summary::after { content: "+"; color: var(--color-accent-light); font-family: var(--font-mono); }
-    .au-faq details[open] summary::after { content: "–"; }
-    .au-faq details p { padding: 0 4px 20px; margin: 0; color: var(--color-muted); font-size: var(--font-body-base); line-height: 1.7; max-width: 62ch; }
-
-    /* CTA FINAL */
-    .au-final { text-align: center; padding: clamp(3.5rem, 7vw, 6rem) 0; }
-    .au-final .h2 { max-width: 20ch; margin-inline: auto; }
-    .au-final .au-sec-intro { margin-inline: auto; }
-    .au-final .au-ctas { justify-content: center; margin-top: 30px; }
-    .au-footer { border-top: 1px solid var(--color-border-subtle); padding: 22px 24px; text-align: center;
-      font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-muted-deep); }
-
-    [data-demo] { display: none; }
-    [data-demo].is-on { display: inline-flex; }
+    /* ── CTA final ──────────────────────────────────────── */
+    .cta-fim { background: var(--teal-deep); color: #fff; border-radius: clamp(24px, 4vw, 48px); text-align: center; }
+    .cta-fim .display { font-size: clamp(38px, 5.4vw, 76px); }
+    .cta-fim .lead { color: rgba(255,255,255,0.78); max-width: 52ch; margin: 20px auto 0; }
+    .cta-fim .btn-solid { background: var(--terra); color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-top: 36px; font-size: 18px; padding: 18px 40px; }
+    .cta-fim .btn-solid:hover { background: #fff; color: var(--teal-deep); }
+    .cta-fim .nota { display: block; margin-top: 18px; font-size: 14.5px; color: rgba(255,255,255,0.62); }
   </style>
 </head>
 <body>
 
-  <div class="grain" aria-hidden="true"></div>
-
-  <header class="au-header">
-    <a class="brand" href="index.html" aria-label="Mindle — início">
-      <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
-        <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H539.349V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
-        <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="var(--color-accent)"/>
-      </svg>
-    </a>
-    <span class="au-header-tag">Camada 05 · Operação</span>
+  <!-- ============ HEADER ============ -->
+  <header class="top" id="topo">
+    <div class="top-inner">
+      <a href="index.html" aria-label="Mindle, início">
+        <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+          <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H535.214V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+          <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="#2E8B8E"/>
+        </svg>
+      </a>
+      <nav class="top-nav" aria-label="Navegação principal">
+        <a href="index.html#pecas">As três peças</a>
+        <a href="index.html#fluxo">Como funciona</a>
+        <a href="index.html#alem">O que fazemos</a>
+        <a href="index.html#quem">Para quem</a>
+      </nav>
+      <a class="btn btn-solid btn-sm" href="https://wa.me/5541998619917?text=Ol%C3%A1%2C%20vim%20pela%20p%C3%A1gina%20de%20automa%C3%A7%C3%A3o." target="_blank" rel="noopener">Conversar grátis</a>
+    </div>
   </header>
 
   <main>
 
-    <!-- HERO -->
-    <div class="au-wrap">
-      <section class="au-hero">
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="wrap hero-grid">
         <div>
-          <p class="eyebrow"><span class="eyebrow-index">05</span>Sistema de presença digital — Operação</p>
-          <h1 class="h1">Quem responde primeiro, <span class="tx">atende.</span></h1>
-          <p class="au-sub">O cliente indicado te chama às 22h, no sábado, no meio do seu atendimento. Um agente no seu WhatsApp responde na hora, com o seu tom — e te passa a conversa quando ela precisa de gente.</p>
-          <div class="au-ctas">
-            <a class="btn btn-primary" data-demo id="demo-hero" href="#" target="_blank" rel="noopener" data-hover>Converse com o nosso agente</a>
-            <a class="link-ghost" href="agenda.html" data-hover>Agendar diagnóstico <span class="link-arrow">&rarr;</span></a>
+          <p class="eyebrow rv">Peça 03 · Atende na hora</p>
+          <h1 class="display rv rv-d1">Quem responde primeiro, <span class="tx">atende.</span></h1>
+          <p class="lead rv rv-d2">O cliente indicado te chama às 22h, no sábado, no meio do seu atendimento. Um agente no seu WhatsApp responde na hora, com o seu tom, e te passa a conversa quando ela precisa de gente.</p>
+          <div class="hero-cta rv rv-d3">
+            <a class="btn btn-solid" href="https://wa.me/5541998619917?text=Ol%C3%A1%2C%20vim%20pela%20p%C3%A1gina%20de%20automa%C3%A7%C3%A3o." target="_blank" rel="noopener">Quero isso no meu WhatsApp</a>
+            <a class="btn btn-ghost" href="#como-funciona">Ver como funciona</a>
           </div>
-          <p class="au-cta-nota" data-demo id="nota-hero" style="margin-top:14px">Repare: quem te responde é o nosso próprio agente.</p>
+          <p class="hero-nota rv rv-d3">30 minutos de diagnóstico · online · sem compromisso</p>
         </div>
-        <div class="chat" aria-label="Exemplo: cliente pergunta às 22h47 se há horário essa semana; o agente responde em 8 segundos com dois horários e confirma o agendamento.">
+        <div class="chat rv rv-d2" aria-label="Exemplo: cliente pergunta às 22h47 se há horário essa semana; o agente responde em segundos com dois horários e confirma o agendamento.">
           <div class="phone">
             <div class="phone-screen">
               <div class="phone-top">
@@ -196,125 +311,136 @@
               </div>
               <div class="phone-msgs">
                 <div class="bolha entrada">Oi! Vocês foram indicados pra mim. Consegue me encaixar essa semana?<time>22:47</time></div>
-                <div class="bolha saida">Consigo! Tenho <strong>quinta às 15h</strong> ou <strong>sexta às 10h</strong>. Qual fica melhor pra você?<time>22:47 · respondido em 8 segundos</time></div>
+                <div class="bolha saida">Consigo! Tenho quinta às 15h ou sexta às 10h. Qual fica melhor pra você?<time>22:47 · respondido em 8 segundos</time></div>
                 <div class="bolha entrada">Quinta 15h é perfeito.<time>22:48</time></div>
-                <div class="bolha saida">Fechado, quinta às 15h. Confirmo com você na quarta — qualquer coisa, é só chamar por aqui.<time>22:48</time></div>
+                <div class="bolha saida">Fechado, quinta às 15h. Confirmo com você na quarta, qualquer coisa é só chamar por aqui.<time>22:48</time></div>
               </div>
             </div>
           </div>
           <p class="chat-legenda">E você estava em outro atendimento.</p>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
-    <!-- MÉTRICAS -->
-    <div class="au-band--fill">
-      <div class="au-wrap">
-        <dl class="au-metricas">
-          <div><dt>21×</dt><dd>mais chance de qualificar um contato respondendo em 5 minutos <span>(Harvard Business Review)</span></dd></div>
-          <div><dt>80%</dt><dd>do atendimento no Brasil acontece pelo WhatsApp</dd></div>
-          <div><dt>&minus;40%</dt><dd>de faltas quando a confirmação do horário é automática</dd></div>
+    <!-- ============ MÉTRICAS ============ -->
+    <section class="metricas bleed">
+      <div class="wrap">
+        <dl class="metricas-grid">
+          <div class="rv"><dt>21×</dt><dd>mais chance de qualificar um contato respondendo em 5 minutos <span>(Harvard Business Review)</span></dd></div>
+          <div class="rv rv-d1"><dt>80%</dt><dd>do atendimento no Brasil acontece pelo WhatsApp</dd></div>
+          <div class="rv rv-d2"><dt>&minus;40%</dt><dd>de faltas quando a confirmação do horário é automática</dd></div>
         </dl>
       </div>
-    </div>
+    </section>
 
-    <!-- O PROBLEMA -->
-    <div class="au-band">
-      <div class="au-wrap">
-        <section class="au-sec">
-          <p class="eyebrow"><span class="eyebrow-index">01</span>O vazamento</p>
-          <h2 class="h2">O contato não se perde por falta de qualidade. Se perde por falta de <span class="tx">hora.</span></h2>
-          <p class="au-sec-intro">O indicado te chama fora do horário. Você responde no dia seguinte — e ele já falou com quem respondeu em dois minutos. <strong>Esse custo não aparece em relatório: aparece na conversa que esfriou.</strong></p>
-          <div class="au-cards3">
-            <article class="au-card au-card--forahora"><h3>Chega fora de hora</h3><p>Boa parte das mensagens cai à noite, no fim de semana, no feriado — justamente quando você não está no telefone.</p></article>
-            <article class="au-card au-card--espera"><h3>Espera esfria</h3><p>Cada hora de silêncio é uma chance a menos. O cliente indicado não avisa que desistiu; ele só fecha com outro.</p></article>
-            <article class="au-card au-card--some"><h3>Some no meio</h3><p>Conversa perdida no meio de mil outras, orçamento sem retorno, horário que ninguém confirmou. Vaza sem ninguém ver.</p></article>
-          </div>
-        </section>
+    <!-- ============ O VAZAMENTO ============ -->
+    <section id="vazamento">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="eyebrow rv">O vazamento</p>
+          <h2 class="h2 display rv rv-d1">O contato não se perde por falta de qualidade. Se perde por falta de <span class="tx" style="color:var(--teal)">hora.</span></h2>
+          <p class="lead rv rv-d2">O indicado te chama fora do horário. Você responde no dia seguinte, e ele já falou com quem respondeu em dois minutos. Esse custo não aparece em relatório: aparece na conversa que esfriou.</p>
+        </div>
+        <div class="card3-grid">
+          <article class="card-foto card-foto--forahora rv"><h3>Chega fora de hora</h3><p>Boa parte das mensagens cai à noite, no fim de semana, no feriado, justamente quando você não está no telefone.</p></article>
+          <article class="card-foto card-foto--espera rv rv-d1"><h3>Espera esfria</h3><p>Cada hora de silêncio é uma chance a menos. O cliente indicado não avisa que desistiu, ele só fecha com outro.</p></article>
+          <article class="card-foto card-foto--some rv rv-d2"><h3>Some no meio</h3><p>Conversa perdida no meio de mil outras, orçamento sem retorno, horário que ninguém confirmou. Vaza sem ninguém ver.</p></article>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- COMO FUNCIONA -->
-    <div class="au-band--fill">
-      <div class="au-wrap">
-        <section class="au-sec">
-          <p class="eyebrow"><span class="eyebrow-index">02</span>Como funciona</p>
-          <h2 class="h2">Um agente com o seu tom — não um <span class="tx">robô genérico.</span></h2>
-          <div class="au-steps">
-            <div class="au-step au-step--tom"><span class="au-step-num">01</span><div><h4>O tom é seu</h4><p>Um briefing define como ele fala: 1ª pessoa ou assistente, o que pode dizer, o que jamais responde — inclusive sobre preço. Ele soa como o seu negócio porque foi calibrado por ele.</p></div></div>
-            <div class="au-step au-step--whats"><span class="au-step-num">02</span><div><h4>Atende no seu WhatsApp</h4><p>No seu número atual, com o seu histórico. Responde as perguntas do dia a dia na hora, a qualquer hora, e você continua podendo assumir a conversa quando quiser.</p></div></div>
-            <div class="au-step au-step--passa"><span class="au-step-num">03</span><div><h4>Passa pra você na hora certa</h4><p>Quando a conversa pede gente — um caso delicado, uma negociação, um cliente importante — ele avisa você e sai de cena. Faz a triagem; quem atende é você.</p></div></div>
-            <div class="au-step au-step--melhora"><span class="au-step-num">04</span><div><h4>Melhora todo mês</h4><p>Cada pergunta nova e cada resposta que ele errou vira treino. Um agente parado envelhece; o seu fica mais afiado a cada ciclo.</p></div></div>
-          </div>
-        </section>
+    <!-- ============ COMO FUNCIONA ============ -->
+    <section class="fluxo bleed" id="como-funciona">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="eyebrow rv">Como funciona</p>
+          <h2 class="h2 display rv rv-d1">Um agente com o seu tom, não um robô genérico</h2>
+        </div>
+        <div class="passos">
+          <div class="passo rv"><div class="passo-n">1</div><div><h4>O tom é seu</h4><p>Um briefing define como ele fala: 1ª pessoa ou assistente, o que pode dizer, o que jamais responde, inclusive sobre preço. <strong>Ele soa como o seu negócio porque foi calibrado por ele.</strong></p></div></div>
+          <div class="passo rv"><div class="passo-n">2</div><div><h4>Atende no seu WhatsApp</h4><p>No seu número atual, com o seu histórico. Responde as perguntas do dia a dia na hora, a qualquer hora, e você continua podendo assumir a conversa quando quiser.</p></div></div>
+          <div class="passo rv"><div class="passo-n">3</div><div><h4>Passa pra você na hora certa</h4><p>Quando a conversa pede gente, um caso delicado, uma negociação, um cliente importante, ele avisa você e sai de cena. <strong>Faz a triagem; quem atende é você.</strong></p></div></div>
+          <div class="passo rv"><div class="passo-n">4</div><div><h4>Melhora todo mês</h4><p>Cada pergunta nova e cada resposta que ele errou vira treino. Um agente parado envelhece; o seu fica mais afiado a cada ciclo.</p></div></div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- INVESTIMENTO -->
-    <div class="au-band">
-      <div class="au-wrap">
-        <section class="au-sec">
-          <p class="eyebrow"><span class="eyebrow-index">03</span>Como se investe</p>
-          <h2 class="h2">Dois momentos, sem <span class="tx">fidelidade.</span></h2>
-          <div class="au-modelo">
-            <div class="au-modelo-card"><span class="layer-tag">Setup — uma vez</span><p>A construção: briefing do tom, calibração das regras, treino inicial com as suas respostas reais e a entrada no ar no seu número.</p></div>
-            <div class="au-modelo-card"><span class="layer-tag">Mensalidade — operação</span><p>O que mantém o agente vivo: revisão das conversas, treino contínuo com correções e perguntas novas, ajustes de tom e monitoramento.</p></div>
-          </div>
-          <p class="au-sec-intro" style="margin-top:20px">O número certo depende do seu volume e do seu caso — e sai da primeira conversa, como tudo aqui. <strong>Diagnóstico antes de prescrição.</strong></p>
-        </section>
+    <!-- ============ INVESTIMENTO ============ -->
+    <section id="investimento">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="eyebrow rv">Como se investe</p>
+          <h2 class="h2 display rv rv-d1">Dois momentos, sem <span class="tx" style="color:var(--teal)">fidelidade.</span></h2>
+        </div>
+        <div class="modelo-grid">
+          <div class="modelo-card rv"><span class="tag">Setup · uma vez</span><p>A construção: briefing do tom, calibração das regras, treino inicial com as suas respostas reais e a entrada no ar no seu número.</p></div>
+          <div class="modelo-card rv rv-d1"><span class="tag">Mensalidade · operação</span><p>O que mantém o agente vivo: revisão das conversas, treino contínuo com correções e perguntas novas, ajustes de tom e monitoramento.</p></div>
+        </div>
+        <p class="modelo-nota rv rv-d2">O número certo depende do seu volume e do seu caso, e sai da primeira conversa, como tudo aqui. <strong>Diagnóstico antes de prescrição.</strong></p>
       </div>
-    </div>
+    </section>
 
-    <!-- FAQ -->
-    <div class="au-band--fill">
-      <div class="au-wrap">
-        <section class="au-sec">
-          <p class="eyebrow"><span class="eyebrow-index">04</span>Antes que você pergunte</p>
-          <h2 class="h2">Perguntas de quem chegou até <span class="tx">aqui.</span></h2>
-          <div class="au-faq">
-            <details><summary>O agente parece robô? O cliente percebe?</summary><p>Ele responde com o tom do seu negócio, não com voz de robô genérico. E é honesto: quando a conversa precisa de gente, ele não inventa — passa pra você. É treinado com as suas respostas reais, então soa como o seu melhor atendimento soaria.</p></details>
-            <details><summary>Funciona no meu número atual do WhatsApp?</summary><p>Funciona. A instalação usa o seu número, mantém o seu histórico, e você continua podendo assumir a conversa manualmente quando quiser.</p></details>
-            <details><summary>Preciso ter o resto do sistema pra ter só o agente?</summary><p>A automação é a camada de Operação — ela rende mais sobre uma base bem-feita (uma presença que já traz contato). Mas dá pra entrar por aqui. O que faz sentido no seu caso sai do diagnóstico, sem empurrar o que você não precisa.</p></details>
-            <details><summary>Quanto custa?</summary><p>Setup mais uma mensalidade, sem fidelidade — não passamos número solto porque ele muda conforme o seu volume e o seu escopo. O valor fechado sai do diagnóstico gratuito, por escrito, antes de qualquer coisa começar.</p></details>
-            <details><summary>Quanto tempo pra entrar no ar?</summary><p>Semanas, não meses. O prazo exato vai por escrito na proposta.</p></details>
-          </div>
-        </section>
+    <!-- ============ FAQ ============ -->
+    <section id="faq">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="eyebrow rv">Antes que você pergunte</p>
+          <h2 class="h2 display rv rv-d1">Perguntas de quem chegou até aqui</h2>
+        </div>
+        <div class="faq rv">
+          <details><summary>O agente parece robô? O cliente percebe?</summary><p>Ele responde com o tom do seu negócio, não com voz de robô genérico. E é honesto: quando a conversa precisa de gente, ele não inventa, passa pra você. É treinado com as suas respostas reais, então soa como o seu melhor atendimento soaria.</p></details>
+          <details><summary>Funciona no meu número atual do WhatsApp?</summary><p>Funciona. A instalação usa o seu número, mantém o seu histórico, e você continua podendo assumir a conversa manualmente quando quiser.</p></details>
+          <details><summary>Preciso ter o site e o sistema pra ter só o agente?</summary><p>A automação é uma das três peças, e rende mais sobre uma base bem-feita (um site que já traz contato, um sistema que já organiza). Mas dá pra entrar por aqui. O que faz sentido no seu caso sai do diagnóstico, sem empurrar o que você não precisa.</p></details>
+          <details><summary>Quanto custa?</summary><p>Setup mais uma mensalidade, sem fidelidade. Não passamos número solto porque ele muda conforme o seu volume e o seu escopo. O valor fechado sai do diagnóstico gratuito, por escrito, antes de qualquer coisa começar.</p></details>
+          <details><summary>Quanto tempo pra entrar no ar?</summary><p>Semanas, não meses. O prazo exato vai por escrito na proposta.</p></details>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- CTA FINAL -->
-    <div class="au-band">
-      <div class="au-wrap">
-        <section class="au-sec au-final">
-          <p class="eyebrow" style="justify-content:center"><span class="eyebrow-index">&#9679;</span>Prove antes de decidir</p>
-          <h2 class="h2">A melhor prova é <span class="tx">conversar.</span></h2>
-          <p class="au-sec-intro">O nosso próprio atendimento roda neste sistema. Mande uma mensagem e veja como ele soa — depois imagine com o seu tom, no seu número.</p>
-          <div class="au-ctas">
-            <a class="btn btn-primary" data-demo id="demo-final" href="#" target="_blank" rel="noopener" data-hover>Falar com o nosso agente</a>
-            <a class="btn btn-header" href="agenda.html" data-hover>Agendar diagnóstico gratuito</a>
-          </div>
-        </section>
+    <!-- ============ CTA FINAL ============ -->
+    <section class="cta-fim bleed">
+      <div class="wrap">
+        <h2 class="display rv">Vamos conversar sobre o seu atendimento?</h2>
+        <p class="lead rv rv-d1">Conta pra gente como funciona hoje. A gente te mostra, na tela, como ficaria com o agente rodando no seu número.</p>
+        <a class="btn btn-solid rv rv-d2" href="https://wa.me/5541998619917?text=Ol%C3%A1%2C%20vim%20pela%20p%C3%A1gina%20de%20automa%C3%A7%C3%A3o." target="_blank" rel="noopener">Agendar conversa grátis</a>
+        <span class="nota rv rv-d2">30 minutos · online · sem compromisso e sem enrolação</span>
       </div>
-    </div>
+    </section>
 
   </main>
 
-  <footer class="au-footer">Mindle · Ponto · Linha · Sistema · <a href="index.html" style="color:var(--color-accent-light)">mindlebrand.com.br</a></footer>
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap foot-inner">
+      <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+        <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H535.214V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+        <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="#2E8B8E"/>
+      </svg>
+      <p>Sites, sistemas e automação para negócios que atendem gente.</p>
+      <p>© 2026 Mindle · <a href="index.html">mindlebrand.com.br</a></p>
+    </div>
+  </footer>
 
-  <script src="config.js"></script>
   <script>
-    // Demo viva: os botões e a nota só aparecem se o número do agente estiver no config
-    (function () {
-      var n = (window.MINDLE_WHATS || '').replace(/\D/g, '');
-      if (!n) return;
-      var msg = encodeURIComponent('Olá! Vim pela página da Mindle e quero ver o agente funcionando.');
-      ['demo-hero', 'demo-final'].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) { el.href = 'https://wa.me/' + n + '?text=' + msg; el.classList.add('is-on'); }
-      });
-      var nota = document.getElementById('nota-hero');
-      if (nota) nota.classList.add('is-on');
-    })();
+    document.documentElement.classList.add('js');
+
+    const topbar = document.querySelector('.top');
+    addEventListener('scroll', () => topbar.classList.toggle('scrolled', scrollY > 8), { passive: true });
+
+    const rvs = Array.from(document.querySelectorAll('.rv'));
+    function revela() {
+      const corte = innerHeight * 0.94;
+      for (let i = rvs.length - 1; i >= 0; i--) {
+        if (rvs[i].getBoundingClientRect().top < corte) {
+          rvs[i].classList.add('on');
+          rvs.splice(i, 1);
+        }
+      }
+    }
+    addEventListener('scroll', revela, { passive: true });
+    addEventListener('resize', revela);
+    revela();
   </script>
 </body>
 </html>
