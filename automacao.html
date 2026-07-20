@@ -25,6 +25,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/novo/hero.webp" media="(min-width: 901px)">
+  <link rel="preload" as="image" href="assets/novo/hero-mobile.webp" media="(max-width: 900px)">
 
   <style>
     /* ════════════════════════════════════════════════════════
@@ -155,9 +157,8 @@
     .hero { position: relative; padding: clamp(48px, 7vw, 96px) 0 clamp(56px, 7vw, 100px); }
     .hero-grid > div { max-width: 640px; }
 
-    /* Mesma foto (peca-automacao.webp) no desktop e no mobile, como fundo
-       full-bleed da seção — igual à técnica do hero do index.html, só que
-       com uma imagem só para as duas larguras. */
+    /* Mesmo par de fotos do hero do index.html (hero.webp / hero-mobile.webp),
+       fundo full-bleed da seção. */
     @media (min-width: 901px) {
       .hero {
         display: flex; align-items: center;
@@ -168,7 +169,7 @@
             rgba(244,241,234,0.88) 34%,
             rgba(244,241,234,0.45) 60%,
             rgba(244,241,234,0.05) 84%),
-          url('assets/novo/peca-automacao.webp');
+          url('assets/novo/hero.webp');
         background-size: cover;
         background-position: center right;
         background-repeat: no-repeat;
@@ -201,7 +202,7 @@
             rgba(244,241,234,0) 72%,
             rgba(244,241,234,0) 86%,
             rgba(244,241,234,0.9) 100%),
-          url('assets/novo/peca-automacao.webp');
+          url('assets/novo/hero-mobile.webp');
         background-size: cover;
         background-position: center bottom;
         background-repeat: no-repeat;
