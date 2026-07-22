@@ -84,6 +84,7 @@
       </div>
 
       <div class="toolbar">
+        <button class="btn btn-primary" id="lead-novo-btn" type="button">+ Novo lead</button>
         <div class="chips" id="chips-caminho" role="group" aria-label="Filtrar por caminho">
           <button class="chip is-on" data-caminho="todos">Todos</button>
           <button class="chip" data-caminho="A">Caminho A</button>
@@ -99,6 +100,22 @@
         </select>
         <input class="field-input toolbar-busca" type="search" id="busca" placeholder="Buscar nome, e-mail, profissão&hellip;" aria-label="Buscar leads">
       </div>
+
+      <form class="cl-form" id="lead-form" hidden>
+        <div class="cl-form-grid">
+          <div class="dg-field"><label class="field-label" for="lead-nome">Nome</label><input class="field-input" id="lead-nome" required></div>
+          <div class="dg-field"><label class="field-label" for="lead-email">E-mail</label><input class="field-input" id="lead-email" type="email" required></div>
+          <div class="dg-field"><label class="field-label" for="lead-telefone">Telefone / WhatsApp</label><input class="field-input" id="lead-telefone" type="tel" inputmode="numeric" maxlength="16" placeholder="(41) 99999-9999"></div>
+          <div class="dg-field"><label class="field-label" for="lead-profissao">Profissão</label><input class="field-input" id="lead-profissao" placeholder="opcional"></div>
+          <div class="dg-field"><label class="field-label" for="lead-servico">Serviço de interesse</label><input class="field-input" id="lead-servico" placeholder="opcional"></div>
+        </div>
+        <div class="dg-field"><label class="field-label" for="lead-notas">Notas</label><textarea class="field-input dg-ta" id="lead-notas" placeholder="Como chegou até você, contexto da indicação…"></textarea></div>
+        <div class="cl-form-acoes">
+          <button class="btn btn-primary" id="lead-salvar" type="submit">Salvar lead</button>
+          <button class="btn cl-cancelar" id="lead-cancelar" type="button">Cancelar</button>
+          <p class="admin-msg" id="lead-form-msg" role="alert" hidden></p>
+        </div>
+      </form>
 
       <p class="admin-msg" id="app-msg" role="status" hidden></p>
       <div class="leads" id="leads-list" aria-live="polite"></div>

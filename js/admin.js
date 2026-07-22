@@ -169,7 +169,7 @@
       const atrasado = l.status === 'novo' && slaEstourado(l.created_at);
       const origem = [l.utm_source, l.utm_medium, l.utm_campaign].filter(Boolean).join(' · ');
       const canal = l.canal || 'site';
-      const CANAL_LABEL = { site: 'Site', whatsapp: 'WhatsApp', instagram: 'Instagram', agenda: 'Agenda direto' };
+      const CANAL_LABEL = { site: 'Site', whatsapp: 'WhatsApp', instagram: 'Instagram', agenda: 'Agenda direto', indicacao: 'Indicação' };
       const foneDigits = (l.telefone || '').replace(/\D/g, '');
       return `
       <article class="lead-card${atrasado ? ' is-atrasado' : ''}" data-id="${esc(l.id)}">
@@ -205,6 +205,7 @@
           </select>
           <textarea class="lead-notas" placeholder="Notas de follow-up…" aria-label="Notas">${esc(l.notas || '')}</textarea>
           <button type="button" class="ta-expand" aria-label="Expandir notas">expandir</button>
+          <button type="button" class="lead-view lead-converter">→ Cliente</button>
           <button type="button" class="cl-excluir lead-excluir" aria-label="Excluir lead">excluir</button>
           <span class="lead-salvo" aria-hidden="true">salvo ✓</span>
         </div>
@@ -246,6 +247,19 @@
     if (lead && (lead.notas || null) !== valor) salvar(card.dataset.id, { notas: valor }, card);
   });
   $('#leads-list').addEventListener('click', async (e) => {
+    const conv = e.target.closest('.lead-converter');
+    if (conv) {
+      const card = conv.closest('.lead-card');
+      const lead = leads.find((l) => l.id === card.dataset.id);
+      if (!lead) return;
+      const tabCadastro = document.querySelector('.tab[data-tab="cadastro"]');
+      if (tabCadastro) tabCadastro.click();
+      cadAbrirForm({ nome: lead.nome, email: lead.email, whatsapp: lead.telefone, notas: lead.notas });
+      $('#cad-nome').focus();
+      cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (lead.status !== 'fechado') salvar(lead.id, { status: 'fechado' }, card);
+      return;
+    }
     const btn = e.target.closest('.lead-excluir');
     if (!btn) return;
     const card = btn.closest('.lead-card');
@@ -254,6 +268,56 @@
     const { error } = await sb.from('leads').delete().eq('id', card.dataset.id);
     if (error) { alert('Erro ao excluir: ' + error.message); return; }
     leads = leads.filter((l) => l.id !== card.dataset.id);
+    render();
+  });
+
+  /* ── Novo lead manual (indicação direta) ────────── */
+  const leadForm = $('#lead-form');
+  $('#lead-novo-btn').addEventListener('click', () => {
+    if (leadForm.hidden) {
+      leadForm.reset();
+      $('#lead-form-msg').hidden = true;
+      leadForm.hidden = false;
+      $('#lead-nome').focus();
+    } else {
+      leadForm.hidden = true;
+    }
+  });
+  $('#lead-cancelar').addEventListener('click', () => { leadForm.hidden = true; });
+  const leadTelefone = $('#lead-telefone');
+  if (leadTelefone) leadTelefone.addEventListener('input', () => {
+    const d = leadTelefone.value.replace(/\D/g, '').slice(0, 11);
+    leadTelefone.value = d.length <= 2 ? (d ? '(' + d : '')
+      : d.length <= 6 ? '(' + d.slice(0, 2) + ') ' + d.slice(2)
+      : d.length <= 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6)
+      : '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  });
+
+  leadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fmsg = $('#lead-form-msg');
+    const nome = $('#lead-nome').value.trim();
+    const email = $('#lead-email').value.trim();
+    if (!nome || !email) { fmsg.textContent = 'Informe nome e e-mail.'; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+    const dados = {
+      nome, email,
+      telefone: $('#lead-telefone').value.trim() || null,
+      profissao: $('#lead-profissao').value.trim() || null,
+      servico: $('#lead-servico').value.trim() || null,
+      notas: $('#lead-notas').value.trim() || null,
+      canal: 'indicacao',
+      situacao: 'A',
+      investimento: 'sim',
+      status: 'novo',
+    };
+    const btn = $('#lead-salvar');
+    btn.disabled = true; btn.textContent = 'Salvando…';
+    const { error } = await sb.from('leads').insert(dados);
+    btn.disabled = false; btn.textContent = 'Salvar lead';
+    if (error) { fmsg.textContent = 'Erro ao salvar: ' + error.message; fmsg.classList.add('is-error'); fmsg.hidden = false; return; }
+    leadForm.hidden = true; fmsg.hidden = true;
+    const { data } = await sb.from(cfg.table || 'leads').select('*').order('created_at', { ascending: false });
+    leads = data || [];
     render();
   });
 
