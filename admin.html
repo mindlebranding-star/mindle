@@ -80,7 +80,7 @@
         <div class="stat"><span class="stat-num" id="stat-total">–</span><span class="stat-label">Total</span></div>
         <div class="stat"><span class="stat-num stat-a" id="stat-a">–</span><span class="stat-label">Categoria A</span></div>
         <div class="stat"><span class="stat-num" id="stat-b">–</span><span class="stat-label">Categoria B</span></div>
-        <div class="stat"><span class="stat-num" id="stat-novos">–</span><span class="stat-label">Novos</span></div>
+        <div class="stat"><span class="stat-num" id="stat-novos">–</span><span class="stat-label">Sem próxima ação</span></div>
       </div>
 
       <div class="toolbar">
@@ -92,14 +92,6 @@
           <button class="chip" data-categoria="C">C</button>
           <button class="chip" data-categoria="D">D</button>
         </div>
-        <select class="field-input toolbar-status" id="filtro-status" aria-label="Filtrar por status">
-          <option value="todos">Todos os status</option>
-          <option value="novo">Novo</option>
-          <option value="contatado">Contatado</option>
-          <option value="agendado">Agendado</option>
-          <option value="fechado">Fechado</option>
-          <option value="descartado">Descartado</option>
-        </select>
         <input class="field-input toolbar-busca" type="search" id="busca" placeholder="Buscar nome, e-mail, profissão&hellip;" aria-label="Buscar leads">
       </div>
 
@@ -120,8 +112,8 @@
       </form>
 
       <p class="admin-msg" id="app-msg" role="status" hidden></p>
-      <div class="leads" id="leads-list" aria-live="polite"></div>
-      <p class="empty" id="empty" hidden>Nenhum lead com esses filtros.</p>
+      <p class="empty" id="empty" hidden>Nenhum lead ainda.</p>
+      <div class="board" id="leads-board" aria-live="polite"></div>
       </div><!-- /tab-leads -->
 
       <div class="tab-pane" id="tab-briefings" hidden>

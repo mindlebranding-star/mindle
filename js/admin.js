@@ -22,7 +22,7 @@
   const sb = supabase.createClient(cfg.url, cfg.anonKey);
 
   let leads = [];
-  const filtro = { categoria: 'todos', status: 'todos', q: '' };
+  const filtro = { categoria: 'todos', q: '' };
 
   const esc = (s) => String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -51,7 +51,26 @@
     breve: 'Ainda não, pretende em breve',
     entender: 'Precisa entender melhor'
   };
-  const STATUS = ['novo', 'contatado', 'agendado', 'fechado', 'descartado'];
+
+  /* Pipeline de vendas — o formulário de diagnóstico decide quem entra
+     (A/B → aguardando_contato; C/D → nutricao, nunca no funil ativo).
+     O CRM só rastreia o que acontece depois disso.
+     "ativo": exige próxima ação com data. "terminal": não. */
+  const ESTAGIOS = [
+    { key: 'nutricao',           label: 'Nutrição',              ativo: false, terminal: true },
+    { key: 'aguardando_contato', label: 'Aguardando Contato',    ativo: true },
+    { key: 'primeiro_contato',   label: 'Primeiro Contato',      ativo: true },
+    { key: 'reuniao_agendada',   label: 'Reunião Agendada',      ativo: true },
+    { key: 'compareceu',         label: 'Compareceu na Reunião', ativo: true },
+    { key: 'proposta',           label: 'Proposta',              ativo: true },
+    { key: 'negociacao',         label: 'Negociação',            ativo: true },
+    { key: 'ganho',              label: 'Ganho',                 ativo: false, terminal: true },
+    { key: 'perdido',            label: 'Perdido',               ativo: false, terminal: true },
+  ];
+  const ESTAGIO_LABEL = Object.fromEntries(ESTAGIOS.map((e) => [e.key, e.label]));
+  const ESTAGIO_ATIVO = Object.fromEntries(ESTAGIOS.map((e) => [e.key, !!e.ativo]));
+  function estagioValido(s) { return ESTAGIO_LABEL[s] ? s : 'aguardando_contato'; }
+  function hoje() { return new Date().toISOString().slice(0, 10); }
 
   /* ── Estado de tela ───────────────────────────── */
   function ajustarSticky() {
@@ -147,42 +166,44 @@
     const q = filtro.q.toLowerCase();
     return leads.filter((l) =>
       (filtro.categoria === 'todos' || l.categoria === filtro.categoria) &&
-      (filtro.status === 'todos' || l.status === filtro.status) &&
       (!q || [l.nome, l.email, l.negocio_nome, l.ramo, l.profissao, l.servico, l.notas]
         .some((v) => v && v.toLowerCase().includes(q)))
     );
   }
 
-  function render() {
-    $('#stat-total').textContent = leads.length;
-    $('#stat-a').textContent = leads.filter((l) => l.categoria === 'A').length;
-    $('#stat-b').textContent = leads.filter((l) => l.categoria === 'B').length;
-    $('#stat-novos').textContent = leads.filter((l) => l.status === 'novo').length;
-    const atrasados = leads.filter((l) => l.status === 'novo' && slaEstourado(l.created_at)).length;
-    $('#stat-novos').classList.toggle('is-alerta', atrasados > 0);
-    $('#stat-novos').title = atrasados > 0 ? atrasados + ' fora do prazo de 1 dia útil' : '';
+  function fmtDataCurta(iso) {
+    const [, m, d] = iso.split('-');
+    return d + '/' + m;
+  }
 
-    const lista = filtrados();
-    const wrap = $('#leads-list');
-    $('#empty').hidden = lista.length > 0;
-    wrap.innerHTML = lista.map((l) => {
-      const atrasado = l.status === 'novo' && slaEstourado(l.created_at);
-      const origem = [l.utm_source, l.utm_medium, l.utm_campaign].filter(Boolean).join(' · ');
-      const canal = l.canal || 'site';
-      const CANAL_LABEL = { site: 'Site', whatsapp: 'WhatsApp', instagram: 'Instagram', agenda: 'Agenda direto', indicacao: 'Indicação' };
-      const foneDigits = (l.telefone || '').replace(/\D/g, '');
-      return `
-      <article class="lead-card${atrasado ? ' is-atrasado' : ''}" data-id="${esc(l.id)}">
-        <div class="lead-top">
-          ${l.categoria
-            ? `<span class="badge ${(l.categoria === 'A' || l.categoria === 'B') ? 'badge-a' : 'badge-b'}">Categoria ${esc(l.categoria)}${l.pontuacao != null ? ' · ' + esc(l.pontuacao) + ' pts' : ''}</span>`
-            : (l.caminho ? `<span class="badge ${l.caminho === 'A' ? 'badge-a' : 'badge-b'}">Caminho ${esc(l.caminho)}</span>` : '')}
-          <span class="badge badge-status">${esc(l.status || 'novo')}</span>
-          ${canal !== 'site' ? `<span class="badge badge-canal">${esc(CANAL_LABEL[canal] || canal)}</span>` : ''}
-          ${atrasado ? '<span class="badge badge-sla">Responder hoje</span>' : ''}
-          <span class="lead-nome">${esc(l.nome)}</span>
-          <span class="lead-data">${esc(fmtData(l.created_at))}</span>
-        </div>
+  function proximaAcaoInfo(l, ativo) {
+    if (!ativo) return null;
+    if (!l.proxima_acao_data) return { tipo: 'faltando', texto: 'Sem próxima ação' };
+    const atrasado = l.proxima_acao_data < hoje();
+    return {
+      tipo: atrasado ? 'atrasado' : 'ok',
+      texto: (atrasado ? 'Atrasado · ' : '') + fmtDataCurta(l.proxima_acao_data) + (l.proxima_acao ? ' — ' + l.proxima_acao : '')
+    };
+  }
+
+  function cardHTML(l, estagio) {
+    const canal = l.canal || 'site';
+    const CANAL_LABEL = { site: 'Site', whatsapp: 'WhatsApp', instagram: 'Instagram', agenda: 'Agenda direto', indicacao: 'Indicação' };
+    const foneDigits = (l.telefone || '').replace(/\D/g, '');
+    const pa = proximaAcaoInfo(l, estagio.ativo);
+    const origem = [l.utm_source, l.utm_medium, l.utm_campaign].filter(Boolean).join(' · ');
+    return `
+    <article class="board-card${pa && pa.tipo !== 'ok' ? ' is-' + pa.tipo : ''}" data-id="${esc(l.id)}">
+      <button type="button" class="board-card-head">
+        <span class="board-card-nome">${esc(l.nome)}</span>
+        ${l.categoria ? `<span class="badge ${(l.categoria === 'A' || l.categoria === 'B') ? 'badge-a' : 'badge-b'}">${esc(l.categoria)}</span>` : ''}
+      </button>
+      <div class="board-card-meta">
+        ${canal !== 'site' ? `<span class="badge badge-canal">${esc(CANAL_LABEL[canal] || canal)}</span>` : ''}
+        ${pa ? `<span class="board-pa board-pa--${pa.tipo}">${esc(pa.texto)}</span>` : ''}
+      </div>
+
+      <div class="board-card-detalhe" hidden>
         <dl class="lead-grid">
           ${l.email ? `<div class="lead-field"><dt>E-mail</dt><dd><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></dd></div>` : ''}
           ${l.telefone ? `<div class="lead-field"><dt>Telefone</dt><dd><a href="https://wa.me/${esc(foneDigits)}" target="_blank" rel="noopener noreferrer">${esc(l.telefone)}</a></dd></div>` : ''}
@@ -201,27 +222,85 @@
           <div class="lead-field"><dt>Investimento</dt><dd>${esc(INVESTIMENTOS[l.investimento] || l.investimento)}</dd></div>
           ` : ''}
           ${(origem || l.referrer) ? `<div class="lead-field"><dt>Origem</dt><dd>${esc(origem || 'direto')}${l.referrer ? `<span class="lead-ref">${esc(l.referrer)}</span>` : ''}</dd></div>` : ''}
+          <div class="lead-field"><dt>Chegou em</dt><dd>${esc(fmtData(l.created_at))}</dd></div>
         </dl>
+
         ${(l.email_rascunho || l.proposta_prompt) ? `<div class="lead-views">
           ${l.email_rascunho ? '<button type="button" class="lead-view" data-view="email">✉ Ver e-mail</button>' : ''}
           ${l.proposta_prompt ? '<button type="button" class="lead-view" data-view="proposta">◳ Ver proposta</button>' : ''}
         </div>` : ''}
-        <div class="lead-foot">
-          <select class="lead-status" aria-label="Status do lead">
-            ${STATUS.map((s) => `<option value="${s}" ${s === (l.status || 'novo') ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
+
+        ${estagio.ativo ? `
+        <div class="board-campo">
+          <label class="field-label">Próxima ação — o quê e quando</label>
+          <div class="board-pa-linha">
+            <input class="field-input board-pa-texto" type="text" placeholder="Ex: ligar, mandar proposta…" value="${esc(l.proxima_acao || '')}">
+            <input class="field-input board-pa-data" type="date" value="${esc(l.proxima_acao_data || '')}">
+          </div>
+        </div>` : ''}
+
+        <div class="board-campo">
+          <label class="field-label">Estágio</label>
+          <select class="field-input board-mover" aria-label="Mover lead para outro estágio">
+            ${ESTAGIOS.map((e) => `<option value="${e.key}" ${e.key === estagio.key ? 'selected' : ''}>${esc(e.label)}</option>`).join('')}
           </select>
-          <textarea class="lead-notas" placeholder="Notas de follow-up…" aria-label="Notas">${esc(l.notas || '')}</textarea>
-          <button type="button" class="ta-expand" aria-label="Expandir notas">expandir</button>
+        </div>
+
+        ${l.status === 'perdido' ? `
+        <div class="board-campo">
+          <label class="field-label">Motivo da perda</label>
+          <textarea class="field-input dg-ta board-motivo-perda" placeholder="Por que não fechou?">${esc(l.motivo_perda || '')}</textarea>
+        </div>` : ''}
+
+        <textarea class="lead-notas board-notas" placeholder="Notas de follow-up…" aria-label="Notas">${esc(l.notas || '')}</textarea>
+
+        <div class="lead-foot">
           <button type="button" class="lead-view lead-converter">→ Cliente</button>
           <button type="button" class="cl-excluir lead-excluir" aria-label="Excluir lead">excluir</button>
           <span class="lead-salvo" aria-hidden="true">salvo ✓</span>
         </div>
-      </article>`;
+      </div>
+    </article>`;
+  }
+
+  function render() {
+    $('#stat-total').textContent = leads.length;
+    $('#stat-a').textContent = leads.filter((l) => l.categoria === 'A').length;
+    $('#stat-b').textContent = leads.filter((l) => l.categoria === 'B').length;
+    const semAcao = leads.filter((l) => ESTAGIO_ATIVO[estagioValido(l.status)] && !l.proxima_acao_data).length;
+    $('#stat-novos').textContent = semAcao;
+    $('#stat-novos').closest('.stat').querySelector('.stat-label').textContent = 'Sem próxima ação';
+    $('#stat-novos').classList.toggle('is-alerta', semAcao > 0);
+    $('#stat-novos').title = semAcao > 0 ? semAcao + ' lead(s) ativo(s) sem data de próxima ação' : '';
+
+    const lista = filtrados();
+    $('#empty').hidden = leads.length > 0;
+    $('#leads-board').hidden = leads.length === 0;
+
+    const porEstagio = {};
+    ESTAGIOS.forEach((e) => { porEstagio[e.key] = []; });
+    lista.forEach((l) => {
+      const k = estagioValido(l.status);
+      (porEstagio[k] = porEstagio[k] || []).push(l);
+    });
+
+    $('#leads-board').innerHTML = ESTAGIOS.map((e) => {
+      const itens = porEstagio[e.key] || [];
+      return `
+      <div class="board-col" data-estagio="${e.key}">
+        <div class="board-col-head">
+          <span>${esc(e.label)}</span>
+          <span class="board-col-count">${itens.length}</span>
+        </div>
+        <div class="board-col-body">
+          ${itens.map((l) => cardHTML(l, e)).join('') || '<p class="board-col-vazio">Vazio</p>'}
+        </div>
+      </div>`;
     }).join('');
   }
 
-  /* ── Atualizações (status / notas) ────────────── */
-  async function salvar(id, patch, card) {
+  /* ── Atualizações (campo isolado, sem trocar de coluna) ── */
+  async function salvarCampo(id, patch, card) {
     const { error } = await sb.from(cfg.table || 'leads').update(patch).eq('id', id);
     const flag = card.querySelector('.lead-salvo');
     if (error) {
@@ -232,31 +311,99 @@
       flag.style.color = '';
       const lead = leads.find((l) => l.id === id);
       if (lead) Object.assign(lead, patch);
-      if ('status' in patch) {
-        card.querySelector('.badge-status').textContent = patch.status;
-        $('#stat-novos').textContent = leads.filter((l) => l.status === 'novo').length;
-      }
     }
     flag.classList.add('is-on');
     setTimeout(() => flag.classList.remove('is-on'), 1800);
   }
 
-  $('#leads-list').addEventListener('change', (e) => {
-    if (!e.target.classList.contains('lead-status')) return;
-    const card = e.target.closest('.lead-card');
-    salvar(card.dataset.id, { status: e.target.value }, card);
+  /* ── Mudança de estágio (sempre redesenha o board) ── */
+  async function moverPara(id, patch) {
+    const { error } = await sb.from(cfg.table || 'leads').update(patch).eq('id', id);
+    if (error) { alert('Erro ao mover: ' + error.message); return false; }
+    const lead = leads.find((l) => l.id === id);
+    if (lead) Object.assign(lead, patch);
+    render();
+    return true;
+  }
+
+  $('#leads-board').addEventListener('click', (e) => {
+    const head = e.target.closest('.board-card-head');
+    if (head) {
+      const detalhe = head.closest('.board-card').querySelector('.board-card-detalhe');
+      detalhe.hidden = !detalhe.hidden;
+    }
   });
-  $('#leads-list').addEventListener('focusout', (e) => {
-    if (!e.target.classList.contains('lead-notas')) return;
-    const card = e.target.closest('.lead-card');
-    const lead = leads.find((l) => l.id === card.dataset.id);
-    const valor = e.target.value.trim() || null;
-    if (lead && (lead.notas || null) !== valor) salvar(card.dataset.id, { notas: valor }, card);
+
+  $('#leads-board').addEventListener('change', async (e) => {
+    if (!e.target.classList.contains('board-mover')) return;
+    const sel = e.target;
+    const card = sel.closest('.board-card');
+    const id = card.dataset.id;
+    const lead = leads.find((l) => l.id === id);
+    if (!lead) return;
+    const destino = ESTAGIOS.find((x) => x.key === sel.value);
+    const estagioAtual = estagioValido(lead.status);
+
+    // Regra da aula: todo lead ativo precisa de próxima ação com data —
+    // sem isso o board vira lista bonita que ninguém revisita.
+    if (destino && destino.ativo) {
+      const paTexto = card.querySelector('.board-pa-texto');
+      const paData = card.querySelector('.board-pa-data');
+      if (!paTexto.value.trim() || !paData.value) {
+        alert('Antes de mover pra "' + destino.label + '", preenche a próxima ação (o quê e quando).');
+        sel.value = estagioAtual;
+        paTexto.focus();
+        return;
+      }
+    }
+
+    const patch = { status: sel.value };
+    if (destino && destino.ativo) {
+      patch.proxima_acao = card.querySelector('.board-pa-texto').value.trim() || null;
+      patch.proxima_acao_data = card.querySelector('.board-pa-data').value || null;
+    }
+
+    // Regra da aula: nunca perdido sem motivo anotado.
+    if (sel.value === 'perdido') {
+      const atual = card.querySelector('.board-motivo-perda');
+      const motivo = prompt('Motivo da perda (obrigatório):', atual ? atual.value : (lead.motivo_perda || ''));
+      if (!motivo || !motivo.trim()) { sel.value = estagioAtual; return; }
+      patch.motivo_perda = motivo.trim();
+    }
+
+    await moverPara(id, patch);
   });
-  $('#leads-list').addEventListener('click', async (e) => {
+
+  $('#leads-board').addEventListener('focusout', (e) => {
+    const card = e.target.closest('.board-card');
+    if (!card) return;
+    const id = card.dataset.id;
+    const lead = leads.find((l) => l.id === id);
+    if (!lead) return;
+
+    if (e.target.classList.contains('board-notas')) {
+      const valor = e.target.value.trim() || null;
+      if ((lead.notas || null) !== valor) salvarCampo(id, { notas: valor }, card);
+      return;
+    }
+    if (e.target.classList.contains('board-pa-texto') || e.target.classList.contains('board-pa-data')) {
+      const texto = card.querySelector('.board-pa-texto').value.trim() || null;
+      const data = card.querySelector('.board-pa-data').value || null;
+      if ((lead.proxima_acao || null) !== texto || (lead.proxima_acao_data || null) !== data) {
+        salvarCampo(id, { proxima_acao: texto, proxima_acao_data: data }, card);
+      }
+      return;
+    }
+    if (e.target.classList.contains('board-motivo-perda')) {
+      const valor = e.target.value.trim() || null;
+      if ((lead.motivo_perda || null) !== valor) salvarCampo(id, { motivo_perda: valor }, card);
+    }
+  });
+
+  $('#leads-board').addEventListener('click', async (e) => {
     const conv = e.target.closest('.lead-converter');
     if (conv) {
-      const card = conv.closest('.lead-card');
+      const card = conv.closest('.board-card');
       const lead = leads.find((l) => l.id === card.dataset.id);
       if (!lead) return;
       const tabCadastro = document.querySelector('.tab[data-tab="cadastro"]');
@@ -264,12 +411,12 @@
       cadAbrirForm({ nome: lead.nome, email: lead.email, whatsapp: lead.telefone, notas: lead.notas });
       $('#cad-nome').focus();
       cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      if (lead.status !== 'fechado') salvar(lead.id, { status: 'fechado' }, card);
+      if (lead.status !== 'ganho') moverPara(lead.id, { status: 'ganho' });
       return;
     }
     const btn = e.target.closest('.lead-excluir');
     if (!btn) return;
-    const card = btn.closest('.lead-card');
+    const card = btn.closest('.board-card');
     const lead = leads.find((l) => l.id === card.dataset.id);
     if (!confirm('Excluir o lead "' + (lead ? lead.nome : '') + '" definitivamente?')) return;
     const { error } = await sb.from('leads').delete().eq('id', card.dataset.id);
@@ -315,7 +462,7 @@
       canal: 'indicacao',
       situacao: 'A',
       investimento: 'sim',
-      status: 'novo',
+      status: 'aguardando_contato',
     };
     const btn = $('#lead-salvar');
     btn.disabled = true; btn.textContent = 'Salvando…';
@@ -336,7 +483,6 @@
     document.querySelectorAll('#chips-caminho .chip').forEach((c) => c.classList.toggle('is-on', c === chip));
     render();
   });
-  $('#filtro-status').addEventListener('change', (e) => { filtro.status = e.target.value; render(); });
   $('#busca').addEventListener('input', (e) => { filtro.q = e.target.value.trim(); render(); });
 
   /* ── Abas ─────────────────────────────────────── */
@@ -778,7 +924,7 @@
     let salvo = '';
     try { salvo = (JSON.parse(localStorage.getItem(DG_KEY)) || {}).lead || ''; } catch (e) {}
     sel.innerHTML = '<option value="">— selecionar ou digitar abaixo —</option>' +
-      leads.map((l) => `<option value="${esc(l.id)}">${esc(l.nome)} — ${esc(l.profissao)} (${esc(l.status)})</option>`).join('');
+      leads.map((l) => `<option value="${esc(l.id)}">${esc(l.nome)} — ${esc(l.negocio_nome || l.profissao || '—')} (${esc(ESTAGIO_LABEL[estagioValido(l.status)])})</option>`).join('');
     sel.value = atual || salvo;
   }
 
@@ -1043,17 +1189,17 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     const emailRascunho = $('#dg-proposta').value || null;
     const propostaPrompt = $('#dg-prompt').value || null;
     const msg = $('#dg-msg');
-    const completo = { notas, status: 'contatado', email_rascunho: emailRascunho, proposta_prompt: propostaPrompt };
+    const completo = { notas, status: 'compareceu', email_rascunho: emailRascunho, proposta_prompt: propostaPrompt };
     let { error } = await sb.from(cfg.table || 'leads').update(completo).eq('id', id);
     // colunas de entregáveis ainda não criadas? salva só o essencial (nunca falha por isso)
     if (error && /column|PGRST204|42703/i.test(error.message || '')) {
-      ({ error } = await sb.from(cfg.table || 'leads').update({ notas, status: 'contatado' }).eq('id', id));
+      ({ error } = await sb.from(cfg.table || 'leads').update({ notas, status: 'compareceu' }).eq('id', id));
     }
     msg.classList.toggle('is-error', !!error);
-    msg.textContent = error ? 'Erro ao salvar: ' + error.message : 'Salvo no lead — status: contatado.';
+    msg.textContent = error ? 'Erro ao salvar: ' + error.message : 'Salvo no lead — status: compareceu na reunião.';
     msg.hidden = false;
     if (!error && l) {
-      l.notas = notas; l.status = 'contatado';
+      l.notas = notas; l.status = 'compareceu';
       l.email_rascunho = emailRascunho; l.proposta_prompt = propostaPrompt;
       render(); dgPopularLeads();
     }

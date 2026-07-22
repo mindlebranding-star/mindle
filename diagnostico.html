@@ -467,7 +467,7 @@
           negocio_nome: negocio,
           ramo: ramo,
           canal: 'site',
-          status: 'novo',
+          status: (categoria === 'A' || categoria === 'B') ? 'aguardando_contato' : 'nutricao',
           pontuacao: pontuacao,
           categoria: categoria,
           notas: notas
