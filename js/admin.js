@@ -1066,8 +1066,32 @@
     let salvo = '';
     try { salvo = (JSON.parse(localStorage.getItem(DG_KEY)) || {}).lead || ''; } catch (e) {}
     sel.innerHTML = '<option value="">— selecionar ou digitar abaixo —</option>' +
-      leads.map((l) => `<option value="${esc(l.id)}">${esc(l.nome)} — ${esc(l.negocio_nome || l.ramo || l.profissao || '—')} (${esc(ESTAGIO_LABEL[estagioValido(l.status)])})</option>`).join('');
+      leads.map((l) => {
+        const cat = l.categoria ? ` [${l.categoria}${l.pontuacao != null ? ' · ' + l.pontuacao + 'pts' : ''}]` : '';
+        return `<option value="${esc(l.id)}">${esc(l.nome)} — ${esc(l.negocio_nome || l.ramo || l.profissao || '—')}${esc(cat)} (${esc(ESTAGIO_LABEL[estagioValido(l.status)])})</option>`;
+      }).join('');
     sel.value = atual || salvo;
+  }
+
+  /* Pré-marca sinais que já dá pra deduzir das respostas do diagnostico.html
+     (guardadas em notas, em formato fixo "Tem site: X" / "Dor: Y" etc). Só
+     marca o que tem correspondência clara — o resto continua por conta do
+     que o admin ouvir na call de verdade. */
+  function marcarSinalPorTexto(sig, trecho) {
+    const el = $$(`input[data-sig="${sig}"]`).find((e) => e.value.includes(trecho));
+    if (el) el.checked = true;
+  }
+  function dgPreMarcarSinais(lead) {
+    $$('#tab-diagnostico input[data-sig]').forEach((el) => { el.checked = false; });
+    if (!lead || !lead.notas) return;
+    const temSite = /Tem site: (.+)/.exec(lead.notas);
+    const dor = /^Dor: (.+)$/m.exec(lead.notas);
+    if (temSite && /Não tenho|não gosto/i.test(temSite[1])) {
+      marcarSinalPorTexto('site', 'Não tem site, ou o que tem não representa');
+    }
+    if (dor && /Já perdeu cliente por demora|Demora às vezes/i.test(dor[1])) {
+      marcarSinalPorTexto('automacao', 'Já perdeu contato por demora na resposta');
+    }
   }
 
   function dgEstado() {
@@ -1143,12 +1167,15 @@
           pecas.map((k) => DG_PECA_NOME[k] + ': ' + s[k].join('; ')).join(' — ') + '. ' +
           'Resolver uma peça e deixar as outras furadas é o mesmo erro das peças soltas que a maioria ' +
           'já tentou: melhora um pedaço e o negócio continua vazando pelos outros dois.<br><br>' +
-          '<strong>Para fechar:</strong> "Pelo que você me contou, não é um problema só — são ' +
-          (pecas.length === 3 ? 'as três peças' : 'essas duas peças') + ' puxando o negócio pra trás ao mesmo tempo. ' +
-          'A gente monta ' + (pecas.length === 3 ? 'o conjunto' : lista.toLowerCase()) + ': ' +
-          pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. Cada peça entra com aprovação em etapa, ' +
-          'e você não paga por nada que ainda não precisa." Se o orçamento apertar, ofereça começar pela ' +
-          'peça mais urgente com o resto no roadmap — nunca empurre as três de uma vez sem essa saída.' };
+          '<strong>Para fechar:</strong> "Olha, vou ser direto com você: não é um buraco só, são ' +
+          (pecas.length === 3 ? 'as três peças' : 'essas duas peças') + ' furadas ao mesmo tempo — e cada dia ' +
+          'que isso continua assim é cliente e dinheiro escorrendo pra concorrência. Remendo em peça solta ' +
+          'você já tentou, e não resolveu; se resolvesse, a gente não estaria conversando agora. ' +
+          'A jogada é montar ' + (pecas.length === 3 ? 'o conjunto' : lista.toLowerCase()) + ' de uma vez: ' +
+          pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. Você aprova cada etapa, não paga um centavo ' +
+          'adiantado do que ainda não vai usar." Se o caixa não fecha pras ' + (pecas.length === 3 ? 'três' : 'duas') +
+          ' agora, começa pela que mais sangra e trava o resto no roadmap — mas não sai dessa call sem uma ' +
+          'data marcada.' };
     }
 
     if (pecas.length === 1) {
@@ -1158,10 +1185,11 @@
           '<strong>Por quê:</strong> só uma peça acumulou sinal — as outras duas parecem estar de pé. ' +
           'Forçar o combo completo aqui seria vender escopo que o caso não pede; ignorar o sinal e ' +
           'oferecer menos do que ele precisa seria deixar o buraco aberto.<br><br>' +
-          '<strong>Para fechar:</strong> "O seu caso não pede o conjunto inteiro agora — pede ' +
-          DG_PECA_DESC[k] + '. É isso que vai resolver o que está te custando cliente hoje. ' +
-          'Se mais pra frente aparecer sinal nas outras peças, a gente conversa; não tem porque vender ' +
-          'agora o que você ainda não precisa." Feche pedindo a data de início ainda na call.' };
+          '<strong>Para fechar:</strong> "Direto ao ponto: você não precisa das três peças agora, precisa ' +
+          'de uma — ' + DG_PECA_DESC[k] + '. É isso, especificamente, que tá custando cliente pra você hoje, ' +
+          'enquanto a gente conversa aqui. Não vou empurrar mais escopo só pra engordar o contrato — quando ' +
+          'o resto pesar, a gente resolve. Mas essa peça aqui não dá pra deixar esfriar: trava a data de ' +
+          'início ainda nessa ligação."' };
     }
 
     return { tipo: 'incompleto', titulo: 'Diagnóstico em andamento',
@@ -1185,7 +1213,7 @@
   $('#tab-diagnostico').addEventListener('change', (e) => {
     if (e.target.id === 'dg-lead' && e.target.value) {
       const l = leads.find((x) => x.id === e.target.value);
-      if (l) $('#dg-nome').value = l.nome;
+      if (l) { $('#dg-nome').value = l.nome; dgPreMarcarSinais(l); }
     }
     dgAtualizar();
   });
@@ -1270,9 +1298,9 @@ Mindle — sites, sistemas e automação`;
 
     /* Escopo da proposta conforme o veredito */
     const DG_PECA_ESCOPO = {
-      site: 'SITE: construído a partir do fundamento da oferta, com identidade visual própria e copy estruturado (não um template com o nome trocado)',
-      sistema: 'SISTEMA: painel sob medida com as etapas do negócio do cliente — clientes, conversas e pagamentos num lugar só',
-      automacao: 'AUTOMAÇÃO: agente de WhatsApp com o tom do cliente, treinado com respostas reais, com triagem pra gente quando a conversa pede',
+      site: 'SITE: a vitrine que hoje não convence ninguém vira uma que fecha venda sozinha — construída a partir do fundamento da oferta, não um template com o nome trocado. Quem pesquisa seu nome antes de te ligar vai achar motivo pra chamar, não pra desistir',
+      sistema: 'SISTEMA: painel sob medida com as etapas do SEU negócio — cada cliente, conversa e pagamento num lugar só, sem depender de planilha, papel ou memória de ninguém',
+      automacao: 'AUTOMAÇÃO: um agente que responde no seu WhatsApp em segundos, com o seu tom, mesmo enquanto você dorme — o cliente que hoje escolhe o concorrente porque respondeu primeiro passa a ser seu',
     };
     let escopo;
     if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
@@ -1291,9 +1319,12 @@ Gere uma PROPOSTA visual pronta para enviar, como um artefato HTML de página ú
 da Mindle: fundo escuro (#0F0F0E), acento teal (#2E8B8E), off-white para texto (#F0EDE6),
 tipografia de display marcante + corpo legível, muito respiro, sóbrio e editorial.
 
-TOM (obrigatório): diagnóstico antes de prescrição; economia verbal; posição, não observação
-neutra. Proibido linguagem aspiracional ("eleve sua marca", "transforme sua presença"),
-intimidade forçada e adjetivo vazio. Frases curtas. O cliente compra porque foi entendido.
+TOM (obrigatório): dono de negócio falando com dono de negócio, direto e sem rodeio de agência.
+Diagnóstico antes de prescrição, mas pode confrontar o custo real de ficar como está — cliente
+perdido, concorrente respondendo primeiro, dinheiro deixado na mesa — e pode prometer resultado
+com confiança. Frases curtas, urgência de verdade, sem enrolação. Proibido: "eleve sua marca",
+"transforme sua presença", intimidade forçada, adjetivo vazio, papo de personagem. O cliente
+fecha porque sentiu que alguém finalmente falou a verdade sobre o negócio dele.
 
 DIAGNÓSTICO DO CLIENTE (da call de hoje):
 - Nome: ${nome}
