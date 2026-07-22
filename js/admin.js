@@ -180,6 +180,42 @@
     day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
   });
 
+  function formatarContagem(ms) {
+    if (ms <= 0) return 'agora';
+    const totalMin = Math.round(ms / 60000);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    if (h === 0) return 'em ' + m + 'min';
+    return 'em ' + h + 'h' + (m ? String(m).padStart(2, '0') : '');
+  }
+
+  /* Avisos de reunião próxima: uma faixa "1 dia antes" (até 24h) e uma
+     faixa "2 horas antes" (mais urgente, cor diferente). Recalcula sozinho
+     a cada minuto (ver setInterval no Boot), não só quando os leads mudam. */
+  function checarReunioesProximas() {
+    const cont = $('#reuniao-alertas');
+    if (!cont) return;
+    const agora = Date.now();
+    const itens = leads
+      .filter((l) => l.reuniao_em)
+      .map((l) => ({ lead: l, diff: new Date(l.reuniao_em).getTime() - agora }))
+      .filter((x) => x.diff > -5 * 60 * 1000 && x.diff <= 24 * 3600 * 1000)
+      .sort((a, b) => a.diff - b.diff);
+
+    if (!itens.length) { cont.hidden = true; cont.innerHTML = ''; return; }
+
+    cont.innerHTML = itens.map(({ lead, diff }) => {
+      const urgente = diff <= 2 * 3600 * 1000;
+      return `
+      <div class="reuniao-alerta reuniao-alerta--${urgente ? 'urgente' : 'dia'}">
+        <span class="reuniao-alerta-nome">${esc(lead.nome)}</span>
+        <span>reunião ${esc(fmtReuniao(lead.reuniao_em))}</span>
+        <span class="reuniao-alerta-quando">${formatarContagem(diff)}</span>
+      </div>`;
+    }).join('');
+    cont.hidden = false;
+  }
+
   function proximaAcaoInfo(l, ativo) {
     if (!ativo) return null;
     if (!l.proxima_acao_data) return { tipo: 'faltando', texto: 'Sem próxima ação' };
@@ -276,6 +312,7 @@
     $('#empty').hidden = leads.length > 0;
     $('#leads-board').hidden = leads.length === 0 || emCalendario;
     if (emCalendario) renderCalendario();
+    checarReunioesProximas();
 
     const porEstagio = {};
     ESTAGIOS.forEach((e) => { porEstagio[e.key] = []; });
@@ -2062,4 +2099,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     if (data && data.session) carregar();
     else mostrar('login');
   });
+  // recalcula os avisos de reunião próxima mesmo sem recarregar os leads
+  // (o tempo passa e um aviso "1 dia antes" pode virar "2h antes" sozinho)
+  setInterval(checarReunioesProximas, 60000);
 })();
