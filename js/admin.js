@@ -245,20 +245,17 @@
           </div>
         </div>` : ''}
 
-        <div class="board-campo">
-          <label class="field-label">Estágio</label>
-          <select class="field-input board-mover" aria-label="Mover lead para outro estágio">
-            ${ESTAGIOS.map((e) => `<option value="${e.key}" ${e.key === estagio.key ? 'selected' : ''}>${esc(e.label)}</option>`).join('')}
-          </select>
-        </div>
-
         ${l.status === 'perdido' ? `
         <div class="board-campo">
           <label class="field-label">Motivo da perda</label>
           <textarea class="field-input dg-ta board-motivo-perda" placeholder="Por que não fechou?">${esc(l.motivo_perda || '')}</textarea>
         </div>` : ''}
 
-        <textarea class="lead-notas board-notas" placeholder="Notas de follow-up…" aria-label="Notas">${esc(l.notas || '')}</textarea>
+        <div class="board-campo">
+          <label class="field-label">Notas</label>
+          <textarea class="lead-notas board-notas" id="notas-${esc(l.id)}" placeholder="Notas de follow-up…" aria-label="Notas">${esc(l.notas || '')}</textarea>
+          <button type="button" class="ta-expand" data-ta="notas-${esc(l.id)}" aria-label="Expandir notas">expandir</button>
+        </div>
 
         <div class="lead-foot">
           <button type="button" class="lead-view lead-converter">→ Cliente</button>
@@ -340,20 +337,6 @@
     }
   });
 
-  /* Abre o detalhe de um card recém-renderizado (usado após o drop
-     numa coluna ativa sem próxima ação: o campo já abre focado). */
-  function abrirDetalhe(id, focarPa) {
-    const card = $('#leads-board').querySelector(`.board-card[data-id="${id}"]`);
-    if (!card) return;
-    const det = card.querySelector('.board-card-detalhe');
-    if (det) det.hidden = false;
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if (focarPa) {
-      const pa = card.querySelector('.board-pa-texto');
-      if (pa) pa.focus();
-    }
-  }
-
   /* ── Drag-and-drop entre colunas ── */
   let dragId = null;
   $('#leads-board').addEventListener('dragstart', (e) => {
@@ -399,50 +382,9 @@
       patch.motivo_perda = motivo.trim();
     }
 
-    // Regra da aula: lead ativo precisa de próxima ação com data.
-    // No drag o movimento acontece, mas o card já abre com o campo focado.
-    const faltaAcao = destino.ativo && !lead.proxima_acao_data;
-    const ok = await moverPara(id, patch);
-    if (ok && faltaAcao) abrirDetalhe(id, true);
-  });
-
-  $('#leads-board').addEventListener('change', async (e) => {
-    if (!e.target.classList.contains('board-mover')) return;
-    const sel = e.target;
-    const card = sel.closest('.board-card');
-    const id = card.dataset.id;
-    const lead = leads.find((l) => l.id === id);
-    if (!lead) return;
-    const destino = ESTAGIOS.find((x) => x.key === sel.value);
-    const estagioAtual = estagioValido(lead.status);
-
-    // Regra da aula: todo lead ativo precisa de próxima ação com data —
-    // sem isso o board vira lista bonita que ninguém revisita.
-    if (destino && destino.ativo) {
-      const paTexto = card.querySelector('.board-pa-texto');
-      const paData = card.querySelector('.board-pa-data');
-      if (!paTexto.value.trim() || !paData.value) {
-        alert('Antes de mover pra "' + destino.label + '", preenche a próxima ação (o quê e quando).');
-        sel.value = estagioAtual;
-        paTexto.focus();
-        return;
-      }
-    }
-
-    const patch = { status: sel.value };
-    if (destino && destino.ativo) {
-      patch.proxima_acao = card.querySelector('.board-pa-texto').value.trim() || null;
-      patch.proxima_acao_data = card.querySelector('.board-pa-data').value || null;
-    }
-
-    // Regra da aula: nunca perdido sem motivo anotado.
-    if (sel.value === 'perdido') {
-      const atual = card.querySelector('.board-motivo-perda');
-      const motivo = prompt('Motivo da perda (obrigatório):', atual ? atual.value : (lead.motivo_perda || ''));
-      if (!motivo || !motivo.trim()) { sel.value = estagioAtual; return; }
-      patch.motivo_perda = motivo.trim();
-    }
-
+    // Regra da aula: lead ativo precisa de próxima ação com data — quem
+    // ficar sem preencher aparece com o aviso "Sem próxima ação" no card
+    // e entra na estatística do topo, sem travar o arrastar.
     await moverPara(id, patch);
   });
 

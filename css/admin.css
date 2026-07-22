@@ -668,16 +668,18 @@
 }
 
 /* ── Board (pipeline de vendas — aba Leads) ─────────────────── */
-/* Desktop: as 9 colunas dividem a largura da tela, sem scroll
-   horizontal. As colunas crescem com o conteúdo (a página rola,
-   o board não corta card). */
+/* Todas as colunas com a MESMA largura fixa (280px — o suficiente pro
+   painel de detalhe do card não quebrar campo nem texto), com scroll
+   horizontal quando não couberem todas na tela. Forçar 9 colunas
+   dentro da viewport deixava cada uma estreita demais pro formulário
+   de dentro (data, notas, campos) e o layout ficava torto. */
 .board {
-  display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
-  gap: 8px; align-items: start;
+  display: flex; gap: 10px; align-items: flex-start;
+  overflow-x: auto; padding-bottom: 12px;
+  scrollbar-width: thin;
 }
 .board-col {
-  min-width: 0;
+  flex: 0 0 280px; width: 280px;
   background: var(--color-surface-01);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
@@ -753,17 +755,12 @@
   border-top: 1px solid var(--color-border-subtle);
   padding: 10px; display: grid; gap: 10px;
 }
+/* Dentro do card a coluna é estreita — nunca deixa o .lead-grid
+   (3 colunas por padrão) tentar caber lado a lado. */
+.board-card-detalhe .lead-grid { grid-template-columns: 1fr; }
 .board-campo { display: grid; gap: 6px; }
 .board-pa-linha { display: grid; gap: 8px; }
 
-/* Telas menores: volta pro trilho horizontal (9 colunas não cabem) */
-@media (max-width: 1280px) {
-  .board {
-    display: flex; overflow-x: auto; padding-bottom: 12px;
-    scrollbar-width: thin;
-  }
-  .board-col { flex: 0 0 264px; width: 264px; }
-}
 @media (max-width: 640px) {
   .board-col { flex-basis: 84vw; width: 84vw; }
 }
