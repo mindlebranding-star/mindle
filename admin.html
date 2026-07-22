@@ -78,17 +78,19 @@
       <div class="tab-pane" id="tab-leads">
       <div class="stats" id="stats">
         <div class="stat"><span class="stat-num" id="stat-total">–</span><span class="stat-label">Total</span></div>
-        <div class="stat"><span class="stat-num stat-a" id="stat-a">–</span><span class="stat-label">Caminho A</span></div>
-        <div class="stat"><span class="stat-num" id="stat-b">–</span><span class="stat-label">Caminho B</span></div>
+        <div class="stat"><span class="stat-num stat-a" id="stat-a">–</span><span class="stat-label">Categoria A</span></div>
+        <div class="stat"><span class="stat-num" id="stat-b">–</span><span class="stat-label">Categoria B</span></div>
         <div class="stat"><span class="stat-num" id="stat-novos">–</span><span class="stat-label">Novos</span></div>
       </div>
 
       <div class="toolbar">
         <button class="btn btn-primary" id="lead-novo-btn" type="button">+ Novo lead</button>
-        <div class="chips" id="chips-caminho" role="group" aria-label="Filtrar por caminho">
-          <button class="chip is-on" data-caminho="todos">Todos</button>
-          <button class="chip" data-caminho="A">Caminho A</button>
-          <button class="chip" data-caminho="B">Caminho B</button>
+        <div class="chips" id="chips-caminho" role="group" aria-label="Filtrar por categoria">
+          <button class="chip is-on" data-categoria="todos">Todos</button>
+          <button class="chip" data-categoria="A">A</button>
+          <button class="chip" data-categoria="B">B</button>
+          <button class="chip" data-categoria="C">C</button>
+          <button class="chip" data-categoria="D">D</button>
         </div>
         <select class="field-input toolbar-status" id="filtro-status" aria-label="Filtrar por status">
           <option value="todos">Todos os status</option>

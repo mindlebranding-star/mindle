@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico rápido — Mindle</title>
+  <meta name="description" content="6 perguntas rápidas (2 minutos) pra gente já chegar na conversa sabendo exatamente o que o seu negócio precisa.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#F4F1EA">
+
+  <link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%23F4F1EA"/><rect x="17" y="13" width="30" height="17" fill="%232E8B8E"/><rect x="17" y="34" width="30" height="18" fill="%232E8B8E"/></svg>'>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ════════════════════════════════════════════════════════
+       MINDLE / DIAGNÓSTICO — mesmo sistema visual do index.html.
+       ════════════════════════════════════════════════════════ */
+    @font-face {
+      font-family: 'Mango Grotesque';
+      src: url('assets/fonts/MangoGrotesque-Medium.woff2') format('woff2');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Mango Grotesque';
+      src: url('assets/fonts/MangoGrotesque-Bold.woff2') format('woff2');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+
+    :root {
+      --cream:      #F4F1EA;
+      --cream-soft: #ECE8DF;
+      --card:       #FFFFFF;
+      --ink:        #171715;
+      --ink-soft:   #4C4B46;
+      --muted:      #7B7A73;
+
+      --teal:        #2E8B8E;
+      --teal-deep:   #00494A;
+      --teal-bright: #3DB4B6;
+      --terra:       #C9713D;
+      --terra-soft:  #F3DFCE;
+
+      --dark:       #12211F;
+      --dark-2:     #1A2E2B;
+
+      --display: 'Mango Grotesque', 'Arial Narrow', sans-serif;
+      --body: 'Lato', sans-serif;
+
+      --h1: clamp(36px, 5.4vw, 60px);
+      --h2: clamp(28px, 3.6vw, 42px);
+
+      --pad: clamp(20px, 4vw, 64px);
+      --radius: 20px;
+      --shadow: 0 12px 40px rgba(23, 23, 21, 0.08);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body);
+      background: var(--cream);
+      color: var(--ink);
+      font-size: 17.5px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+
+    .wrap { max-width: 720px; margin: 0 auto; padding: 0 var(--pad); }
+    .display { font-family: var(--display); font-weight: 700; line-height: 0.98; letter-spacing: 0.02em; text-transform: uppercase; }
+    .h1 { font-size: var(--h1); }
+    .h2 { font-size: var(--h2); }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--teal-deep);
+    }
+    .eyebrow::before {
+      content: ''; width: 22px; height: 13px; flex: none;
+      background:
+        linear-gradient(var(--teal) 0 0) top left / 100% 5.5px no-repeat,
+        linear-gradient(var(--teal) 0 0) bottom left / 100% 5.5px no-repeat;
+    }
+    .lead { font-size: clamp(17px, 1.6vw, 20px); color: var(--ink-soft); }
+
+    /* ── Header ─────────────────────────────────────────── */
+    .top {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(244, 241, 234, 0.88);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    .top-inner { display: flex; align-items: center; justify-content: center; padding: 16px var(--pad); max-width: 1240px; margin: 0 auto; }
+    .brand-mark { height: 28px; width: auto; color: var(--ink); }
+
+    .btn {
+      display: inline-block; text-decoration: none; font-weight: 700; cursor: pointer;
+      border: none; border-radius: 999px; padding: 16px 32px; font-size: 16.5px;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s, background 0.3s;
+      font-family: var(--body);
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-solid { background: var(--teal-deep); color: #fff; box-shadow: 0 8px 24px rgba(0, 73, 74, 0.25); }
+    .btn-solid:hover { background: var(--teal); }
+    .btn-solid:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+    /* ── Intro ──────────────────────────────────────────── */
+    .intro { padding: clamp(40px, 6vw, 72px) 0 clamp(24px, 4vw, 40px); text-align: center; }
+    .intro .h1 { margin: 16px 0 18px; }
+    .intro .lead { max-width: 52ch; margin-inline: auto; }
+    .promessa {
+      margin-top: 22px; display: inline-block; padding: 14px 22px; border-radius: 14px;
+      background: var(--terra-soft); color: var(--ink); font-size: 15px; font-weight: 700;
+      max-width: 56ch;
+    }
+
+    /* ── Formulário ─────────────────────────────────────── */
+    .form-wrap { padding-bottom: clamp(48px, 7vw, 88px); }
+    .bloco { margin-bottom: clamp(32px, 4vw, 48px); }
+    .bloco-titulo { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal-deep); margin-bottom: 18px; }
+
+    .campo { margin-bottom: 20px; }
+    .campo label.rotulo { display: block; font-weight: 700; font-size: 16px; margin-bottom: 10px; color: var(--ink); }
+
+    input[type="text"], input[type="tel"], select, textarea {
+      width: 100%; padding: 15px 18px; border-radius: 14px;
+      border: 1.5px solid rgba(23,23,21,0.15); background: var(--card);
+      font-family: var(--body); font-size: 16px; color: var(--ink);
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46,139,142,0.15);
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%234C4B46'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 44px; }
+
+    .opcoes { display: grid; gap: 10px; }
+    .opcoes label {
+      display: flex; align-items: flex-start; gap: 12px; padding: 15px 18px;
+      border-radius: 14px; border: 1.5px solid rgba(23,23,21,0.12);
+      cursor: pointer; background: var(--card); transition: border-color 0.2s, background 0.2s;
+      font-size: 15.5px; color: var(--ink-soft);
+    }
+    .opcoes label:hover { border-color: rgba(46,139,142,0.4); }
+    .opcoes input { margin-top: 3px; accent-color: var(--teal-deep); flex: none; }
+    .opcoes label:has(input:checked) { border-color: var(--teal); background: rgba(46,139,142,0.06); color: var(--ink); }
+
+    .invalido { border-color: var(--terra) !important; }
+    .erro-form {
+      display: none; margin-bottom: 20px; padding: 14px 18px; border-radius: 12px;
+      background: var(--terra-soft); color: var(--ink); font-size: 14.5px; font-weight: 700;
+    }
+    .erro-form.is-on { display: block; }
+
+    /* ── Resultado ──────────────────────────────────────── */
+    .resultado { display: none; padding: clamp(32px, 5vw, 56px) 0; text-align: center; }
+    .resultado.is-on { display: block; }
+    .resultado .h2 { margin: 14px 0 16px; }
+    .resultado .lead { max-width: 52ch; margin-inline: auto; }
+    .cal-slot { margin-top: 28px; min-height: 480px; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--card); }
+    .cal-fallback { display: block; margin-top: 16px; font-size: 14px; color: var(--teal-deep); font-weight: 700; }
+
+    footer { padding: clamp(32px, 5vw, 48px) 0; text-align: center; }
+    footer p { font-size: 14px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="top-inner">
+      <a href="index.html" aria-label="Mindle, início">
+        <svg class="brand-mark" viewBox="0 0 540 194" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M30.3271 193.266H0V100.266H25.6182L30.3271 193.266ZM70.5791 193.266H40.5273L30.7168 100.266H52.249L54.8643 148.878H56.2422L58.5869 100.266H80.1006L70.5791 193.266ZM110.556 193.266H80.2285L84.6572 100.266H110.556V193.266ZM167.776 193.266H135.243V100.266H167.776V193.266ZM51.6572 89.2656H29.5566L26.7422 62.584L24.2617 42.458L22.8828 42.7334L23.71 62.584L25.0605 89.2656H0V0.275391H46.8691L51.6572 89.2656ZM110.556 89.2656H85.1807L87.3965 42.7334L86.0186 42.458L81.2266 89.2656H59.1182L63.4111 0.275391H110.556V89.2656ZM167.776 89.2656H135.243V0.275391H167.776V89.2656Z" fill="currentColor"/>
+          <path d="M435.569 167.074H458.729V193.266H403.037V100.531H435.569V167.074ZM535.214 106.972H513.434V167.074H535.214V193.266H480.9V100.531H535.214V106.972ZM435.569 89.5312H403.037V0H435.569V89.5312ZM536.867 26.1914H513.434V80.7803H535.214V89.5312H480.9V0H536.867V26.1914Z" fill="currentColor"/>
+          <path d="M225.294 192.99H193.037V99.9902H219.349L225.294 192.99ZM277.677 192.99H238.803L224.821 99.9902H247.324L252.863 135.92L254.242 135.645L251.923 99.9902H277.677V192.99ZM379.899 151.084C379.899 165.42 376.223 175.988 368.871 182.789C361.519 189.59 351.686 192.99 339.371 192.99H301.324V99.9902H333.857V166.799H339.371C344.701 166.799 347.366 163.031 347.366 155.495V99.9902H379.899V151.084ZM245.629 88.9902H223.167L220.606 71.958L217.299 52.1074L215.92 52.3828L217.574 72.2334L218.646 88.9902H193.037V0H231.91L245.629 88.9902ZM277.677 88.9902H251.208L245.42 0H277.677V88.9902ZM339.371 0C351.502 5.37728e-06 361.244 3.40058 368.596 10.2012C376.131 16.818 379.899 27.2947 379.899 41.6309V88.9902H347.366V36.9443C347.366 29.5924 344.701 25.916 339.371 25.916H333.857V88.9902H301.324V0H339.371Z" fill="#2E8B8E"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="wrap">
+        <p class="eyebrow" style="justify-content:center">Antes da conversa</p>
+        <h1 class="display h1">6 perguntas rápidas sobre o seu negócio</h1>
+        <p class="lead">A gente monta site, sistema e automação pra negócios que atendem gente — e antes de marcar uma conversa, queremos entender o seu caso.</p>
+        <p class="promessa">Responde 6 perguntas rápidas (leva 2 minutos). Com isso a gente já chega na conversa sabendo exatamente o que o seu negócio precisa, sem você perder tempo explicando do zero.</p>
+      </div>
+    </section>
+
+    <section class="form-wrap">
+      <div class="wrap">
+
+        <form id="form-diagnostico" novalidate>
+          <p class="erro-form" id="erro-form">Faltou responder alguma pergunta acima — confira e tenta de novo.</p>
+
+          <div class="bloco">
+            <p class="bloco-titulo">Sobre você e o seu negócio</p>
+
+            <div class="campo">
+              <label class="rotulo" for="c-nome">Seu nome</label>
+              <input type="text" id="c-nome" name="nome" required>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo" for="c-whatsapp">Seu WhatsApp</label>
+              <input type="tel" id="c-whatsapp" name="whatsapp" inputmode="numeric" maxlength="16" placeholder="(41) 99999-9999" required>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo" for="c-negocio">Nome do negócio</label>
+              <input type="text" id="c-negocio" name="negocio" required>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo" for="c-ramo">Ramo</label>
+              <select id="c-ramo" name="ramo" required>
+                <option value="">— selecionar —</option>
+                <option value="Consultório/clínica">Consultório/clínica</option>
+                <option value="Advocacia">Advocacia</option>
+                <option value="Salão/barbearia">Salão/barbearia</option>
+                <option value="Restaurante/café">Restaurante/café</option>
+                <option value="Loja">Loja</option>
+                <option value="Oficina">Oficina</option>
+                <option value="Outro prestador de serviço">Outro prestador de serviço</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo">Hoje você já tem site?</label>
+              <div class="opcoes">
+                <label><input type="radio" name="tem_site" value="gosto" required> Sim, e gosto dele</label>
+                <label><input type="radio" name="tem_site" value="nao_gosto"> Sim, mas não gosto</label>
+                <label><input type="radio" name="tem_site" value="nao_tenho"> Não tenho</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="bloco">
+            <p class="bloco-titulo">Sobre a operação</p>
+
+            <div class="campo">
+              <label class="rotulo">Esse negócio já está funcionando e atendendo cliente hoje, ou ainda é uma ideia?</label>
+              <div class="opcoes">
+                <label><input type="radio" name="funcionando" value="sim" required> Já está funcionando e atendendo</label>
+                <label><input type="radio" name="funcionando" value="nao"> Ainda é uma ideia</label>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo">Você é o dono/sócio, ou decide sozinho sobre contratar algo assim?</label>
+              <div class="opcoes">
+                <label><input type="radio" name="decisor" value="sim" required> Sim, decido sozinho (ou sou dono/sócio)</label>
+                <label><input type="radio" name="decisor" value="nao"> Não, preciso de aprovação de outra pessoa</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="bloco">
+            <p class="bloco-titulo">O que mais pesa hoje</p>
+
+            <div class="campo">
+              <label class="rotulo">Qual dessas mais descreve o seu negócio hoje?</label>
+              <div class="opcoes">
+                <label><input type="radio" name="dor" value="alta" required> Já perdi cliente porque demorei a responder</label>
+                <label><input type="radio" name="dor" value="media"> Às vezes demoro a responder, mas nunca perdi cliente por isso</label>
+                <label><input type="radio" name="dor" value="baixa"> Respondo rápido, não é minha maior dor</label>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo">Quando você quer resolver isso?</label>
+              <div class="opcoes">
+                <label><input type="radio" name="momento" value="semana" required> Quero resolver essa semana</label>
+                <label><input type="radio" name="momento" value="mes"> Nos próximos 30 dias</label>
+                <label><input type="radio" name="momento" value="sem_pressa"> Só pesquisando, sem pressa</label>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo">Quanto consegue investir pra resolver isso agora?</label>
+              <div class="opcoes">
+                <label><input type="radio" name="capacidade" value="alta" required> R$5.000 ou mais</label>
+                <label><input type="radio" name="capacidade" value="media"> Entre R$3.000 e R$5.000</label>
+                <label><input type="radio" name="capacidade" value="baixa"> Menos de R$3.000 por enquanto</label>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label class="rotulo">Como seu negócio atende cliente?</label>
+              <div class="opcoes">
+                <label><input type="radio" name="perfil" value="fisico" required> Tenho local físico e atendo presencialmente</label>
+                <label><input type="radio" name="perfil" value="remoto"> Atendo só remoto/online</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="bloco">
+            <p class="bloco-titulo">Por último</p>
+            <div class="campo">
+              <label class="rotulo" for="c-tentativa">Você já tentou resolver isso antes (site de freelancer, outra agência, fazer você mesmo)? O que não funcionou?</label>
+              <textarea id="c-tentativa" name="tentativa"></textarea>
+            </div>
+          </div>
+
+          <button class="btn btn-solid" id="btn-enviar" type="submit">Enviar e ver o próximo passo</button>
+        </form>
+
+        <section class="resultado" id="resultado-ab">
+          <p class="eyebrow" style="justify-content:center">Prontinho</p>
+          <h2 class="h2 display">Já dá pra marcar a conversa</h2>
+          <p class="lead">Escolhe um horário abaixo — chegamos nele já sabendo o essencial do seu caso.</p>
+          <div class="cal-slot" id="cal-slot" aria-label="Agenda de horários do diagnóstico"></div>
+          <a class="cal-fallback" href="https://cal.com/mindle-diagnostico/branding" target="_blank" rel="noopener">Problema com a agenda? Abrir em nova aba &nearr;</a>
+        </section>
+
+        <section class="resultado" id="resultado-cd">
+          <p class="eyebrow" style="justify-content:center">Recebemos</p>
+          <h2 class="h2 display">Obrigado pelas respostas</h2>
+          <p class="lead">Anotamos tudo por aqui. Alguém da Mindle vai olhar o seu caso com calma e entra em contato pelo WhatsApp que você deixou.</p>
+        </section>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Mindle · <a href="index.html" style="color:var(--teal-deep); font-weight:700; text-decoration:none;">mindlebrand.com.br</a></p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('form-diagnostico');
+      var erro = document.getElementById('erro-form');
+
+      var PESOS = {
+        dor:        { alta: 40, media: 20, baixa: 5 },
+        momento:    { semana: 25, mes: 15, sem_pressa: 5 },
+        capacidade: { alta: 25, media: 18, baixa: 8 },
+        perfil:     { fisico: 10, remoto: 6 }
+      };
+      var TEM_SITE_LABEL = { gosto: 'Sim, e gosto dele', nao_gosto: 'Sim, mas não gosto', nao_tenho: 'Não tenho' };
+      var DOR_LABEL = { alta: 'Já perdeu cliente por demora', media: 'Demora às vezes, nunca perdeu cliente', baixa: 'Responde rápido' };
+      var MOMENTO_LABEL = { semana: 'Quer resolver essa semana', mes: 'Nos próximos 30 dias', sem_pressa: 'Só pesquisando, sem pressa' };
+      var CAPACIDADE_LABEL = { alta: 'R$5.000 ou mais', media: 'Entre R$3.000 e R$5.000', baixa: 'Menos de R$3.000 por enquanto' };
+      var PERFIL_LABEL = { fisico: 'Atende presencialmente', remoto: 'Atende só remoto/online' };
+
+      function valorRadio(nome) {
+        var el = form.querySelector('input[name="' + nome + '"]:checked');
+        return el ? el.value : '';
+      }
+
+      function montarCal(nome) {
+        (function (C, A, L) {
+          var p = function (a, ar) { a.q.push(ar); };
+          var d = C.document;
+          C.Cal = C.Cal || function () {
+            var cal = C.Cal, ar = arguments;
+            if (!cal.loaded) {
+              cal.ns = {}; cal.q = cal.q || [];
+              d.head.appendChild(d.createElement('script')).src = A;
+              cal.loaded = true;
+            }
+            if (ar[0] === L) {
+              var api = function () { p(api, arguments); };
+              var namespace = ar[1];
+              api.q = api.q || [];
+              if (typeof namespace === 'string') {
+                cal.ns[namespace] = cal.ns[namespace] || api;
+                p(cal.ns[namespace], ar);
+                p(cal, ['initNamespace', namespace]);
+              } else p(cal, ar);
+              return;
+            }
+            p(cal, ar);
+          };
+        })(window, 'https://app.cal.com/embed/embed.js', 'init');
+
+        Cal('init', { origin: 'https://app.cal.com' });
+        Cal('inline', {
+          elementOrSelector: '#cal-slot',
+          calLink: window.MINDLE_CAL,
+          config: { theme: 'light', name: nome || '', locale: 'pt-BR' }
+        });
+        Cal('ui', { theme: 'light', styles: { branding: { brandColor: '#2E8B8E' } } });
+      }
+
+      async function enviarLead(payload) {
+        var cfg = window.MINDLE_SUPABASE;
+        if (!cfg || !cfg.url || !cfg.anonKey) return 'demo';
+        var res = await fetch(cfg.url + '/rest/v1/' + (cfg.table || 'leads'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: cfg.anonKey,
+            Authorization: 'Bearer ' + cfg.anonKey,
+            Prefer: 'return=minimal'
+          },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          var corpo = await res.text().catch(function () { return ''; });
+          throw new Error('Supabase HTTP ' + res.status + ' ' + corpo.slice(0, 220));
+        }
+        return 'ok';
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        var camposObrigatorios = ['nome', 'whatsapp', 'negocio', 'ramo'];
+        var faltando = camposObrigatorios.some(function (n) { return !form[n].value.trim(); });
+        var radiosObrigatorios = ['tem_site', 'funcionando', 'decisor', 'dor', 'momento', 'capacidade', 'perfil'];
+        faltando = faltando || radiosObrigatorios.some(function (n) { return !valorRadio(n); });
+
+        if (faltando) {
+          erro.classList.add('is-on');
+          erro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        erro.classList.remove('is-on');
+
+        var nome = form.nome.value.trim();
+        var whatsapp = form.whatsapp.value.trim();
+        var negocio = form.negocio.value.trim();
+        var ramo = form.ramo.value;
+        var temSite = valorRadio('tem_site');
+        var funcionando = valorRadio('funcionando');
+        var decisor = valorRadio('decisor');
+        var dor = valorRadio('dor');
+        var momento = valorRadio('momento');
+        var capacidade = valorRadio('capacidade');
+        var perfil = valorRadio('perfil');
+        var tentativa = form.tentativa.value.trim();
+
+        var eliminado = funcionando === 'nao' || decisor === 'nao';
+        var pontuacao = eliminado ? 0 : (PESOS.dor[dor] + PESOS.momento[momento] + PESOS.capacidade[capacidade] + PESOS.perfil[perfil]);
+        var categoria;
+        if (eliminado) categoria = 'D';
+        else if (pontuacao >= 75) categoria = 'A';
+        else if (pontuacao >= 50) categoria = 'B';
+        else if (pontuacao >= 25) categoria = 'C';
+        else categoria = 'D';
+
+        var notas =
+          'Tem site: ' + (TEM_SITE_LABEL[temSite] || temSite) + '\n' +
+          'Já funciona/atende: ' + (funcionando === 'sim' ? 'Sim' : 'Não, ainda é ideia') + '\n' +
+          'Decisor: ' + (decisor === 'sim' ? 'Sim' : 'Não, precisa de aprovação') + '\n' +
+          'Dor: ' + (DOR_LABEL[dor] || dor) + '\n' +
+          'Momento: ' + (MOMENTO_LABEL[momento] || momento) + '\n' +
+          'Capacidade: ' + (CAPACIDADE_LABEL[capacidade] || capacidade) + '\n' +
+          'Perfil: ' + (PERFIL_LABEL[perfil] || perfil) +
+          (tentativa ? '\nJá tentou antes: ' + tentativa : '');
+
+        var btn = document.getElementById('btn-enviar');
+        btn.disabled = true; btn.textContent = 'Enviando…';
+
+        var payload = {
+          nome: nome,
+          telefone: whatsapp,
+          negocio_nome: negocio,
+          ramo: ramo,
+          canal: 'site',
+          status: 'novo',
+          pontuacao: pontuacao,
+          categoria: categoria,
+          notas: notas
+        };
+
+        try {
+          await enviarLead(payload);
+        } catch (err) {
+          console.error('Falha ao registrar lead:', err);
+          btn.disabled = false; btn.textContent = 'Enviar e ver o próximo passo';
+          erro.textContent = 'Não conseguimos registrar agora. Tenta de novo em instantes.';
+          erro.classList.add('is-on');
+          erro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        form.hidden = true;
+        if (categoria === 'A' || categoria === 'B') {
+          document.getElementById('resultado-ab').classList.add('is-on');
+          montarCal(nome);
+        } else {
+          document.getElementById('resultado-cd').classList.add('is-on');
+        }
+        document.querySelector('.resultado.is-on').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      var whats = document.getElementById('c-whatsapp');
+      whats.addEventListener('input', function () {
+        var d = whats.value.replace(/\D/g, '').slice(0, 11);
+        whats.value = d.length <= 2 ? (d ? '(' + d : '')
+          : d.length <= 6 ? '(' + d.slice(0, 2) + ') ' + d.slice(2)
+          : d.length <= 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6)
+          : '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+      });
+    })();
+  </script>
+</body>
+</html>

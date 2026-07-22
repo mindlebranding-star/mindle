@@ -22,7 +22,7 @@
   const sb = supabase.createClient(cfg.url, cfg.anonKey);
 
   let leads = [];
-  const filtro = { caminho: 'todos', status: 'todos', q: '' };
+  const filtro = { categoria: 'todos', status: 'todos', q: '' };
 
   const esc = (s) => String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -146,17 +146,17 @@
   function filtrados() {
     const q = filtro.q.toLowerCase();
     return leads.filter((l) =>
-      (filtro.caminho === 'todos' || l.caminho === filtro.caminho) &&
+      (filtro.categoria === 'todos' || l.categoria === filtro.categoria) &&
       (filtro.status === 'todos' || l.status === filtro.status) &&
-      (!q || [l.nome, l.email, l.profissao, l.servico, l.notas]
+      (!q || [l.nome, l.email, l.negocio_nome, l.ramo, l.profissao, l.servico, l.notas]
         .some((v) => v && v.toLowerCase().includes(q)))
     );
   }
 
   function render() {
     $('#stat-total').textContent = leads.length;
-    $('#stat-a').textContent = leads.filter((l) => l.caminho === 'A').length;
-    $('#stat-b').textContent = leads.filter((l) => l.caminho === 'B').length;
+    $('#stat-a').textContent = leads.filter((l) => l.categoria === 'A').length;
+    $('#stat-b').textContent = leads.filter((l) => l.categoria === 'B').length;
     $('#stat-novos').textContent = leads.filter((l) => l.status === 'novo').length;
     const atrasados = leads.filter((l) => l.status === 'novo' && slaEstourado(l.created_at)).length;
     $('#stat-novos').classList.toggle('is-alerta', atrasados > 0);
@@ -174,7 +174,9 @@
       return `
       <article class="lead-card${atrasado ? ' is-atrasado' : ''}" data-id="${esc(l.id)}">
         <div class="lead-top">
-          <span class="badge ${l.caminho === 'A' ? 'badge-a' : 'badge-b'}">Caminho ${esc(l.caminho)}</span>
+          ${l.categoria
+            ? `<span class="badge ${(l.categoria === 'A' || l.categoria === 'B') ? 'badge-a' : 'badge-b'}">Categoria ${esc(l.categoria)}${l.pontuacao != null ? ' · ' + esc(l.pontuacao) + ' pts' : ''}</span>`
+            : (l.caminho ? `<span class="badge ${l.caminho === 'A' ? 'badge-a' : 'badge-b'}">Caminho ${esc(l.caminho)}</span>` : '')}
           <span class="badge badge-status">${esc(l.status || 'novo')}</span>
           ${canal !== 'site' ? `<span class="badge badge-canal">${esc(CANAL_LABEL[canal] || canal)}</span>` : ''}
           ${atrasado ? '<span class="badge badge-sla">Responder hoje</span>' : ''}
@@ -182,14 +184,19 @@
           <span class="lead-data">${esc(fmtData(l.created_at))}</span>
         </div>
         <dl class="lead-grid">
-          <div class="lead-field"><dt>E-mail</dt><dd><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></dd></div>
+          ${l.email ? `<div class="lead-field"><dt>E-mail</dt><dd><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></dd></div>` : ''}
           ${l.telefone ? `<div class="lead-field"><dt>Telefone</dt><dd><a href="https://wa.me/${esc(foneDigits)}" target="_blank" rel="noopener noreferrer">${esc(l.telefone)}</a></dd></div>` : ''}
+          ${(l.negocio_nome || l.ramo) ? `
+          <div class="lead-field"><dt>Negócio</dt><dd>${esc(l.negocio_nome || '—')}</dd></div>
+          <div class="lead-field"><dt>Ramo</dt><dd>${esc(l.ramo || '—')}</dd></div>
+          ` : `
           <div class="lead-field"><dt>Profissão</dt><dd>${esc(l.profissao || '—')}</dd></div>
-          <div class="lead-field"><dt>Link</dt><dd>${l.link && /^https?:\/\//i.test(l.link)
-            ? `<a href="${esc(l.link)}" target="_blank" rel="noopener noreferrer">${esc(l.link)}</a>`
-            : esc(l.link || '—')}</dd></div>
           <div class="lead-field"><dt>Serviço</dt><dd>${esc(l.servico || '—')}</dd></div>
-          ${canal === 'site' ? `
+          `}
+          ${l.link ? `<div class="lead-field"><dt>Link</dt><dd>${/^https?:\/\//i.test(l.link)
+            ? `<a href="${esc(l.link)}" target="_blank" rel="noopener noreferrer">${esc(l.link)}</a>`
+            : esc(l.link)}</dd></div>` : ''}
+          ${(!l.categoria && canal === 'site' && l.situacao) ? `
           <div class="lead-field"><dt>Situação</dt><dd>${esc(l.situacao)} — ${esc(SITUACOES[l.situacao] || '')}</dd></div>
           <div class="lead-field"><dt>Investimento</dt><dd>${esc(INVESTIMENTOS[l.investimento] || l.investimento)}</dd></div>
           ` : ''}
@@ -325,7 +332,7 @@
   $('#chips-caminho').addEventListener('click', (e) => {
     const chip = e.target.closest('.chip');
     if (!chip) return;
-    filtro.caminho = chip.dataset.caminho;
+    filtro.categoria = chip.dataset.categoria;
     document.querySelectorAll('#chips-caminho .chip').forEach((c) => c.classList.toggle('is-on', c === chip));
     render();
   });
