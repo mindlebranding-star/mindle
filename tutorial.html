@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do formulário ao fechamento — como o funil da Mindle funciona</title>
+<meta name="description" content="Como o diagnóstico de 6 perguntas qualifica o lead e alimenta o pipeline de vendas em kanban da Mindle.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FBFBFA">
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="9" fill="%233D5AFE"/><path d="M18 32h10M28 32l-4-4M28 32l-4 4M36 32h10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'>
+<style>
+  :root {
+    --bg: #FBFBFA;
+    --surface: #FFFFFF;
+    --surface-2: #F4F5F7;
+    --border: #E7E8EC;
+    --border-soft: #F0F1F4;
+    --ink: #14151C;
+    --ink-soft: #52556A;
+    --muted: #8B8E9E;
+    --accent: #3D5AFE;
+    --accent-soft: #EEF0FF;
+    --accent-ink: #2C3FCB;
+
+    --good: #17875A;
+    --good-soft: #E7F5EE;
+    --warn: #B4650B;
+    --warn-soft: #FCF0E1;
+    --bad: #C0362C;
+    --bad-soft: #FBECE9;
+    --neutral: #6B6E80;
+    --neutral-soft: #EEEEF2;
+
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+
+    --shadow-sm: 0 1px 2px rgba(20, 21, 28, 0.04), 0 1px 1px rgba(20, 21, 28, 0.03);
+    --shadow-md: 0 4px 16px rgba(20, 21, 28, 0.06), 0 1px 3px rgba(20, 21, 28, 0.04);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0B0C10;
+      --surface: #141519;
+      --surface-2: #1B1D23;
+      --border: #26282F;
+      --border-soft: #1F2026;
+      --ink: #F1F1F4;
+      --ink-soft: #B7B9C6;
+      --muted: #797C8C;
+      --accent: #7C8CFF;
+      --accent-soft: #1B1F3D;
+      --accent-ink: #A9B3FF;
+
+      --good: #3FCB8E;
+      --good-soft: #12291F;
+      --warn: #E2A23B;
+      --warn-soft: #2E2313;
+      --bad: #E5695E;
+      --bad-soft: #301917;
+      --neutral: #9497A6;
+      --neutral-soft: #1E1F26;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0B0C10; --surface: #141519; --surface-2: #1B1D23;
+    --border: #26282F; --border-soft: #1F2026;
+    --ink: #F1F1F4; --ink-soft: #B7B9C6; --muted: #797C8C;
+    --accent: #7C8CFF; --accent-soft: #1B1F3D; --accent-ink: #A9B3FF;
+    --good: #3FCB8E; --good-soft: #12291F;
+    --warn: #E2A23B; --warn-soft: #2E2313;
+    --bad: #E5695E; --bad-soft: #301917;
+    --neutral: #9497A6; --neutral-soft: #1E1F26;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+  :root[data-theme="light"] {
+    --bg: #FBFBFA; --surface: #FFFFFF; --surface-2: #F4F5F7;
+    --border: #E7E8EC; --border-soft: #F0F1F4;
+    --ink: #14151C; --ink-soft: #52556A; --muted: #8B8E9E;
+    --accent: #3D5AFE; --accent-soft: #EEF0FF; --accent-ink: #2C3FCB;
+    --good: #17875A; --good-soft: #E7F5EE;
+    --warn: #B4650B; --warn-soft: #FCF0E1;
+    --bad: #C0362C; --bad-soft: #FBECE9;
+    --neutral: #6B6E80; --neutral-soft: #EEEEF2;
+    --shadow-sm: 0 1px 2px rgba(20, 21, 28, 0.04), 0 1px 1px rgba(20, 21, 28, 0.03);
+    --shadow-md: 0 4px 16px rgba(20, 21, 28, 0.06), 0 1px 3px rgba(20, 21, 28, 0.04);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+
+  .page {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100svh;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .wrap-wide { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  a { color: var(--accent-ink); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── Top bar ─────────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .topbar-inner {
+    max-width: 1040px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .topbar-title {
+    font-family: var(--font-display); font-weight: 600; font-size: 14.5px;
+    color: var(--ink); letter-spacing: -0.01em;
+  }
+  .topbar-nav { display: flex; gap: 20px; }
+  .topbar-nav a {
+    font-size: 13px; color: var(--muted); text-decoration: none; font-weight: 500;
+  }
+  .topbar-nav a:hover { color: var(--ink); }
+  @media (max-width: 720px) { .topbar-nav { display: none; } }
+
+  /* ── Hero ────────────────────────────────────────── */
+  .hero { padding: 72px 0 56px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.02em; color: var(--accent-ink);
+    background: var(--accent-soft); border-radius: 6px;
+    padding: 5px 10px; margin-bottom: 20px;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 650;
+    font-size: clamp(34px, 5vw, 46px); line-height: 1.08;
+    letter-spacing: -0.025em; margin: 0 0 18px;
+    text-wrap: balance;
+  }
+  .hero-lead {
+    font-size: 19px; line-height: 1.5; color: var(--ink-soft);
+    max-width: 56ch; margin: 0;
+  }
+  .hero-thesis {
+    margin-top: 28px; padding: 16px 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    font-size: 15px; color: var(--ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .hero-thesis strong { font-weight: 650; }
+
+  /* ── Section shell ───────────────────────────────── */
+  section { padding: 56px 0; border-top: 1px solid var(--border-soft); }
+  section:first-of-type { border-top: none; }
+  .section-head { max-width: 640px; margin-bottom: 32px; }
+  .section-kicker {
+    font-family: var(--font-mono); font-size: 11.5px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+    margin: 0 0 10px;
+  }
+  h2 {
+    font-family: var(--font-display); font-weight: 640;
+    font-size: clamp(24px, 3vw, 29px); letter-spacing: -0.015em;
+    margin: 0 0 10px; text-wrap: balance;
+  }
+  .section-desc { font-size: 15.5px; color: var(--ink-soft); margin: 0; max-width: 60ch; }
+
+  /* ── Step flow (formulário) ──────────────────────── */
+  .flow {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    counter-reset: step;
+  }
+  .flow-step {
+    position: relative; padding: 22px 20px 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; box-shadow: var(--shadow-sm);
+  }
+  .flow-step + .flow-step { margin-left: -1px; }
+  .flow > .flow-step:not(:last-child)::after {
+    content: ""; position: absolute; top: 50%; right: -13px; z-index: 2;
+    width: 22px; height: 22px; transform: translateY(-50%) rotate(45deg);
+    background: var(--bg); border-top: 1px solid var(--border); border-right: 1px solid var(--border);
+  }
+  .flow-num {
+    counter-increment: step; font-family: var(--font-mono); font-size: 12px;
+    color: var(--muted); margin-bottom: 10px;
+  }
+  .flow-num::before { content: counter(step, decimal-leading-zero) " · "; color: var(--muted); }
+  .flow-step h3 {
+    font-family: var(--font-display); font-weight: 620; font-size: 15.5px;
+    margin: 0 0 8px; letter-spacing: -0.01em;
+  }
+  .flow-step p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+  .flow-step .tag {
+    display: inline-block; margin-top: 12px;
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 500;
+    padding: 3px 8px; border-radius: 999px;
+  }
+  .tag--elim { background: var(--bad-soft); color: var(--bad); }
+  .tag--score { background: var(--accent-soft); color: var(--accent-ink); }
+
+  @media (max-width: 860px) {
+    .flow { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .flow-step { margin-left: 0 !important; }
+    .flow > .flow-step::after { display: none; }
+  }
+  @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }
+
+  /* ── Scoring bars ────────────────────────────────── */
+  .score-grid { display: grid; gap: 14px; }
+  .score-row {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow-sm);
+  }
+  .score-row-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 12px; gap: 12px;
+  }
+  .score-row-head h4 {
+    font-family: var(--font-display); font-weight: 620; font-size: 15px; margin: 0;
+  }
+  .score-weight {
+    font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .score-bars { display: flex; flex-direction: column; gap: 8px; }
+  .score-bar-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+  .score-bar-track {
+    grid-column: 1 / -1; height: 8px; background: var(--surface-2);
+    border-radius: 999px; overflow: hidden; position: relative;
+  }
+  .score-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
+  .score-bar-label {
+    display: flex; justify-content: space-between; gap: 12px;
+    font-size: 13px; color: var(--ink-soft);
+  }
+  .score-bar-pts {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--ink);
+    font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+
+  /* ── Category routing ────────────────────────────── */
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .cat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; box-shadow: var(--shadow-sm);
+    border-top: 3px solid var(--cat-color);
+  }
+  .cat-letter {
+    font-family: var(--font-display); font-weight: 700; font-size: 26px;
+    color: var(--cat-color); line-height: 1; margin-bottom: 4px;
+  }
+  .cat-range {
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .cat-dest {
+    font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; margin: 0 0 12px;
+  }
+  .cat-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    padding: 4px 9px; border-radius: 999px;
+    background: var(--cat-soft); color: var(--cat-color);
+  }
+  @media (max-width: 760px) { .cat-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .cat-grid { grid-template-columns: 1fr; } }
+
+  /* ── Automation chain ────────────────────────────── */
+  .chain { display: flex; flex-direction: column; }
+  .chain-item {
+    display: grid; grid-template-columns: 28px 1fr; gap: 16px;
+    position: relative; padding-bottom: 28px;
+  }
+  .chain-item:last-child { padding-bottom: 0; }
+  .chain-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft);
+    z-index: 1; font-variant-numeric: tabular-nums;
+  }
+  .chain-item::before {
+    content: ""; position: absolute; left: 13.5px; top: 28px; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .chain-item:last-child::before { display: none; }
+  .chain-body {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow-sm);
+  }
+  .chain-body h4 {
+    font-family: var(--font-display); font-weight: 620; font-size: 14.5px; margin: 0 0 5px;
+  }
+  .chain-body p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.55; }
+  .chain-body code {
+    font-family: var(--font-mono); font-size: 12px;
+    background: var(--surface-2); border-radius: 4px; padding: 1px 6px;
+    color: var(--accent-ink);
+  }
+
+  /* ── Pipeline strip ──────────────────────────────── */
+  .pipeline-scroll { overflow-x: auto; margin: 0 -24px; padding: 0 24px 8px; }
+  .pipeline { display: flex; gap: 10px; width: max-content; }
+  .pipe-card {
+    width: 208px; flex: none;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; box-shadow: var(--shadow-sm);
+    border-top: 3px solid var(--pipe-color, var(--border));
+  }
+  .pipe-card.is-dashed { border-style: dashed; opacity: 0.9; }
+  .pipe-name {
+    font-family: var(--font-display); font-weight: 620; font-size: 14px;
+    margin: 0 0 8px; letter-spacing: -0.005em;
+  }
+  .pipe-desc { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin: 0 0 12px; min-height: 55px; }
+  .pipe-flag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 500;
+    padding: 3px 8px; border-radius: 999px;
+  }
+  .pipe-flag--on { background: var(--accent-soft); color: var(--accent-ink); }
+  .pipe-flag--off { background: var(--neutral-soft); color: var(--neutral); }
+
+  /* ── Rules callouts ──────────────────────────────── */
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .rule-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px; box-shadow: var(--shadow-sm);
+  }
+  .rule-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--accent-soft); color: var(--accent-ink);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .rule-card h4 {
+    font-family: var(--font-display); font-weight: 620; font-size: 16px; margin: 0 0 8px;
+  }
+  .rule-card p { font-size: 14px; color: var(--ink-soft); line-height: 1.6; margin: 0; }
+  @media (max-width: 640px) { .rules-grid { grid-template-columns: 1fr; } }
+
+  /* ── Entry points (footer section) ───────────────── */
+  .entry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .entry-card {
+    background: var(--surface-2); border: 1px solid var(--border-soft);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .entry-card h4 {
+    font-family: var(--font-display); font-weight: 620; font-size: 14.5px; margin: 0 0 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .entry-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.55; }
+  .entry-badge {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    background: var(--accent); color: #fff; border-radius: 6px; padding: 2px 7px;
+  }
+  @media (max-width: 640px) { .entry-grid { grid-template-columns: 1fr; } }
+
+  footer.page-foot {
+    padding: 40px 0 64px; border-top: 1px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .page-foot p { font-size: 12.5px; color: var(--muted); margin: 0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span class="topbar-title">Funil Mindle — do formulário ao fechamento</span>
+      <nav class="topbar-nav">
+        <a href="#formulario">Formulário</a>
+        <a href="#pontuacao">Pontuação</a>
+        <a href="#automacao">Automação</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#regras">Regras</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <header class="hero">
+      <span class="eyebrow">Como funciona</span>
+      <h1>Do formulário ao fechamento</h1>
+      <p class="hero-lead">Todo clique nos botões do site passa por um diagnóstico de 6 perguntas antes de chegar numa agenda. Daí em diante, tudo é rastreado num quadro só.</p>
+      <div class="hero-thesis">
+        <strong>A regra de ouro:</strong> o formulário decide quem entra no funil e com que prioridade. O CRM só rastreia o que acontece depois disso — nunca re-qualifica quem já foi qualificado.
+      </div>
+    </header>
+  </div>
+
+  <div class="wrap-wide">
+
+    <section id="formulario">
+      <div class="section-head">
+        <p class="section-kicker">Etapa 1 — diagnostico.html</p>
+        <h2>O formulário</h2>
+        <p class="section-desc">Seis perguntas, dois minutos, calculadas no navegador assim que a pessoa clica em enviar.</p>
+      </div>
+      <div class="flow">
+        <div class="flow-step">
+          <p class="flow-num">Aquecimento</p>
+          <h3>Quem é e o que faz</h3>
+          <p>Nome, WhatsApp, nome do negócio, ramo e se já tem site hoje.</p>
+        </div>
+        <div class="flow-step">
+          <p class="flow-num">Eliminatórias</p>
+          <h3>Funciona e decide?</h3>
+          <p>O negócio já atende cliente? A pessoa decide sozinha? Um "não" em qualquer uma tira o lead do funil ativo na hora.</p>
+          <span class="tag tag--elim">Elimina na hora</span>
+        </div>
+        <div class="flow-step">
+          <p class="flow-num">Pontuação</p>
+          <h3>Dor, momento, capacidade, perfil</h3>
+          <p>Quatro perguntas de múltipla escolha somam até 100 pontos — é a régua P.D.C.M.</p>
+          <span class="tag tag--score">Vale pontos</span>
+        </div>
+        <div class="flow-step">
+          <p class="flow-num">Contexto</p>
+          <h3>O que já tentou antes</h3>
+          <p>Pergunta aberta, não pontua — vira munição pra call, não critério de corte.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pontuacao">
+      <div class="section-head">
+        <p class="section-kicker">A régua — P.D.C.M.</p>
+        <h2>Como os 100 pontos se somam</h2>
+        <p class="section-desc">Cada pergunta pesa diferente. Dor é o eixo mais forte porque é o que mais prevê se a pessoa vai mesmo fechar.</p>
+      </div>
+      <div class="score-grid">
+
+        <div class="score-row">
+          <div class="score-row-head">
+            <h4>Dor</h4>
+            <span class="score-weight">peso 40</span>
+          </div>
+          <div class="score-bars">
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Já perdeu cliente por demora</span><span class="score-bar-pts">40 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+            </div>
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Demora às vezes, nunca perdeu</span><span class="score-bar-pts">20 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:50%"></div></div>
+            </div>
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Responde rápido</span><span class="score-bar-pts">5 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:12.5%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="score-row">
+          <div class="score-row-head">
+            <h4>Momento</h4>
+            <span class="score-weight">peso 25</span>
+          </div>
+          <div class="score-bars">
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Quer resolver essa semana</span><span class="score-bar-pts">25 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+            </div>
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Nos próximos 30 dias</span><span class="score-bar-pts">15 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:60%"></div></div>
+            </div>
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Só pesquisando</span><span class="score-bar-pts">5 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:20%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="score-row">
+          <div class="score-row-head">
+            <h4>Capacidade</h4>
+            <span class="score-weight">peso 25</span>
+          </div>
+          <div class="score-bars">
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>R$5.000 ou mais</span><span class="score-bar-pts">25 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+            </div>
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Entre R$3.000 e R$5.000</span><span class="score-bar-pts">18 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:72%"></div></div>
+            </div>
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Menos de R$3.000</span><span class="score-bar-pts">8 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:32%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="score-row">
+          <div class="score-row-head">
+            <h4>Perfil</h4>
+            <span class="score-weight">peso 10</span>
+          </div>
+          <div class="score-bars">
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Atende presencialmente</span><span class="score-bar-pts">10 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+            </div>
+            <div class="score-bar-item">
+              <div class="score-bar-label"><span>Só remoto/online</span><span class="score-bar-pts">6 pts</span></div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="categorias">
+      <div class="section-head">
+        <p class="section-kicker">O resultado</p>
+        <h2>Pra onde cada pontuação vai</h2>
+        <p class="section-desc">A soma vira uma categoria, e a categoria decide se o calendário aparece na tela ou não.</p>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-card" style="--cat-color: var(--good); --cat-soft: var(--good-soft);">
+          <div class="cat-letter">A</div>
+          <p class="cat-range">≥ 75 pontos</p>
+          <p class="cat-dest">Sem eliminação, dor alta, pronto pra decidir. O melhor lead que o formulário entrega.</p>
+          <span class="cat-pill">● Calendário libera na hora</span>
+        </div>
+        <div class="cat-card" style="--cat-color: var(--accent); --cat-soft: var(--accent-soft);">
+          <div class="cat-letter">B</div>
+          <p class="cat-range">50–74 pontos</p>
+          <p class="cat-dest">Qualificado, mas com alguma reserva — investimento menor ou momento menos urgente.</p>
+          <span class="cat-pill">● Calendário libera na hora</span>
+        </div>
+        <div class="cat-card" style="--cat-color: var(--warn); --cat-soft: var(--warn-soft);">
+          <div class="cat-letter">C</div>
+          <p class="cat-range">25–49 pontos</p>
+          <p class="cat-dest">Pouca urgência ou pouca capacidade agora. Não é hora de call.</p>
+          <span class="cat-pill">● Vai pra nutrição</span>
+        </div>
+        <div class="cat-card" style="--cat-color: var(--neutral); --cat-soft: var(--neutral-soft);">
+          <div class="cat-letter">D</div>
+          <p class="cat-range">&lt; 25 pontos, ou eliminado</p>
+          <p class="cat-dest">Sem dor, sem pressa — ou caiu nas eliminatórias (ideia ainda não aberta, ou sem poder de decisão).</p>
+          <span class="cat-pill">● Vai pra nutrição</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="automacao">
+      <div class="section-head">
+        <p class="section-kicker">Sem toque manual</p>
+        <h2>O que acontece quando alguém agenda</h2>
+        <p class="section-desc">Categoria A ou B libera o calendário na própria página. Se a pessoa realmente marcar um horário, o CRM se atualiza sozinho.</p>
+      </div>
+      <div class="chain">
+        <div class="chain-item">
+          <div class="chain-dot">1</div>
+          <div class="chain-body">
+            <h4>Pessoa escolhe um horário no Cal.com</h4>
+            <p>Embutido direto na tela de resultado do formulário — sem sair da página, sem novo link.</p>
+          </div>
+        </div>
+        <div class="chain-item">
+          <div class="chain-dot">2</div>
+          <div class="chain-body">
+            <h4>Cal.com dispara um webhook</h4>
+            <p>Evento <code>BOOKING_CREATED</code>, assinado e verificado antes de qualquer coisa ser processada.</p>
+          </div>
+        </div>
+        <div class="chain-item">
+          <div class="chain-dot">3</div>
+          <div class="chain-body">
+            <h4>A função procura o lead</h4>
+            <p>Por e-mail primeiro; se não achar, pelos últimos 10 dígitos do WhatsApp — o formulário não pede e-mail.</p>
+          </div>
+        </div>
+        <div class="chain-item">
+          <div class="chain-dot">4</div>
+          <div class="chain-body">
+            <h4>O card pula direto pra "Reunião Agendada"</h4>
+            <p>Com a data e a hora exatas da call já gravadas — ninguém precisa mover nada à mão.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline">
+      <div class="section-head">
+        <p class="section-kicker">Etapa 2 — o CRM</p>
+        <h2>As nove colunas do quadro</h2>
+        <p class="section-desc">Cada lead vive numa coluna. Mover é só arrastar. Role pro lado pra ver todas.</p>
+      </div>
+      <div class="pipeline-scroll">
+        <div class="pipeline">
+
+          <div class="pipe-card is-dashed" style="--pipe-color: var(--neutral);">
+            <p class="pipe-name">Nutrição</p>
+            <p class="pipe-desc">Categorias C e D do formulário. Nunca foi trabalhado — por isso não conta como perda depois.</p>
+            <span class="pipe-flag pipe-flag--off">Sem ação obrigatória</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--accent);">
+            <p class="pipe-name">Aguardando Contato</p>
+            <p class="pipe-desc">Categoria A ou B, ainda esperando o primeiro toque de alguém do time.</p>
+            <span class="pipe-flag pipe-flag--on">Exige próxima ação</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--accent);">
+            <p class="pipe-name">Primeiro Contato</p>
+            <p class="pipe-desc">O primeiro toque já foi feito — ligação, mensagem, o que for.</p>
+            <span class="pipe-flag pipe-flag--on">Exige próxima ação</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--accent);">
+            <p class="pipe-name">Reunião Agendada</p>
+            <p class="pipe-desc">Cal.com confirmou. Data e hora chegam sozinhas via webhook.</p>
+            <span class="pipe-flag pipe-flag--on">Exige próxima ação</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--accent);">
+            <p class="pipe-name">Compareceu na Reunião</p>
+            <p class="pipe-desc">A pessoa apareceu. Marcado ao salvar a call na aba Diagnóstico.</p>
+            <span class="pipe-flag pipe-flag--on">Exige próxima ação</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--accent);">
+            <p class="pipe-name">Proposta</p>
+            <p class="pipe-desc">Escopo e investimento já foram enviados por escrito.</p>
+            <span class="pipe-flag pipe-flag--on">Exige próxima ação</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--accent);">
+            <p class="pipe-name">Negociação</p>
+            <p class="pipe-desc">Ajustando escopo ou valor antes do sim final.</p>
+            <span class="pipe-flag pipe-flag--on">Exige próxima ação</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--good);">
+            <p class="pipe-name">Ganho</p>
+            <p class="pipe-desc">Fechou. Um clique em "→ Cliente" já abre o cadastro pré-preenchido.</p>
+            <span class="pipe-flag pipe-flag--off">Etapa final</span>
+          </div>
+
+          <div class="pipe-card" style="--pipe-color: var(--bad);">
+            <p class="pipe-name">Perdido</p>
+            <p class="pipe-desc">Não fechou — mas só chega aqui quem realmente foi trabalhado antes.</p>
+            <span class="pipe-flag pipe-flag--off">Motivo obrigatório</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="wrap">
+
+    <section id="regras">
+      <div class="section-head">
+        <p class="section-kicker">Disciplina do quadro</p>
+        <h2>As duas regras que ele tenta forçar</h2>
+      </div>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <h4>Toda coluna ativa exige próxima ação com data</h4>
+          <p>Sem isso, o card ganha um aviso vermelho — "Sem próxima ação" — e entra na estatística do topo do quadro. É o sinal mais importante pra revisar todo dia.</p>
+        </div>
+        <div class="rule-card">
+          <div class="rule-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L14 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          </div>
+          <h4>Nenhum lead vira "Perdido" sem motivo</h4>
+          <p>Arrastar um card pra essa coluna pede o motivo antes de confirmar. Sem isso, a taxa de perda não ensina nada.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="entradas">
+      <div class="section-head">
+        <p class="section-kicker">Fora do formulário</p>
+        <h2>Outras duas portas de entrada</h2>
+      </div>
+      <div class="entry-grid">
+        <div class="entry-card">
+          <h4><span class="entry-badge">+</span> Novo lead</h4>
+          <p>Pra quem chega por indicação direta — telefone, presencial — sem passar pelo site.</p>
+        </div>
+        <div class="entry-card">
+          <h4><span class="entry-badge">→</span> Cliente</h4>
+          <p>Um clique no card move o lead pra "Ganho" e já abre o cadastro de cliente com os dados preenchidos.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <p>Mindle — site · sistema · automação</p>
+      <p>Diagnóstico → formulário → pontuação → pipeline</p>
+    </footer>
+
+  </div>
+
+</div>
+</body>
+</html>
