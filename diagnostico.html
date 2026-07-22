@@ -400,14 +400,14 @@
 
       async function enviarLead(payload) {
         var cfg = window.MINDLE_SUPABASE;
-        if (!cfg || !cfg.url || !cfg.anonKey) return null;
+        if (!cfg || !cfg.url || !cfg.anonKey) return 'demo';
         var res = await fetch(cfg.url + '/rest/v1/' + (cfg.table || 'leads'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             apikey: cfg.anonKey,
             Authorization: 'Bearer ' + cfg.anonKey,
-            Prefer: 'return=representation'
+            Prefer: 'return=minimal'
           },
           body: JSON.stringify(payload)
         });
@@ -415,8 +415,7 @@
           var corpo = await res.text().catch(function () { return ''; });
           throw new Error('Supabase HTTP ' + res.status + ' ' + corpo.slice(0, 220));
         }
-        var linhas = await res.json().catch(function () { return []; });
-        return (linhas && linhas[0] && linhas[0].id) || null;
+        return 'ok';
       }
 
       form.addEventListener('submit', async function (e) {
@@ -469,6 +468,12 @@
         var btn = document.getElementById('btn-enviar');
         btn.disabled = true; btn.textContent = 'Enviando…';
 
+        // Gera o id no navegador (em vez de pedir de volta do Supabase depois
+        // do insert) — assim não depende de permissão de leitura, que o
+        // formulário público não tem. Vai como lead_id pro Cal.com casar o
+        // agendamento com esse lead exato, sem duplicar.
+        var leadId = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : null;
+
         var payload = {
           nome: nome,
           telefone: whatsapp,
@@ -480,10 +485,10 @@
           categoria: categoria,
           notas: notas
         };
+        if (leadId) payload.id = leadId;
 
-        var leadId;
         try {
-          leadId = await enviarLead(payload);
+          await enviarLead(payload);
         } catch (err) {
           console.error('Falha ao registrar lead:', err);
           btn.disabled = false; btn.textContent = 'Enviar e ver o próximo passo';
