@@ -176,6 +176,10 @@
     return d + '/' + m;
   }
 
+  const fmtReuniao = (iso) => new Date(iso).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+  });
+
   function proximaAcaoInfo(l, ativo) {
     if (!ativo) return null;
     if (!l.proxima_acao_data) return { tipo: 'faltando', texto: 'Sem próxima ação' };
@@ -193,13 +197,14 @@
     const pa = proximaAcaoInfo(l, estagio.ativo);
     const origem = [l.utm_source, l.utm_medium, l.utm_campaign].filter(Boolean).join(' · ');
     return `
-    <article class="board-card${pa && pa.tipo !== 'ok' ? ' is-' + pa.tipo : ''}" data-id="${esc(l.id)}">
+    <article class="board-card${pa && pa.tipo !== 'ok' ? ' is-' + pa.tipo : ''}" data-id="${esc(l.id)}" draggable="true">
       <button type="button" class="board-card-head">
         <span class="board-card-nome">${esc(l.nome)}</span>
         ${l.categoria ? `<span class="badge ${(l.categoria === 'A' || l.categoria === 'B') ? 'badge-a' : 'badge-b'}">${esc(l.categoria)}</span>` : ''}
       </button>
       <div class="board-card-meta">
         ${canal !== 'site' ? `<span class="badge badge-canal">${esc(CANAL_LABEL[canal] || canal)}</span>` : ''}
+        ${l.reuniao_em ? `<span class="board-reuniao">Reunião ${esc(fmtReuniao(l.reuniao_em))}</span>` : ''}
         ${pa ? `<span class="board-pa board-pa--${pa.tipo}">${esc(pa.texto)}</span>` : ''}
       </div>
 
@@ -222,6 +227,7 @@
           <div class="lead-field"><dt>Investimento</dt><dd>${esc(INVESTIMENTOS[l.investimento] || l.investimento)}</dd></div>
           ` : ''}
           ${(origem || l.referrer) ? `<div class="lead-field"><dt>Origem</dt><dd>${esc(origem || 'direto')}${l.referrer ? `<span class="lead-ref">${esc(l.referrer)}</span>` : ''}</dd></div>` : ''}
+          ${l.reuniao_em ? `<div class="lead-field"><dt>Reunião marcada</dt><dd>${esc(fmtData(l.reuniao_em))}</dd></div>` : ''}
           <div class="lead-field"><dt>Chegou em</dt><dd>${esc(fmtData(l.created_at))}</dd></div>
         </dl>
 
@@ -332,6 +338,72 @@
       const detalhe = head.closest('.board-card').querySelector('.board-card-detalhe');
       detalhe.hidden = !detalhe.hidden;
     }
+  });
+
+  /* Abre o detalhe de um card recém-renderizado (usado após o drop
+     numa coluna ativa sem próxima ação: o campo já abre focado). */
+  function abrirDetalhe(id, focarPa) {
+    const card = $('#leads-board').querySelector(`.board-card[data-id="${id}"]`);
+    if (!card) return;
+    const det = card.querySelector('.board-card-detalhe');
+    if (det) det.hidden = false;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (focarPa) {
+      const pa = card.querySelector('.board-pa-texto');
+      if (pa) pa.focus();
+    }
+  }
+
+  /* ── Drag-and-drop entre colunas ── */
+  let dragId = null;
+  $('#leads-board').addEventListener('dragstart', (e) => {
+    const card = e.target.closest('.board-card');
+    if (!card) return;
+    dragId = card.dataset.id;
+    e.dataTransfer.effectAllowed = 'move';
+    card.classList.add('is-dragging');
+  });
+  $('#leads-board').addEventListener('dragend', (e) => {
+    const card = e.target.closest('.board-card');
+    if (card) card.classList.remove('is-dragging');
+    dragId = null;
+    $$('.board-col.is-over').forEach((c) => c.classList.remove('is-over'));
+  });
+  $('#leads-board').addEventListener('dragover', (e) => {
+    const col = e.target.closest('.board-col');
+    if (!col || !dragId) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    $$('.board-col.is-over').forEach((c) => { if (c !== col) c.classList.remove('is-over'); });
+    col.classList.add('is-over');
+  });
+  $('#leads-board').addEventListener('drop', async (e) => {
+    const col = e.target.closest('.board-col');
+    if (!col || !dragId) return;
+    e.preventDefault();
+    const id = dragId;
+    dragId = null;
+    $$('.board-col.is-over').forEach((c) => c.classList.remove('is-over'));
+
+    const destinoKey = col.dataset.estagio;
+    const lead = leads.find((l) => l.id === id);
+    if (!lead || estagioValido(lead.status) === destinoKey) return;
+    const destino = ESTAGIOS.find((x) => x.key === destinoKey);
+    if (!destino) return;
+
+    const patch = { status: destinoKey };
+    // Regra da aula: nunca perdido sem motivo anotado.
+    if (destinoKey === 'perdido') {
+      const motivo = prompt('Motivo da perda (obrigatório):', lead.motivo_perda || '');
+      if (!motivo || !motivo.trim()) return;
+      patch.motivo_perda = motivo.trim();
+    }
+
+    // Regra da aula: lead ativo precisa de próxima ação com data.
+    // No drag o movimento acontece, mas o card já abre com o campo focado.
+    const faltaAcao = destino.ativo && !lead.proxima_acao_data;
+    const ok = await moverPara(id, patch);
+    if (ok && faltaAcao) abrirDetalhe(id, true);
   });
 
   $('#leads-board').addEventListener('change', async (e) => {
