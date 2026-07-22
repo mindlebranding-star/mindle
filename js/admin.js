@@ -212,13 +212,8 @@
         <dl class="lead-grid">
           ${l.email ? `<div class="lead-field"><dt>E-mail</dt><dd><a href="mailto:${esc(l.email)}">${esc(l.email)}</a></dd></div>` : ''}
           ${l.telefone ? `<div class="lead-field"><dt>Telefone</dt><dd><a href="https://wa.me/${esc(foneDigits)}" target="_blank" rel="noopener noreferrer">${esc(l.telefone)}</a></dd></div>` : ''}
-          ${(l.negocio_nome || l.ramo) ? `
-          <div class="lead-field"><dt>Negócio</dt><dd>${esc(l.negocio_nome || '—')}</dd></div>
-          <div class="lead-field"><dt>Ramo</dt><dd>${esc(l.ramo || '—')}</dd></div>
-          ` : `
-          <div class="lead-field"><dt>Profissão</dt><dd>${esc(l.profissao || '—')}</dd></div>
-          <div class="lead-field"><dt>Serviço</dt><dd>${esc(l.servico || '—')}</dd></div>
-          `}
+          ${l.negocio_nome ? `<div class="lead-field"><dt>Nome</dt><dd>${esc(l.negocio_nome)}</dd></div>` : ''}
+          ${(l.ramo || l.profissao || l.servico) ? `<div class="lead-field"><dt>Ramo</dt><dd>${esc(l.ramo || l.profissao || l.servico)}</dd></div>` : ''}
           ${l.link ? `<div class="lead-field"><dt>Link</dt><dd>${/^https?:\/\//i.test(l.link)
             ? `<a href="${esc(l.link)}" target="_blank" rel="noopener noreferrer">${esc(l.link)}</a>`
             : esc(l.link)}</dd></div>` : ''}
@@ -470,8 +465,8 @@
     const dados = {
       nome, email,
       telefone: $('#lead-telefone').value.trim() || null,
-      profissao: $('#lead-profissao').value.trim() || null,
-      servico: $('#lead-servico').value.trim() || null,
+      negocio_nome: $('#lead-negocio').value.trim() || null,
+      ramo: $('#lead-ramo').value || null,
       notas: $('#lead-notas').value.trim() || null,
       canal: 'indicacao',
       situacao: 'A',
@@ -938,7 +933,7 @@
     let salvo = '';
     try { salvo = (JSON.parse(localStorage.getItem(DG_KEY)) || {}).lead || ''; } catch (e) {}
     sel.innerHTML = '<option value="">— selecionar ou digitar abaixo —</option>' +
-      leads.map((l) => `<option value="${esc(l.id)}">${esc(l.nome)} — ${esc(l.negocio_nome || l.profissao || '—')} (${esc(ESTAGIO_LABEL[estagioValido(l.status)])})</option>`).join('');
+      leads.map((l) => `<option value="${esc(l.id)}">${esc(l.nome)} — ${esc(l.negocio_nome || l.ramo || l.profissao || '—')} (${esc(ESTAGIO_LABEL[estagioValido(l.status)])})</option>`).join('');
     sel.value = atual || salvo;
   }
 
