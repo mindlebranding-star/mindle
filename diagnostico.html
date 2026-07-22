@@ -356,7 +356,7 @@
         return el ? el.value : '';
       }
 
-      function montarCal(nome) {
+      function montarCal(nome, leadId) {
         (function (C, A, L) {
           var p = function (a, ar) { a.q.push(ar); };
           var d = C.document;
@@ -382,10 +382,17 @@
           };
         })(window, 'https://app.cal.com/embed/embed.js', 'init');
 
+        // lead_id vai como parâmetro de URL pra preencher a pergunta oculta
+        // "ID interno" do tipo de evento no Cal.com — é assim que a Edge
+        // Function registrar-agendamento sabe exatamente qual lead atualizar
+        // quando o agendamento é confirmado, sem depender de casar e-mail
+        // ou telefone (que o Cal.com nem sempre coleta).
+        var link = window.MINDLE_CAL + (leadId ? '?lead_id=' + encodeURIComponent(leadId) : '');
+
         Cal('init', { origin: 'https://app.cal.com' });
         Cal('inline', {
           elementOrSelector: '#cal-slot',
-          calLink: window.MINDLE_CAL,
+          calLink: link,
           config: { theme: 'light', name: nome || '', locale: 'pt-BR' }
         });
         Cal('ui', { theme: 'light', styles: { branding: { brandColor: '#2E8B8E' } } });
@@ -393,14 +400,14 @@
 
       async function enviarLead(payload) {
         var cfg = window.MINDLE_SUPABASE;
-        if (!cfg || !cfg.url || !cfg.anonKey) return 'demo';
+        if (!cfg || !cfg.url || !cfg.anonKey) return null;
         var res = await fetch(cfg.url + '/rest/v1/' + (cfg.table || 'leads'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             apikey: cfg.anonKey,
             Authorization: 'Bearer ' + cfg.anonKey,
-            Prefer: 'return=minimal'
+            Prefer: 'return=representation'
           },
           body: JSON.stringify(payload)
         });
@@ -408,7 +415,8 @@
           var corpo = await res.text().catch(function () { return ''; });
           throw new Error('Supabase HTTP ' + res.status + ' ' + corpo.slice(0, 220));
         }
-        return 'ok';
+        var linhas = await res.json().catch(function () { return []; });
+        return (linhas && linhas[0] && linhas[0].id) || null;
       }
 
       form.addEventListener('submit', async function (e) {
@@ -473,8 +481,9 @@
           notas: notas
         };
 
+        var leadId;
         try {
-          await enviarLead(payload);
+          leadId = await enviarLead(payload);
         } catch (err) {
           console.error('Falha ao registrar lead:', err);
           btn.disabled = false; btn.textContent = 'Enviar e ver o próximo passo';
@@ -487,7 +496,7 @@
         form.hidden = true;
         if (categoria === 'A' || categoria === 'B') {
           document.getElementById('resultado-ab').classList.add('is-on');
-          montarCal(nome);
+          montarCal(nome, leadId);
         } else {
           document.getElementById('resultado-cd').classList.add('is-on');
         }
