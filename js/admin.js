@@ -272,8 +272,10 @@
     $('#stat-novos').title = semAcao > 0 ? semAcao + ' lead(s) ativo(s) sem data de próxima ação' : '';
 
     const lista = filtrados();
+    const emCalendario = !$('#leads-calendario').hidden;
     $('#empty').hidden = leads.length > 0;
-    $('#leads-board').hidden = leads.length === 0;
+    $('#leads-board').hidden = leads.length === 0 || emCalendario;
+    if (emCalendario) renderCalendario();
 
     const porEstagio = {};
     ESTAGIOS.forEach((e) => { porEstagio[e.key] = []; });
@@ -383,55 +385,149 @@
     await moverPara(id, patch);
   });
 
-  $('#leads-board').addEventListener('focusout', (e) => {
-    const card = e.target.closest('.board-card');
-    if (!card) return;
-    const id = card.dataset.id;
-    const lead = leads.find((l) => l.id === id);
-    if (!lead) return;
+  /* Interações comuns a qualquer container que renderize cardHTML() —
+     hoje usado pelo board e pelo modal do calendário. */
+  function ligarInteracoesCard(container) {
+    container.addEventListener('focusout', (e) => {
+      const card = e.target.closest('.board-card');
+      if (!card) return;
+      const id = card.dataset.id;
+      const lead = leads.find((l) => l.id === id);
+      if (!lead) return;
 
-    if (e.target.classList.contains('board-notas')) {
-      const valor = e.target.value.trim() || null;
-      if ((lead.notas || null) !== valor) salvarCampo(id, { notas: valor }, card);
-      return;
-    }
-    if (e.target.classList.contains('board-pa-texto') || e.target.classList.contains('board-pa-data')) {
-      const texto = card.querySelector('.board-pa-texto').value.trim() || null;
-      const data = card.querySelector('.board-pa-data').value || null;
-      if ((lead.proxima_acao || null) !== texto || (lead.proxima_acao_data || null) !== data) {
-        salvarCampo(id, { proxima_acao: texto, proxima_acao_data: data }, card);
+      if (e.target.classList.contains('board-notas')) {
+        const valor = e.target.value.trim() || null;
+        if ((lead.notas || null) !== valor) salvarCampo(id, { notas: valor }, card);
+        return;
       }
-      return;
+      if (e.target.classList.contains('board-pa-texto') || e.target.classList.contains('board-pa-data')) {
+        const texto = card.querySelector('.board-pa-texto').value.trim() || null;
+        const data = card.querySelector('.board-pa-data').value || null;
+        if ((lead.proxima_acao || null) !== texto || (lead.proxima_acao_data || null) !== data) {
+          salvarCampo(id, { proxima_acao: texto, proxima_acao_data: data }, card);
+        }
+        return;
+      }
+      if (e.target.classList.contains('board-motivo-perda')) {
+        const valor = e.target.value.trim() || null;
+        if ((lead.motivo_perda || null) !== valor) salvarCampo(id, { motivo_perda: valor }, card);
+      }
+    });
+
+    container.addEventListener('click', async (e) => {
+      const conv = e.target.closest('.lead-converter');
+      if (conv) {
+        const card = conv.closest('.board-card');
+        const lead = leads.find((l) => l.id === card.dataset.id);
+        if (!lead) return;
+        fecharCalModal();
+        const tabCadastro = document.querySelector('.tab[data-tab="cadastro"]');
+        if (tabCadastro) tabCadastro.click();
+        cadAbrirForm({ nome: lead.nome, email: lead.email, whatsapp: lead.telefone, notas: lead.notas });
+        $('#cad-nome').focus();
+        cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (lead.status !== 'ganho') moverPara(lead.id, { status: 'ganho' });
+        return;
+      }
+      const btn = e.target.closest('.lead-excluir');
+      if (!btn) return;
+      const card = btn.closest('.board-card');
+      const lead = leads.find((l) => l.id === card.dataset.id);
+      if (!confirm('Excluir o lead "' + (lead ? lead.nome : '') + '" definitivamente?')) return;
+      const { error } = await sb.from('leads').delete().eq('id', card.dataset.id);
+      if (error) { alert('Erro ao excluir: ' + error.message); return; }
+      leads = leads.filter((l) => l.id !== card.dataset.id);
+      render();
+    });
+  }
+  ligarInteracoesCard($('#leads-board'));
+
+  /* ── Calendário de reuniões (alternativa ao board) ──────── */
+  const MES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  const hojeObj = new Date();
+  const calState = { ano: hojeObj.getFullYear(), mes: hojeObj.getMonth() };
+
+  function diaKey(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function renderCalendario() {
+    const porDia = {};
+    leads.forEach((l) => {
+      if (!l.reuniao_em) return;
+      const d = new Date(l.reuniao_em);
+      if (d.getFullYear() !== calState.ano || d.getMonth() !== calState.mes) return;
+      const k = diaKey(d);
+      (porDia[k] = porDia[k] || []).push(l);
+    });
+
+    $('#cal-mes-titulo').textContent = MES_NOME[calState.mes] + ' de ' + calState.ano;
+
+    const primeiro = new Date(calState.ano, calState.mes, 1);
+    const totalDias = new Date(calState.ano, calState.mes + 1, 0).getDate();
+    const offset = primeiro.getDay(); // 0 = domingo
+    const hojeKey = diaKey(hojeObj);
+
+    let celulas = '';
+    for (let i = 0; i < offset; i++) celulas += '<div class="cal-dia is-vazio"></div>';
+    for (let dia = 1; dia <= totalDias; dia++) {
+      const k = calState.ano + '-' + String(calState.mes + 1).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
+      const itens = porDia[k] || [];
+      const classes = ['cal-dia'];
+      if (k === hojeKey) classes.push('is-hoje');
+      if (itens.length) classes.push('tem-reuniao');
+      celulas += `<div class="${classes.join(' ')}" ${itens.length ? `data-dia="${k}"` : ''}>` +
+        `<span>${dia}</span>` +
+        (itens.length ? `<span class="cal-dia-count">${itens.length} reuni${itens.length > 1 ? 'ões' : 'ão'}</span>` : '') +
+        `</div>`;
     }
-    if (e.target.classList.contains('board-motivo-perda')) {
-      const valor = e.target.value.trim() || null;
-      if ((lead.motivo_perda || null) !== valor) salvarCampo(id, { motivo_perda: valor }, card);
-    }
+    $('#cal-mes-grid').innerHTML = celulas;
+  }
+
+  $('#cal-mes-prev').addEventListener('click', () => {
+    calState.mes--;
+    if (calState.mes < 0) { calState.mes = 11; calState.ano--; }
+    renderCalendario();
+  });
+  $('#cal-mes-next').addEventListener('click', () => {
+    calState.mes++;
+    if (calState.mes > 11) { calState.mes = 0; calState.ano++; }
+    renderCalendario();
   });
 
-  $('#leads-board').addEventListener('click', async (e) => {
-    const conv = e.target.closest('.lead-converter');
-    if (conv) {
-      const card = conv.closest('.board-card');
-      const lead = leads.find((l) => l.id === card.dataset.id);
-      if (!lead) return;
-      const tabCadastro = document.querySelector('.tab[data-tab="cadastro"]');
-      if (tabCadastro) tabCadastro.click();
-      cadAbrirForm({ nome: lead.nome, email: lead.email, whatsapp: lead.telefone, notas: lead.notas });
-      $('#cad-nome').focus();
-      cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      if (lead.status !== 'ganho') moverPara(lead.id, { status: 'ganho' });
-      return;
-    }
-    const btn = e.target.closest('.lead-excluir');
-    if (!btn) return;
-    const card = btn.closest('.board-card');
-    const lead = leads.find((l) => l.id === card.dataset.id);
-    if (!confirm('Excluir o lead "' + (lead ? lead.nome : '') + '" definitivamente?')) return;
-    const { error } = await sb.from('leads').delete().eq('id', card.dataset.id);
-    if (error) { alert('Erro ao excluir: ' + error.message); return; }
-    leads = leads.filter((l) => l.id !== card.dataset.id);
-    render();
+  const calModal = $('#cal-modal');
+  function abrirCalModal(dataKey, itens) {
+    const [ano, mes, dia] = dataKey.split('-');
+    $('#cal-modal-title').textContent = 'Reuniões — ' + dia + '/' + mes + '/' + ano;
+    $('#cal-modal-body').innerHTML = itens
+      .sort((a, b) => new Date(a.reuniao_em) - new Date(b.reuniao_em))
+      .map((l) => cardHTML(l, ESTAGIOS.find((e) => e.key === estagioValido(l.status)) || ESTAGIOS[0]))
+      .join('');
+    // dentro do modal o card já aparece aberto — sem precisar clicar pra expandir
+    $$('#cal-modal-body .board-card-detalhe').forEach((det) => { det.hidden = false; });
+    calModal.hidden = false;
+  }
+  function fecharCalModal() { calModal.hidden = true; }
+  $('#cal-mes-grid').addEventListener('click', (e) => {
+    const dia = e.target.closest('.cal-dia.tem-reuniao');
+    if (!dia) return;
+    const k = dia.dataset.dia;
+    const itens = leads.filter((l) => l.reuniao_em && diaKey(new Date(l.reuniao_em)) === k);
+    abrirCalModal(k, itens);
+  });
+  calModal.addEventListener('click', (e) => {
+    if (e.target.closest('[data-cal-modal-close]') || e.target.id === 'cal-modal-close') fecharCalModal();
+  });
+  ligarInteracoesCard($('#cal-modal-body'));
+
+  $('#chips-vista').addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    $$('#chips-vista .chip').forEach((c) => c.classList.toggle('is-on', c === chip));
+    const calView = chip.dataset.vista === 'calendario';
+    $('#leads-board').hidden = calView || leads.length === 0;
+    $('#leads-calendario').hidden = !calView;
+    if (calView) renderCalendario();
   });
 
   /* ── Novo lead manual (indicação direta) ────────── */

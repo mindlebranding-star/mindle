@@ -644,6 +644,9 @@
   color: var(--color-respiro-base);
   white-space: pre-wrap; word-break: break-word;
 }
+.modal-body--cards { white-space: normal; display: grid; gap: 12px; }
+.modal-body--cards .board-card { cursor: default; }
+.modal-body--cards .board-card-detalhe { display: grid; }
 
 /* Miniaturas de imagem (URL assinada) */
 .fprev { width: 108px; display: grid; gap: 5px; margin: 0; }
@@ -767,4 +770,58 @@
 
 @media (max-width: 640px) {
   .board-col { flex-basis: 84vw; width: 84vw; max-width: 84vw; }
+}
+
+/* ── Calendário de reuniões (aba Leads, alternativa ao board) ── */
+.cal-mes {
+  background: var(--color-surface-01);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  max-width: 640px;
+}
+.cal-mes-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.cal-mes-titulo {
+  font-family: var(--font-display); font-weight: 500; font-size: 18px;
+  color: var(--color-respiro-base); text-transform: capitalize;
+}
+.cal-nav {
+  width: 32px; height: 32px;
+  border: 1px solid var(--color-border-default); border-radius: 50%;
+  color: var(--color-muted); font-size: 15px;
+  transition: color 0.25s, border-color 0.25s;
+}
+.cal-nav:hover { color: var(--color-respiro-base); border-color: var(--color-muted-deep); }
+.cal-mes-semana {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--color-muted-deep);
+  text-align: center; padding-bottom: 8px;
+}
+.cal-mes-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+}
+.cal-dia {
+  aspect-ratio: 1; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; position: relative;
+  font-size: 13px; color: var(--color-muted);
+  border: 1px solid transparent;
+  background: none;
+}
+.cal-dia.is-vazio { visibility: hidden; }
+.cal-dia.is-hoje { border-color: var(--color-border-default); }
+.cal-dia.tem-reuniao {
+  cursor: pointer; color: var(--color-respiro-base);
+  background: rgba(46, 139, 142, 0.14);
+  border-color: rgba(46, 139, 142, 0.4);
+  transition: background 0.2s, transform 0.2s;
+}
+.cal-dia.tem-reuniao:hover { background: rgba(46, 139, 142, 0.24); transform: translateY(-1px); }
+.cal-dia-count {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--color-accent-light); font-variant-numeric: tabular-nums;
 }

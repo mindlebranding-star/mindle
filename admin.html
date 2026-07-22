@@ -85,6 +85,10 @@
 
       <div class="toolbar">
         <button class="btn btn-primary" id="lead-novo-btn" type="button">+ Novo lead</button>
+        <div class="chips" id="chips-vista" role="group" aria-label="Trocar visualização">
+          <button class="chip is-on" data-vista="board">Board</button>
+          <button class="chip" data-vista="calendario">Calendário</button>
+        </div>
         <div class="chips" id="chips-caminho" role="group" aria-label="Filtrar por categoria">
           <button class="chip is-on" data-categoria="todos">Todos</button>
           <button class="chip" data-categoria="A">A</button>
@@ -126,6 +130,18 @@
       <p class="admin-msg" id="app-msg" role="status" hidden></p>
       <p class="empty" id="empty" hidden>Nenhum lead ainda.</p>
       <div class="board" id="leads-board" aria-live="polite"></div>
+
+      <div class="cal-mes" id="leads-calendario" hidden>
+        <div class="cal-mes-head">
+          <button class="cal-nav" id="cal-mes-prev" type="button" aria-label="Mês anterior">&larr;</button>
+          <span class="cal-mes-titulo" id="cal-mes-titulo">—</span>
+          <button class="cal-nav" id="cal-mes-next" type="button" aria-label="Próximo mês">&rarr;</button>
+        </div>
+        <div class="cal-mes-semana">
+          <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+        </div>
+        <div class="cal-mes-grid" id="cal-mes-grid"></div>
+      </div>
       </div><!-- /tab-leads -->
 
       <div class="tab-pane" id="tab-briefings" hidden>
@@ -569,6 +585,18 @@
         </div>
       </header>
       <pre class="modal-body" id="modal-body"></pre>
+    </div>
+  </div>
+
+  <!-- Modal do calendário (reuniões de um dia) -->
+  <div class="modal" id="cal-modal" hidden>
+    <div class="modal-backdrop" data-cal-modal-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cal-modal-title">
+      <header class="modal-head">
+        <h3 class="modal-title" id="cal-modal-title">Reuniões</h3>
+        <button class="modal-x" id="cal-modal-close" type="button" aria-label="Fechar">&times;</button>
+      </header>
+      <div class="modal-body modal-body--cards" id="cal-modal-body"></div>
     </div>
   </div>
 
