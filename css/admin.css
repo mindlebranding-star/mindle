@@ -28,8 +28,9 @@
 .admin-sair { margin-left: auto; }
 
 .admin-main {
-  /* largo o bastante pro board de 9 colunas respirar em tela cheia */
-  max-width: 1800px; margin-inline: auto;
+  /* 9 colunas de 280px + gaps de 10px = ~2600px — o container precisa
+     caber isso pra não sobrar scroll horizontal em tela grande. */
+  max-width: 2760px; margin-inline: auto;
   padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 48px) 96px;
 }
 
@@ -674,12 +675,15 @@
    dentro da viewport deixava cada uma estreita demais pro formulário
    de dentro (data, notas, campos) e o layout ficava torto. */
 .board {
-  display: flex; gap: 10px; align-items: flex-start;
+  display: flex; gap: 6px; align-items: flex-start;
   overflow-x: auto; padding-bottom: 12px;
   scrollbar-width: thin;
 }
 .board-col {
-  flex: 0 0 280px; width: 280px;
+  /* cresce pra preencher a tela em monitor grande, encolhe até um
+     mínimo ainda legível antes de precisar de scroll horizontal —
+     min-width calibrado pra caber as 9 colunas num monitor 1920px */
+  flex: 1 1 170px; min-width: 168px; max-width: 260px;
   background: var(--color-surface-01);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
@@ -762,5 +766,5 @@
 .board-pa-linha { display: grid; gap: 8px; }
 
 @media (max-width: 640px) {
-  .board-col { flex-basis: 84vw; width: 84vw; }
+  .board-col { flex-basis: 84vw; width: 84vw; max-width: 84vw; }
 }
