@@ -583,8 +583,9 @@
 .ta-expand:hover { color: var(--color-respiro-base); border-color: var(--color-muted-deep); }
 .ta-tall { min-height: 60vh !important; }
 
-/* Saída do diagnóstico em largura total (abaixo da grade, fora do sticky) */
-.dg-saida-full { grid-column: 1 / -1; margin-top: 4px; }
+/* Modal do resumo + proposta (Call) */
+.modal-body--dg { white-space: normal; display: grid; gap: 24px; }
+.dg-saida-bloco { display: grid; gap: 14px; }
 
 /* Botões "Ver e-mail / Ver proposta" no card do lead */
 .lead-views { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -617,6 +618,7 @@
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
+.modal-card.modal-card--wide { width: min(920px, 100%); }
 .modal-head {
   display: flex; align-items: center; gap: 12px;
   padding: 16px 18px;

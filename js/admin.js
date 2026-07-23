@@ -1356,10 +1356,24 @@ ESTRUTURA (nesta ordem):
 Entregue como artefato HTML único e autocontido, bonito e pronto para apresentar/exportar.
 Não invente cases, números ou depoimentos. Deixe valores monetários como campo a preencher.`;
 
-    $('#dg-saida').hidden = false;
-    $('#dg-saida').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    abrirDgModal();
   }
   $('#dg-gerar').addEventListener('click', dgGerar);
+
+  /* Modal do resumo + proposta */
+  const dgModal = $('#dg-modal');
+  function abrirDgModal() {
+    dgModal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function fecharDgModal() {
+    dgModal.hidden = true;
+    document.body.style.overflow = '';
+  }
+  dgModal.addEventListener('click', (e) => {
+    if (e.target.closest('[data-dg-modal-close]') || e.target.id === 'dg-modal-close') fecharDgModal();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !dgModal.hidden) fecharDgModal(); });
 
   $('#dg-salvar').addEventListener('click', async () => {
     const id = $('#dg-lead').value;
@@ -1445,7 +1459,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
       if (el.type === 'checkbox') el.checked = false; else el.value = '';
     });
     $('#dg-lead').value = '';
-    $('#dg-saida').hidden = true;
+    fecharDgModal();
     $('#dg-resumo').value = '';
     $('#dg-proposta').value = '';
     $('#dg-prompt').value = '';
