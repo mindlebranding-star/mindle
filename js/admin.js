@@ -1126,17 +1126,20 @@
 
   const DG_PECA_NOME = { site: 'Site', sistema: 'Sistema', automacao: 'Automação' };
   const DG_PECA_DESC = {
-    site: 'um site que traz cliente — vitrine que convence quem pesquisa antes de chamar',
-    sistema: 'um sistema que organiza — cada cliente, conversa e pagamento num painel só',
-    automacao: 'uma automação que atende na hora — responde no WhatsApp mesmo fora do horário',
+    site: 'um site que traz cliente: a vitrine que convence quem pesquisa antes de chamar',
+    sistema: 'um sistema que organiza: cada cliente, conversa e pagamento num painel só',
+    automacao: 'uma automação que atende na hora: responde no WhatsApp mesmo fora do horário',
   };
-  /* Em segunda pessoa, de propósito — isso é falado direto pro cliente na
+  /* Em segunda pessoa, de propósito: isso é falado direto pro cliente na
      call, não é anotação interna. Devolve a dor que o sinal aponta. */
   const DG_PECA_DOR = {
-    site: 'quem pesquisa seu nome não te encontra, ou encontra algo que não representa o que você entrega — e desiste antes de te ligar',
-    sistema: 'você tá controlando cliente na cabeça, no papel ou em planilha — e isso já te custou gente que sumiu sem ninguém notar',
+    site: 'quem pesquisa seu nome não te encontra, ou encontra algo que não representa o que você entrega, e desiste antes de te ligar',
+    sistema: 'você tá controlando cliente na cabeça, no papel ou em planilha, e isso já te custou gente que sumiu sem ninguém notar',
     automacao: 'você já perdeu cliente porque demorou pra responder, e enquanto isso quem respondeu primeiro levou',
   };
+  function dgListaNumerada(pecas, dict) {
+    return pecas.map((k, i) => (i + 1) + ') <strong>' + DG_PECA_NOME[k] + ':</strong> ' + dict[k]).join('<br>');
+  }
 
   function dgVeredito() {
     const s = dgSinais();
@@ -1170,18 +1173,18 @@
       const lista = nomes.length ? nomes.join(', ') + ' e ' + ultima : ultima;
       return { tipo: 'combo', titulo: pecas.length === 3 ? 'As três peças' : lista,
         txt:
-          '<strong>Devolva isso pro cliente:</strong> "Pelo que você me contou, o problema não é um só — são ' +
-          (pecas.length === 3 ? 'três' : 'dois') + ', ao mesmo tempo: ' +
-          pecas.map((k) => DG_PECA_DOR[k]).join('; ') + '. Resolver um e deixar os outros furados é o mesmo ' +
-          'erro que você já cometeu com peça solta antes — melhora um pedaço, e o negócio continua vazando ' +
-          'pelos outros dois."<br><br>' +
+          '<strong>Devolva isso pro cliente:</strong> "Pelo que você me contou, o problema não é um só: são ' +
+          (pecas.length === 3 ? 'três' : 'dois') + ', ao mesmo tempo.<br><br>' +
+          dgListaNumerada(pecas, DG_PECA_DOR) + '<br><br>' +
+          'Resolver um e deixar os outros furados é o mesmo erro que você já cometeu com peça solta antes: ' +
+          'melhora um pedaço, e o negócio continua vazando pelos outros dois."<br><br>' +
           '<strong>Para fechar:</strong> "Cada mês que isso continua assim é cliente indo pro concorrente. ' +
           'A gente monta ' +
-          (pecas.length === 3 ? 'as três peças' : lista.toLowerCase()) + ' agora, de uma vez: ' +
-          pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. O que isso já te custou até hoje paga o ' +
-          'investimento sozinho — a conta que não fecha é continuar do jeito que está. Se o caixa não fecha ' +
-          'pras ' + (pecas.length === 3 ? 'três' : 'duas') + ' agora, a gente começa pela que mais sangra e ' +
-          'trava o resto no roadmap."' };
+          (pecas.length === 3 ? 'as três peças' : lista.toLowerCase()) + ' agora, de uma vez.<br><br>' +
+          dgListaNumerada(pecas, DG_PECA_DESC) + '<br><br>' +
+          'O que isso já te custou até hoje paga o investimento sozinho. A conta que não fecha é continuar ' +
+          'do jeito que está. Se o caixa não fecha pras ' + (pecas.length === 3 ? 'três' : 'duas') + ' agora, ' +
+          'a gente começa pela que mais sangra e trava o resto no roadmap."' };
     }
 
     if (pecas.length === 1) {
@@ -1191,7 +1194,7 @@
           '<strong>Devolva isso pro cliente:</strong> "Pelo que você me contou, ' + DG_PECA_DOR[k] + '. ' +
           'É isso, especificamente, que tá te custando cliente hoje, agora, enquanto a gente conversa aqui."' +
           '<br><br>' +
-          '<strong>Para fechar:</strong> "Você não precisa das três peças agora, precisa de uma — ' +
+          '<strong>Para fechar:</strong> "Você não precisa das três peças agora, precisa de uma: ' +
           DG_PECA_DESC[k] + '. Não vou empurrar mais escopo só pra engordar o contrato; quando o resto pesar, ' +
           'a gente resolve. Mas essa aqui não dá pra deixar esfriar: cada semana que passa sem isso rodando é ' +
           'cliente que você já sabe que tá perdendo. Trava a data de início ainda nessa ligação."' };
@@ -1278,55 +1281,55 @@ Próximo passo: proposta enviada em ___ (mesmo dia).`;
 
     let bloco;
     if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
-      bloco = '(Caso de recusa ou reagendamento — adapte: "o que você precisa é ___, e não é o que fazemos; quem faz isso bem é ___." Indicar caminho é parte do diagnóstico.)';
+      bloco = '(Caso de recusa ou reagendamento: adapte: "o que você precisa é ___, e não é o que fazemos; quem faz isso bem é ___." Indicar caminho é parte do diagnóstico.)';
     } else if (pecasV.length >= 2) {
       bloco = 'Pelo que vimos na conversa, o seu caso não é de uma peça só: são ' + pecasV.map((k) => DG_PECA_NOME[k]).join(' + ') + ' puxando o negócio pra trás ao mesmo tempo. A gente monta o conjunto: ' + pecasV.map((k) => DG_PECA_BLOCO[k]).join('; ') + '. Cada peça entra com a sua aprovação na etapa anterior.\n\nInvestimento: R$ _____ · Início: _____';
     } else if (pecasV.length === 1) {
       bloco = 'O seu caso não pede o conjunto inteiro agora: pede ' + DG_PECA_BLOCO[pecasV[0]] + '. É isso que resolve o que está te custando cliente hoje.\n\nInvestimento: R$ _____ · Início: _____';
     } else {
-      bloco = '(Diagnóstico incompleto — marque os sinais na call antes de gerar esta proposta.)';
+      bloco = '(Diagnóstico incompleto: marque os sinais na call antes de gerar esta proposta.)';
     }
 
     $('#dg-proposta').value =
-`Assunto: Diagnóstico Mindle — ${nome}
+`Assunto: Diagnóstico Mindle, ${nome}
 
 ${nome.split(' ')[0]}, obrigado pela conversa de hoje.
 
 A leitura do seu caso, em duas linhas:
-${incos.slice(0, 2).map((t) => '— ' + t).join('\n') || '— (resuma aqui as incoerências devolvidas na call)'}
+${incos.slice(0, 2).map((t) => '· ' + t).join('\n') || '· (resuma aqui as incoerências devolvidas na call)'}
 
 ${bloco}
 
-Qualquer dúvida, respondo por aqui — e travamos sua data de início.
+Qualquer dúvida, respondo por aqui, e travamos sua data de início.
 
-Mindle — sites, sistemas e automação`;
+Mindle. Sites, sistemas e automação`;
 
     /* Escopo da proposta conforme o veredito */
     const DG_PECA_ESCOPO = {
-      site: 'SITE: a vitrine que hoje não convence ninguém vira uma que fecha venda sozinha — construída a partir do fundamento da oferta, não um template com o nome trocado. Quem pesquisa seu nome antes de te ligar vai achar motivo pra chamar, não pra desistir',
-      sistema: 'SISTEMA: painel sob medida com as etapas do SEU negócio — cada cliente, conversa e pagamento num lugar só, sem depender de planilha, papel ou memória de ninguém',
-      automacao: 'AUTOMAÇÃO: um agente que responde no seu WhatsApp em segundos, com o seu tom, mesmo enquanto você dorme — o cliente que hoje escolhe o concorrente porque respondeu primeiro passa a ser seu',
+      site: 'SITE: a vitrine que hoje não convence ninguém vira uma que fecha venda sozinha, construída a partir do fundamento da oferta, não um template com o nome trocado. Quem pesquisa seu nome antes de te ligar vai achar motivo pra chamar, não pra desistir',
+      sistema: 'SISTEMA: painel sob medida com as etapas do SEU negócio, cada cliente, conversa e pagamento num lugar só, sem depender de planilha, papel ou memória de ninguém',
+      automacao: 'AUTOMAÇÃO: um agente que responde no seu WhatsApp em segundos, com o seu tom, mesmo enquanto você dorme. O cliente que hoje escolhe o concorrente porque respondeu primeiro passa a ser seu',
     };
     let escopo;
     if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
-      escopo = '(Caso de recusa/reagendamento — normalmente não se gera proposta. Em vez disso, indique a direção certa para o cliente.)';
+      escopo = '(Caso de recusa/reagendamento: normalmente não se gera proposta. Em vez disso, indique a direção certa para o cliente.)';
     } else if (pecasV.length) {
       escopo = pecasV.map((k) => DG_PECA_ESCOPO[k]).join('. ') + '. Processo com aprovação a cada etapa, sem pagar por peça que ainda não precisa.';
     } else {
-      escopo = '(Diagnóstico incompleto — marque os sinais na call antes de definir o escopo.)';
+      escopo = '(Diagnóstico incompleto: marque os sinais na call antes de definir o escopo.)';
     }
 
     /* Prompt pronto p/ colar no Claude e gerar a proposta desenhada */
     $('#dg-prompt').value =
-`Você é redator e designer de propostas comerciais da Mindle — estúdio que monta site, sistema e
+`Você é redator e designer de propostas comerciais da Mindle, estúdio que monta site, sistema e
 automação de atendimento para negócios que atendem gente.
 Gere uma PROPOSTA visual pronta para enviar, como um artefato HTML de página única, no estilo
 da Mindle: fundo escuro (#0F0F0E), acento teal (#2E8B8E), off-white para texto (#F0EDE6),
 tipografia de display marcante + corpo legível, muito respiro, sóbrio e editorial.
 
 TOM (obrigatório): dono de negócio falando com dono de negócio, direto e sem rodeio de agência.
-Diagnóstico antes de prescrição, mas pode confrontar o custo real de ficar como está — cliente
-perdido, concorrente respondendo primeiro, dinheiro deixado na mesa — e pode prometer resultado
+Diagnóstico antes de prescrição, mas pode confrontar o custo real de ficar como está: cliente
+perdido, concorrente respondendo primeiro, dinheiro deixado na mesa. E pode prometer resultado
 com confiança. Frases curtas, urgência de verdade, sem enrolação. Proibido: "eleve sua marca",
 "transforme sua presença", intimidade forçada, adjetivo vazio, papo de personagem. O cliente
 fecha porque sentiu que alguém finalmente falou a verdade sobre o negócio dele.
@@ -1343,12 +1346,12 @@ ESCOPO A PROPOR:
 ${escopo}
 
 ESTRUTURA (nesta ordem):
-1. Abertura — devolva o diagnóstico em 2–3 linhas (as incoerências acima), provando entendimento.
-2. O que será feito — o escopo acima em itens claros.
-3. Como funciona — processo em etapas, com aprovação a cada etapa (nada avança sem o ok do cliente).
+1. Abertura: devolva o diagnóstico em 2-3 linhas (as incoerências acima), provando entendimento.
+2. O que será feito: o escopo acima em itens claros.
+3. Como funciona: processo em etapas, com aprovação a cada etapa (nada avança sem o ok do cliente).
 4. Prazo e o que está incluído.
-5. Investimento — deixe "R$ ____" como campo para eu preencher.
-6. Próximo passo — uma única ação (responder para travar a data de início).
+5. Investimento: deixe "R$ ____" como campo para eu preencher.
+6. Próximo passo: uma única ação (responder para travar a data de início).
 
 Entregue como artefato HTML único e autocontido, bonito e pronto para apresentar/exportar.
 Não invente cases, números ou depoimentos. Deixe valores monetários como campo a preencher.`;
