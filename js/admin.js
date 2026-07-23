@@ -1130,6 +1130,13 @@
     sistema: 'um sistema que organiza — cada cliente, conversa e pagamento num painel só',
     automacao: 'uma automação que atende na hora — responde no WhatsApp mesmo fora do horário',
   };
+  /* Em segunda pessoa, de propósito — isso é falado direto pro cliente na
+     call, não é anotação interna. Devolve a dor que o sinal aponta. */
+  const DG_PECA_DOR = {
+    site: 'quem pesquisa seu nome não te encontra, ou encontra algo que não representa o que você entrega — e desiste antes de te ligar',
+    sistema: 'você tá controlando cliente na cabeça, no papel ou em planilha — e isso já te custou gente que sumiu sem ninguém notar',
+    automacao: 'você já perdeu cliente porque demorou pra responder, e enquanto isso quem respondeu primeiro levou',
+  };
 
   function dgVeredito() {
     const s = dgSinais();
@@ -1163,33 +1170,32 @@
       const lista = nomes.length ? nomes.join(', ') + ' e ' + ultima : ultima;
       return { tipo: 'combo', titulo: pecas.length === 3 ? 'As três peças' : lista,
         txt:
-          '<strong>Por quê:</strong> os sinais não apontam pra um buraco só. ' +
-          pecas.map((k) => DG_PECA_NOME[k] + ': ' + s[k].join('; ')).join(' — ') + '. ' +
-          'Resolver uma peça e deixar as outras furadas é o mesmo erro das peças soltas que a maioria ' +
-          'já tentou: melhora um pedaço e o negócio continua vazando pelos outros dois.<br><br>' +
-          '<strong>Para fechar:</strong> "Olha, vou ser direto com você: não é um buraco só, são ' +
-          (pecas.length === 3 ? 'as três peças' : 'essas duas peças') + ' furadas ao mesmo tempo — e cada dia ' +
-          'que isso continua assim é cliente e dinheiro escorrendo pra concorrência. Remendo em peça solta ' +
-          'você já tentou, e não resolveu; se resolvesse, a gente não estaria conversando agora. ' +
-          'A jogada é montar ' + (pecas.length === 3 ? 'o conjunto' : lista.toLowerCase()) + ' de uma vez: ' +
+          '<strong>Devolva isso pro cliente:</strong> "Pelo que você me contou, o problema não é um só — são ' +
+          (pecas.length === 3 ? 'três' : 'dois') + ', ao mesmo tempo: ' +
+          pecas.map((k) => DG_PECA_DOR[k]).join('; ') + '. Resolver um e deixar os outros furados é o mesmo ' +
+          'erro que você já cometeu com peça solta antes — melhora um pedaço, e o negócio continua vazando ' +
+          'pelos outros dois."<br><br>' +
+          '<strong>Para fechar:</strong> "Cada mês que isso continua assim é cliente indo pro concorrente — ' +
+          'isso não é opinião minha, foi você quem acabou de me contar. A gente monta ' +
+          (pecas.length === 3 ? 'as três peças' : lista.toLowerCase()) + ' agora, de uma vez: ' +
           pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. Você aprova cada etapa, não paga um centavo ' +
-          'adiantado do que ainda não vai usar." Se o caixa não fecha pras ' + (pecas.length === 3 ? 'três' : 'duas') +
-          ' agora, começa pela que mais sangra e trava o resto no roadmap — mas não sai dessa call sem uma ' +
-          'data marcada.' };
+          'adiantado do que ainda não vai usar. O que isso já te custou até hoje paga o investimento sozinho — ' +
+          'a conta que não fecha é continuar do jeito que está. Se o caixa não fecha pras ' +
+          (pecas.length === 3 ? 'três' : 'duas') + ' agora, a gente começa pela que mais sangra e trava o resto ' +
+          'no roadmap — mas não saio dessa call sem uma data marcada."' };
     }
 
     if (pecas.length === 1) {
       const k = pecas[0];
       return { tipo: 'so-' + k, titulo: 'Comece pelo ' + DG_PECA_NOME[k],
         txt:
-          '<strong>Por quê:</strong> só uma peça acumulou sinal — as outras duas parecem estar de pé. ' +
-          'Forçar o combo completo aqui seria vender escopo que o caso não pede; ignorar o sinal e ' +
-          'oferecer menos do que ele precisa seria deixar o buraco aberto.<br><br>' +
-          '<strong>Para fechar:</strong> "Direto ao ponto: você não precisa das três peças agora, precisa ' +
-          'de uma — ' + DG_PECA_DESC[k] + '. É isso, especificamente, que tá custando cliente pra você hoje, ' +
-          'enquanto a gente conversa aqui. Não vou empurrar mais escopo só pra engordar o contrato — quando ' +
-          'o resto pesar, a gente resolve. Mas essa peça aqui não dá pra deixar esfriar: trava a data de ' +
-          'início ainda nessa ligação."' };
+          '<strong>Devolva isso pro cliente:</strong> "Pelo que você me contou, ' + DG_PECA_DOR[k] + '. ' +
+          'É isso, especificamente, que tá te custando cliente hoje, agora, enquanto a gente conversa aqui."' +
+          '<br><br>' +
+          '<strong>Para fechar:</strong> "Você não precisa das três peças agora, precisa de uma — ' +
+          DG_PECA_DESC[k] + '. Não vou empurrar mais escopo só pra engordar o contrato; quando o resto pesar, ' +
+          'a gente resolve. Mas essa aqui não dá pra deixar esfriar: cada semana que passa sem isso rodando é ' +
+          'cliente que você já sabe que tá perdendo. Trava a data de início ainda nessa ligação."' };
     }
 
     return { tipo: 'incompleto', titulo: 'Diagnóstico em andamento',
