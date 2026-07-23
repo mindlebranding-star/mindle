@@ -1353,12 +1353,22 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !dgModal.hidden) fecharDgModal(); });
 
+  /* Só o "Para fechar" do veredito, em texto puro, pra não inchar as notas do lead */
+  function dgParaFechar() {
+    const v = dgVeredito();
+    const idx = v.txt.indexOf('Para fechar:');
+    let t = idx >= 0 ? v.txt.slice(idx + 'Para fechar:'.length) : v.txt;
+    t = t.replace(/<\/?strong>/g, '').replace(/<br\s*\/?>/gi, '\n').trim();
+    return 'Para fechar: ' + t;
+  }
+
   $('#dg-salvar').addEventListener('click', async () => {
     const id = $('#dg-lead').value;
     if (!id) return;
     if (!$('#dg-resumo').value) dgGerar();
     const l = leads.find((x) => x.id === id);
-    const notas = ((l && l.notas) ? l.notas + '\n\n' : '') + $('#dg-resumo').value;
+    const data = new Date().toLocaleDateString('pt-BR');
+    const notas = ((l && l.notas) ? l.notas + '\n\n' : '') + `[Call ${data}] ` + dgParaFechar();
     const propostaPrompt = $('#dg-prompt').value || null;
     const msg = $('#dg-msg');
     const completo = { notas, status: 'compareceu', proposta_prompt: propostaPrompt };
