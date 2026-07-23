@@ -1178,11 +1178,10 @@
           '<strong>Para fechar:</strong> "Cada mês que isso continua assim é cliente indo pro concorrente — ' +
           'isso não é opinião minha, foi você quem acabou de me contar. A gente monta ' +
           (pecas.length === 3 ? 'as três peças' : lista.toLowerCase()) + ' agora, de uma vez: ' +
-          pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. Você aprova cada etapa, não paga um centavo ' +
-          'adiantado do que ainda não vai usar. O que isso já te custou até hoje paga o investimento sozinho — ' +
-          'a conta que não fecha é continuar do jeito que está. Se o caixa não fecha pras ' +
-          (pecas.length === 3 ? 'três' : 'duas') + ' agora, a gente começa pela que mais sangra e trava o resto ' +
-          'no roadmap — mas não saio dessa call sem uma data marcada."' };
+          pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. O que isso já te custou até hoje paga o ' +
+          'investimento sozinho — a conta que não fecha é continuar do jeito que está. Se o caixa não fecha ' +
+          'pras ' + (pecas.length === 3 ? 'três' : 'duas') + ' agora, a gente começa pela que mais sangra e ' +
+          'trava o resto no roadmap."' };
     }
 
     if (pecas.length === 1) {
