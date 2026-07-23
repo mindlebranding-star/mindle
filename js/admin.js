@@ -1175,8 +1175,8 @@
           pecas.map((k) => DG_PECA_DOR[k]).join('; ') + '. Resolver um e deixar os outros furados é o mesmo ' +
           'erro que você já cometeu com peça solta antes — melhora um pedaço, e o negócio continua vazando ' +
           'pelos outros dois."<br><br>' +
-          '<strong>Para fechar:</strong> "Cada mês que isso continua assim é cliente indo pro concorrente — ' +
-          'isso não é opinião minha, foi você quem acabou de me contar. A gente monta ' +
+          '<strong>Para fechar:</strong> "Cada mês que isso continua assim é cliente indo pro concorrente. ' +
+          'A gente monta ' +
           (pecas.length === 3 ? 'as três peças' : lista.toLowerCase()) + ' agora, de uma vez: ' +
           pecas.map((k) => DG_PECA_DESC[k]).join('; ') + '. O que isso já te custou até hoje paga o ' +
           'investimento sozinho — a conta que não fecha é continuar do jeito que está. Se o caixa não fecha ' +
