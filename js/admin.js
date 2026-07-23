@@ -430,7 +430,7 @@
     fecharCalModal();
     const tabCadastro = document.querySelector('.tab[data-tab="cadastro"]');
     if (tabCadastro) tabCadastro.click();
-    cadAbrirForm({ nome: lead.negocio_nome || lead.nome, email: lead.email, whatsapp: lead.telefone, notas: lead.notas });
+    cadAbrirForm({ nome: lead.negocio_nome || lead.nome, email: lead.email, whatsapp: lead.telefone });
     $('#cad-nome').focus();
     cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
