@@ -1272,37 +1272,7 @@ Sinais recusa: ${s.rc.concat(s.rc5).join('; ') || '—'}
 VEREDITO: ${v.titulo.toUpperCase()}
 Próximo passo: proposta enviada em ___ (mesmo dia).`;
 
-    const DG_PECA_BLOCO = {
-      site: 'um site que traz cliente: sua vitrine construída a partir do fundamento da sua oferta, não um template com o nome trocado',
-      sistema: 'um sistema que organiza: cada cliente, conversa e pagamento num painel só, com as etapas do SEU negócio',
-      automacao: 'uma automação que atende na hora: responde no seu WhatsApp em segundos, com o seu tom, mesmo fora do horário',
-    };
     const pecasV = ['site', 'sistema', 'automacao'].filter((k) => s[k].length);
-
-    let bloco;
-    if (v.tipo === 'recusa' || v.tipo === 'reagendar') {
-      bloco = '(Caso de recusa ou reagendamento: adapte: "o que você precisa é ___, e não é o que fazemos; quem faz isso bem é ___." Indicar caminho é parte do diagnóstico.)';
-    } else if (pecasV.length >= 2) {
-      bloco = 'Pelo que vimos na conversa, o seu caso não é de uma peça só: são ' + pecasV.map((k) => DG_PECA_NOME[k]).join(' + ') + ' puxando o negócio pra trás ao mesmo tempo. A gente monta o conjunto: ' + pecasV.map((k) => DG_PECA_BLOCO[k]).join('; ') + '. Cada peça entra com a sua aprovação na etapa anterior.\n\nInvestimento: R$ _____ · Início: _____';
-    } else if (pecasV.length === 1) {
-      bloco = 'O seu caso não pede o conjunto inteiro agora: pede ' + DG_PECA_BLOCO[pecasV[0]] + '. É isso que resolve o que está te custando cliente hoje.\n\nInvestimento: R$ _____ · Início: _____';
-    } else {
-      bloco = '(Diagnóstico incompleto: marque os sinais na call antes de gerar esta proposta.)';
-    }
-
-    $('#dg-proposta').value =
-`Assunto: Diagnóstico Mindle, ${nome}
-
-${nome.split(' ')[0]}, obrigado pela conversa de hoje.
-
-A leitura do seu caso, em duas linhas:
-${incos.slice(0, 2).map((t) => '· ' + t).join('\n') || '· (resuma aqui as incoerências devolvidas na call)'}
-
-${bloco}
-
-Qualquer dúvida, respondo por aqui, e travamos sua data de início.
-
-Mindle. Sites, sistemas e automação`;
 
     /* Escopo da proposta conforme o veredito */
     const DG_PECA_ESCOPO = {
@@ -1381,10 +1351,9 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     if (!$('#dg-resumo').value) dgGerar();
     const l = leads.find((x) => x.id === id);
     const notas = ((l && l.notas) ? l.notas + '\n\n' : '') + $('#dg-resumo').value;
-    const emailRascunho = $('#dg-proposta').value || null;
     const propostaPrompt = $('#dg-prompt').value || null;
     const msg = $('#dg-msg');
-    const completo = { notas, status: 'compareceu', email_rascunho: emailRascunho, proposta_prompt: propostaPrompt };
+    const completo = { notas, status: 'compareceu', proposta_prompt: propostaPrompt };
     let { error } = await sb.from(cfg.table || 'leads').update(completo).eq('id', id);
     // colunas de entregáveis ainda não criadas? salva só o essencial (nunca falha por isso)
     if (error && /column|PGRST204|42703/i.test(error.message || '')) {
@@ -1395,7 +1364,7 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     msg.hidden = false;
     if (!error && l) {
       l.notas = notas; l.status = 'compareceu';
-      l.email_rascunho = emailRascunho; l.proposta_prompt = propostaPrompt;
+      l.proposta_prompt = propostaPrompt;
       render(); dgPopularLeads();
     }
   });
@@ -1461,7 +1430,6 @@ Não invente cases, números ou depoimentos. Deixe valores monetários como camp
     $('#dg-lead').value = '';
     fecharDgModal();
     $('#dg-resumo').value = '';
-    $('#dg-proposta').value = '';
     $('#dg-prompt').value = '';
     $('#dg-msg').hidden = true;
     if (dgTimer) clearInterval(dgTimer);
