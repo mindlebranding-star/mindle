@@ -420,7 +420,20 @@
     // ficar sem preencher aparece com o aviso "Sem próxima ação" no card
     // e entra na estatística do topo, sem travar o arrastar.
     await moverPara(id, patch);
+    if (destinoKey === 'ganho') abrirCadastroDoLead(lead);
   });
+
+  /* Leva o lead pro cadastro de clientes com os dados que já temos,
+     e abre o formulário pra completar o resto. Usado ao arrastar pra
+     "Ganho" e pelo botão "converter em cliente" do card. */
+  function abrirCadastroDoLead(lead) {
+    fecharCalModal();
+    const tabCadastro = document.querySelector('.tab[data-tab="cadastro"]');
+    if (tabCadastro) tabCadastro.click();
+    cadAbrirForm({ nome: lead.negocio_nome || lead.nome, email: lead.email, whatsapp: lead.telefone, notas: lead.notas });
+    $('#cad-nome').focus();
+    cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 
   /* Interações comuns a qualquer container que renderize cardHTML() —
      hoje usado pelo board e pelo modal do calendário. */
@@ -457,12 +470,7 @@
         const card = conv.closest('.board-card');
         const lead = leads.find((l) => l.id === card.dataset.id);
         if (!lead) return;
-        fecharCalModal();
-        const tabCadastro = document.querySelector('.tab[data-tab="cadastro"]');
-        if (tabCadastro) tabCadastro.click();
-        cadAbrirForm({ nome: lead.nome, email: lead.email, whatsapp: lead.telefone, notas: lead.notas });
-        $('#cad-nome').focus();
-        cadForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        abrirCadastroDoLead(lead);
         if (lead.status !== 'ganho') moverPara(lead.id, { status: 'ganho' });
         return;
       }
