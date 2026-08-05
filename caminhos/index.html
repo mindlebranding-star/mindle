@@ -420,6 +420,88 @@
             to { stroke-dashoffset: -20; }
         }
 
+        /* === LINKS (Referências) === */
+        .theme-referencias .section-icon { background: rgba(129,140,248,0.15); color: #818cf8; }
+
+        .links-list {
+            padding: 10px 22px 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .link-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .link-open {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .link-open:hover { border-color: #818cf8; color: #818cf8; background: rgba(129,140,248,0.08); }
+        .link-open.is-empty { pointer-events: none; opacity: 0.35; }
+
+        .link-input {
+            flex: 1;
+            min-width: 0;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            padding: 10px 14px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .link-input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+        .link-input:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.12); }
+
+        .link-remove {
+            flex-shrink: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .link-remove:hover { border-color: #fb7185; color: #fb7185; background: rgba(251,113,133,0.08); }
+
+        .links-add {
+            padding: 6px 22px 18px;
+        }
+
+        .btn-add-link {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: 1.5px dashed var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-add-link:hover { border-color: #818cf8; color: #818cf8; background: rgba(129,140,248,0.06); }
+
         /* === RESPONSIVE === */
         @media (max-width: 500px) {
             .header h1 {
@@ -433,6 +515,10 @@
             }
             .answer-inner {
                 padding: 0 16px 14px 52px;
+            }
+            .links-list, .links-add {
+                padding-left: 16px;
+                padding-right: 16px;
             }
         }
     </style>
@@ -842,6 +928,21 @@ CONTRAS:
             </div>
         </div>
 
+        <!-- ═══════════ REFERÊNCIAS ═══════════ -->
+        <div class="section-card theme-referencias" id="card-referencias">
+            <div class="section-header">
+                <div class="section-icon">🔗</div>
+                <div class="section-header-text">
+                    <h2>Referências</h2>
+                    <p class="subtitle">Links que estamos usando pra criar o projeto</p>
+                </div>
+            </div>
+            <div class="links-list" id="links-list"></div>
+            <div class="links-add">
+                <button type="button" class="btn-add-link" id="btnAddLink">+ Adicionar link</button>
+            </div>
+        </div>
+
         <!-- SVG Connector Lines -->
         <svg class="svg-connectors" id="svgConnectors"></svg>
     </main>
@@ -952,6 +1053,104 @@ CONTRAS:
                 showSaveIndicator(ok);
             }, 600);
         }
+
+        // ═══════════ REFERÊNCIAS (lista de links, tamanho variável) ═══════════
+        const LINKS_ID = 'referencias-links';
+        const DEFAULT_LINKS = [
+            'https://www.facebook.com/reel/2138964513699385',
+            'https://www.facebook.com/61571907991522/posts/122164553918730266/?fs=e&mibextid=wwXIfr&rdid=zzZuqlA3WEruHvo9&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1BK9gaL4FB%2F%3Fmibextid%3DwwXIfr#',
+            'https://www.facebook.com/reel/878778591966773',
+            'https://www.facebook.com/100042167392917/posts/1865625661519662/?fs=e&mibextid=wwXIfr&rdid=QOaZTOo1uK3kUIdj&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Msu1XCFCo%2F%3Fmibextid%3DwwXIfr#',
+            'https://www.facebook.com/story.php?story_fbid=1016638951151492&id=100084161884219&mibextid=wwXIfr&rdid=sYaMBd7tkKouHfJP&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fr%2F1MH8WWrhcF%2F%3Fmibextid%3DwwXIfr#',
+            'https://www.facebook.com/story.php?story_fbid=pfbid0YnWr4qb4LQTSXxHEV1cLbg7FCeEGpBDCn1kjFiExuphF2n9hUotKL57yH41nkTekl&id=61578766172876&_rdr',
+            'https://www.clinicorp.com/',
+            'https://www.instagram.com/med.stage/'
+        ];
+
+        function getLinksData() {
+            const data = loadData();
+            if (data[LINKS_ID]) {
+                try {
+                    const arr = JSON.parse(data[LINKS_ID]);
+                    if (Array.isArray(arr)) return arr;
+                } catch {}
+            }
+            return DEFAULT_LINKS.slice();
+        }
+
+        function syncOpenHref(open, url) {
+            const v = url.trim();
+            if (v) {
+                open.href = /^https?:\/\//i.test(v) ? v : 'https://' + v;
+                open.classList.remove('is-empty');
+            } else {
+                open.removeAttribute('href');
+                open.classList.add('is-empty');
+            }
+        }
+
+        function buildLinkRow(url) {
+            const row = document.createElement('div');
+            row.className = 'link-row';
+
+            const open = document.createElement('a');
+            open.className = 'link-open';
+            open.target = '_blank';
+            open.rel = 'noopener';
+            open.setAttribute('aria-label', 'Abrir link');
+            open.textContent = '↗';
+
+            const input = document.createElement('input');
+            input.type = 'url';
+            input.className = 'link-input';
+            input.placeholder = 'Cole o link aqui...';
+            input.value = url;
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'link-remove';
+            remove.setAttribute('aria-label', 'Remover link');
+            remove.textContent = '×';
+
+            syncOpenHref(open, url);
+            input.addEventListener('input', () => { syncOpenHref(open, input.value); saveLinks(); });
+            remove.addEventListener('click', () => { row.remove(); saveLinks(); });
+
+            row.appendChild(open);
+            row.appendChild(input);
+            row.appendChild(remove);
+            return row;
+        }
+
+        function renderLinks(list) {
+            const container = document.getElementById('links-list');
+            container.innerHTML = '';
+            (list.length ? list : ['']).forEach((url) => container.appendChild(buildLinkRow(url)));
+        }
+
+        function saveLinks() {
+            const urls = Array.from(document.querySelectorAll('#links-list .link-input'))
+                .map((i) => i.value.trim())
+                .filter(Boolean);
+            const texto = JSON.stringify(urls);
+
+            const data = loadData();
+            data[LINKS_ID] = texto;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+            clearTimeout(saveDebounce[LINKS_ID]);
+            saveDebounce[LINKS_ID] = setTimeout(async () => {
+                const ok = await salvarNoSupabase(LINKS_ID, texto);
+                showSaveIndicator(ok);
+            }, 600);
+        }
+
+        document.getElementById('btnAddLink').addEventListener('click', () => {
+            const container = document.getElementById('links-list');
+            const row = buildLinkRow('');
+            container.appendChild(row);
+            row.querySelector('.link-input').focus();
+        });
 
         // ═══════════ SAVE INDICATOR ═══════════
         let saveTimeout;
@@ -1116,6 +1315,7 @@ CONTRAS:
             const remoto = await carregarDoSupabase();
             if (remoto) localStorage.setItem(STORAGE_KEY, JSON.stringify(remoto));
             restoreAnswers();
+            renderLinks(getLinksData());
             updateProgress();
         })();
     </script>
