@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caminhos — Mindle</title>
+    <meta name="description" content="Planejamento estratégico de serviços e caminhos da Mindle">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --bg-input: #1a1a26;
+            --border: #2a2a3a;
+            --border-subtle: #222233;
+            --text-primary: #e8e8f0;
+            --text-secondary: #9090a8;
+            --text-muted: #6060780;
+            --accent-blue: #6c8aff;
+            --accent-purple: #a78bfa;
+            --accent-teal: #5eead4;
+            --accent-amber: #fbbf24;
+            --accent-rose: #fb7185;
+            --accent-green: #4ade80;
+            --gradient-1: linear-gradient(135deg, #6c8aff 0%, #a78bfa 100%);
+            --gradient-2: linear-gradient(135deg, #5eead4 0%, #6c8aff 100%);
+            --gradient-3: linear-gradient(135deg, #a78bfa 0%, #fb7185 100%);
+            --gradient-4: linear-gradient(135deg, #fbbf24 0%, #fb7185 100%);
+            --gradient-5: linear-gradient(135deg, #4ade80 0%, #5eead4 100%);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* === HEADER === */
+        .header {
+            padding: 40px 24px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        /* === CONTAINER === */
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 30px 50px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        /* === SECTION CARD === */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section-card:hover {
+            border-color: var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-header {
+            padding: 20px 22px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .section-header-text h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+        }
+
+        .section-header-text .nicho-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .section-header-text .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* Color themes per section */
+        .theme-nicho .section-icon { background: rgba(251,113,133,0.15); color: #fb7185; }
+        .theme-nicho .item.open .item-toggle { background: #fb7185; border-color: #fb7185; color: #fff; }
+        .theme-nicho .answer-textarea:focus { border-color: #fb7185; box-shadow: 0 0 0 3px rgba(251,113,133,0.12); }
+
+        .theme-sites .section-icon { background: rgba(108,138,255,0.15); color: #6c8aff; }
+
+        .theme-sistemas .section-icon { background: rgba(167,139,250,0.15); color: #a78bfa; }
+
+        .theme-automacao .section-icon { background: rgba(94,234,212,0.15); color: #5eead4; }
+
+        .theme-trafego .section-icon { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+        .theme-modelos .section-icon { background: rgba(74,222,128,0.15); color: #4ade80; }
+
+        /* === ITEMS LIST === */
+        .items-list {
+            padding: 8px 0;
+        }
+
+        .item {
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 22px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            user-select: none;
+        }
+
+        .item-row:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .item-toggle {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+            font-family: 'Inter', sans-serif;
+            line-height: 1;
+        }
+
+        .item-toggle:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            background: rgba(108,138,255,0.08);
+        }
+
+        .item.open .item-toggle {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+            transform: rotate(45deg);
+        }
+
+        .theme-sistemas .item.open .item-toggle {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+        .theme-automacao .item.open .item-toggle {
+            background: var(--accent-teal);
+            border-color: var(--accent-teal);
+            color: #0a0a0f;
+        }
+        .theme-trafego .item.open .item-toggle {
+            background: var(--accent-amber);
+            border-color: var(--accent-amber);
+            color: #0a0a0f;
+        }
+        .theme-modelos .item.open .item-toggle {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #0a0a0f;
+        }
+
+        .item-text {
+            flex: 1;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        .item-text .arrow {
+            color: var(--text-secondary);
+            margin-right: 4px;
+            font-size: 0.8rem;
+        }
+
+        .item-text .question-marks {
+            color: var(--accent-amber);
+            font-weight: 600;
+            margin-left: 4px;
+            letter-spacing: 2px;
+        }
+
+        /* === ANSWER PANEL === */
+        .answer-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                        padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .item.open .answer-panel {
+            max-height: 600px;
+        }
+
+        .answer-inner {
+            padding: 0 22px 16px 64px;
+        }
+
+        .answer-textarea {
+            width: 100%;
+            min-height: 80px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 12px 14px;
+            resize: vertical;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
+        }
+
+        .answer-textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .answer-textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(108,138,255,0.12);
+        }
+
+        .theme-sistemas .answer-textarea:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(167,139,250,0.12);
+        }
+        .theme-automacao .answer-textarea:focus {
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 0 3px rgba(94,234,212,0.12);
+        }
+        .theme-trafego .answer-textarea:focus {
+            border-color: var(--accent-amber);
+            box-shadow: 0 0 0 3px rgba(251,191,36,0.12);
+        }
+        .theme-modelos .answer-textarea:focus {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(74,222,128,0.12);
+        }
+
+        /* === SAVE STATUS === */
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 18px;
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === PROGRESS BAR === */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--bg-secondary);
+            z-index: 100;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* === STATS === */
+        .stats-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            padding: 16px;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-chip .count {
+            color: var(--accent-blue);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* === SVG CONNECTOR OVERLAY === */
+        .svg-connectors {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            overflow: visible;
+        }
+
+        @keyframes dashFlow {
+            to { stroke-dashoffset: -20; }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 500px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .section-header {
+                padding: 16px 16px 12px;
+            }
+            .item-row {
+                padding: 12px 16px;
+            }
+            .answer-inner {
+                padding: 0 16px 14px 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Caminhos</h1>
+        <p>Planejamento de serviços e estratégias</p>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-chip">
+            Perguntas: <span class="count" id="totalCount">0</span>
+        </div>
+        <div class="stat-chip">
+            Respondidas: <span class="count" id="answeredCount">0</span>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <main class="container">
+
+        <!-- ═══════════ NICHO ═══════════ -->
+        <div class="section-card theme-nicho" id="card-nicho">
+            <div class="section-header">
+                <div class="section-icon">🎯</div>
+                <div class="section-header-text">
+                    <h2>Nicho</h2>
+                    <p class="subtitle">Qual nicho vou trabalhar?</p>
+                </div>
+            </div>
+            <div class="items-list">
+                <div class="item" data-id="nicho-1">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Opção 1</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Descreva o nicho, prós, contras..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="nicho-2">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Opção 2</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Descreva o nicho, prós, contras..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="nicho-3">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Opção 3</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Descreva o nicho, prós, contras..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="nicho-4">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Opção 4</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Descreva o nicho, prós, contras..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ SITES ═══════════ -->
+        <div class="section-card theme-sites" id="card-sites">
+            <div class="section-header">
+                <div class="section-icon">🌐</div>
+                <div class="section-header-text">
+                    <h2>Sites</h2>
+                </div>
+            </div>
+            <div class="items-list">
+                <div class="item" data-id="sites-1">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text"><span class="arrow">→</span> Landing page, Institucional, One page</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="sites-2">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text"><span class="arrow">→</span> Copy, SEO, GEO</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="sites-3">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text"><span class="arrow">→</span> Google Meu Negócio</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ SISTEMAS ═══════════ -->
+        <div class="section-card theme-sistemas" id="card-sistemas">
+            <div class="section-header">
+                <div class="section-icon">⚙️</div>
+                <div class="section-header-text">
+                    <h2>Sistemas</h2>
+                </div>
+            </div>
+            <div class="items-list">
+                <div class="item" data-id="sistemas-1">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Funil de Leads</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="sistemas-2">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Agenda (Kanban)</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="sistemas-3">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Escala de evolução de paciente</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="sistemas-4">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Financeiro</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="sistemas-5">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Canva (post Instagram)</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="sistemas-6">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Campanha com IA</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- ═══════════ AUTOMAÇÃO ═══════════ -->
+        <div class="section-card theme-automacao" id="card-automacao">
+            <div class="section-header">
+                <div class="section-icon">🤖</div>
+                <div class="section-header-text">
+                    <h2>Automação</h2>
+                </div>
+            </div>
+            <div class="items-list">
+                <div class="item" data-id="automacao-1">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Triagem</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="automacao-2">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Atendimento</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="automacao-3">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Follow Up</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="automacao-4">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Venda</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="automacao-5">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Agendamento</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ TRÁFEGO INTELIGENTE ═══════════ -->
+        <div class="section-card theme-trafego" id="card-trafego">
+            <div class="section-header">
+                <div class="section-icon">📈</div>
+                <div class="section-header-text">
+                    <h2>Tráfego Inteligente</h2>
+                </div>
+            </div>
+            <div class="items-list">
+                <div class="item" data-id="trafego-1">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Como?</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="trafego-2">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Quais funcionalidades devem ter?</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="trafego-3">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Quais métricas usar?</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="trafego-4">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">O que vai aparecer para o usuário?</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="trafego-5">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">O que a IA deve mensurar?</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="trafego-6">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">O que o relatório deve abranger?</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ MODELOS ═══════════ -->
+        <div class="section-card theme-modelos">
+            <div class="section-header">
+                <div class="section-icon">💰</div>
+                <div class="section-header-text">
+                    <h2>Modelos</h2>
+                </div>
+            </div>
+            <div class="items-list">
+                <div class="item" data-id="modelos-1">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Implementação + Mensal (Suporte)</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" rows="8" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)">PRÓS:
+• Injeção de caixa imediata (High Ticket na taxa de implementação/setup inicial).
+• Cliente valoriza mais o produto pelo investimento inicial realizado.
+• Recorrência previsível cobrindo suporte, manutenção e infraestrutura.
+• Menor taxa de churn precoce (cliente evita cancelar após pagar implantação).
+
+CONTRAS:
+• Ciclo de vendas mais longo e maior esforço de negociação comercial.
+• Onboarding mais complexo e customizado por cliente.
+• Escala mais lenta se depender de braço técnico operacional para cada entrega.</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" data-id="modelos-2">
+                    <div class="item-row" onclick="toggleItem(this)">
+                        <button class="item-toggle">+</button>
+                        <span class="item-text">Assinatura</span>
+                    </div>
+                    <div class="answer-panel">
+                        <div class="answer-inner">
+                            <textarea class="answer-textarea" rows="8" placeholder="Escreva sua resposta..." oninput="saveAnswer(this)">PRÓS:
+• Baixa barreira de entrada para o cliente (fechamento rápido).
+• Receita 100% previsível e altamente escalável (MRR / SaaS).
+• Processo de vendas mais enxuto, rápido e padronizado.
+• Valuation da empresa muito mais elevado no longo prazo.
+
+CONTRAS:
+• Risco maior de Churn nos primeiros meses se a entrega de valor não for imediata.
+• Retorno do investimento (Payback do CAC) é mais lento.
+• Exige plataforma altamente automatizada e onboarding simples/self-serve.</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SVG Connector Lines -->
+        <svg class="svg-connectors" id="svgConnectors"></svg>
+    </main>
+
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="saveIndicator">✓ Salvo automaticamente</div>
+
+    <script src="../config.js"></script>
+    <script>
+        // ═══════════ TOGGLE ITEMS ═══════════
+        function toggleItem(row) {
+            const item = row.closest('.item');
+            const wasOpen = item.classList.contains('open');
+
+            item.classList.toggle('open');
+
+            // Focus textarea when opening
+            if (!wasOpen) {
+                const textarea = item.querySelector('.answer-textarea');
+                setTimeout(() => textarea.focus(), 350);
+            }
+        }
+
+        // ═══════════ SUPABASE (fonte da verdade — dá pra continuar em
+        // qualquer navegador/computador, inclusive o do sócio) ═══════════
+        const cfg = window.MINDLE_SUPABASE;
+        const CAMINHOS_TABLE = (cfg && cfg.caminhosTable) || 'caminhos_respostas';
+
+        function sbHeaders(extra) {
+            return Object.assign({
+                'Content-Type': 'application/json',
+                apikey: cfg.anonKey,
+                Authorization: 'Bearer ' + cfg.anonKey
+            }, extra || {});
+        }
+
+        async function carregarDoSupabase() {
+            if (!cfg || !cfg.url || !cfg.anonKey) return null;
+            try {
+                const res = await fetch(cfg.url + '/rest/v1/' + CAMINHOS_TABLE + '?select=id,texto', {
+                    headers: sbHeaders()
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const rows = await res.json();
+                const data = {};
+                rows.forEach((r) => { data[r.id] = r.texto || ''; });
+                return data;
+            } catch (e) {
+                console.error('Falha ao carregar do Supabase:', e);
+                return null;
+            }
+        }
+
+        async function salvarNoSupabase(id, texto) {
+            if (!cfg || !cfg.url || !cfg.anonKey) return false;
+            try {
+                const res = await fetch(cfg.url + '/rest/v1/' + CAMINHOS_TABLE + '?on_conflict=id', {
+                    method: 'POST',
+                    headers: sbHeaders({ Prefer: 'resolution=merge-duplicates,return=minimal' }),
+                    body: JSON.stringify({ id, texto, atualizado_em: new Date().toISOString() })
+                });
+                return res.ok;
+            } catch (e) {
+                console.error('Falha ao salvar no Supabase:', e);
+                return false;
+            }
+        }
+
+        // ═══════════ LOCAL STORAGE (cache instantâneo, nunca perde o
+        // que foi digitado mesmo se a internet cair no meio) ═══════════
+        const STORAGE_KEY = 'caminhos-respostas';
+
+        function loadData() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            } catch {
+                return {};
+            }
+        }
+
+        function restoreAnswers() {
+            const data = loadData();
+            document.querySelectorAll('.item').forEach(item => {
+                const id = item.dataset.id;
+                if (data[id]) {
+                    const textarea = item.querySelector('.answer-textarea');
+                    textarea.value = data[id];
+                }
+            });
+        }
+
+        // ═══════════ SALVAR (grava local na hora, envia pro Supabase
+        // com debounce pra não bater na API a cada tecla) ═══════════
+        const saveDebounce = {};
+        function saveAnswer(textarea) {
+            const item = textarea.closest('.item');
+            const id = item.dataset.id;
+            const texto = textarea.value;
+
+            const data = loadData();
+            data[id] = texto;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            updateProgress();
+
+            clearTimeout(saveDebounce[id]);
+            saveDebounce[id] = setTimeout(async () => {
+                const ok = await salvarNoSupabase(id, texto);
+                showSaveIndicator(ok);
+            }, 600);
+        }
+
+        // ═══════════ SAVE INDICATOR ═══════════
+        let saveTimeout;
+        function showSaveIndicator(sincronizado) {
+            const el = document.getElementById('saveIndicator');
+            el.textContent = sincronizado === false
+                ? '⚠ Salvo só neste navegador (sem conexão com o Supabase)'
+                : '✓ Salvo automaticamente';
+            el.classList.add('show');
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => el.classList.remove('show'), 1500);
+        }
+
+        // ═══════════ PROGRESS ═══════════
+        function updateProgress() {
+            const data = loadData();
+            const total = document.querySelectorAll('.item').length;
+            const answered = Object.values(data).filter(v => v && v.trim().length > 0).length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('answeredCount').textContent = answered;
+
+            const pct = total > 0 ? (answered / total) * 100 : 0;
+            document.getElementById('progressFill').style.width = pct + '%';
+        }
+
+        // ═══════════ SVG FLOWCHART CONNECTORS ═══════════
+        function drawConnectors() {
+            const svg = document.getElementById('svgConnectors');
+            const container = document.querySelector('.container');
+            const sistemas = document.getElementById('card-sistemas');
+            const automacao = document.getElementById('card-automacao');
+            const trafego = document.getElementById('card-trafego');
+            const sites = document.getElementById('card-sites');
+
+            if (!svg || !container || !sistemas || !automacao || !trafego || !sites) return;
+
+            // Get container rect for relative positioning
+            const cRect = container.getBoundingClientRect();
+
+            // Make SVG cover the full container
+            svg.setAttribute('width', cRect.width);
+            svg.setAttribute('height', container.scrollHeight);
+            svg.style.height = container.scrollHeight + 'px';
+
+            // Helper: get element position relative to container
+            function relPos(el) {
+                const r = el.getBoundingClientRect();
+                return {
+                    top: r.top - cRect.top + container.scrollTop,
+                    bottom: r.bottom - cRect.top + container.scrollTop,
+                    left: r.left - cRect.left,
+                    right: r.right - cRect.left,
+                    midY: (r.top + r.bottom) / 2 - cRect.top + container.scrollTop,
+                    midX: (r.left + r.right) / 2 - cRect.left
+                };
+            }
+
+            const sPos = relPos(sistemas);
+            const aPos = relPos(automacao);
+            const tPos = relPos(trafego);
+            const sitesPos = relPos(sites);
+
+            // Clear previous
+            svg.innerHTML = '';
+
+            // Defs for glow filters only
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+            const filter1 = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+            filter1.setAttribute('id', 'glowPurple');
+            filter1.innerHTML = '<feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#a78bfa" flood-opacity="0.5"/>';
+            defs.appendChild(filter1);
+
+            const filter2 = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+            filter2.setAttribute('id', 'glowAmber');
+            filter2.innerHTML = '<feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#fbbf24" flood-opacity="0.5"/>';
+            defs.appendChild(filter2);
+
+            const filter3 = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+            filter3.setAttribute('id', 'glowBlue');
+            filter3.innerHTML = '<feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#6c8aff" flood-opacity="0.5"/>';
+            defs.appendChild(filter3);
+
+            svg.appendChild(defs);
+
+            // ─── Draw connector: Automação → Sistemas (LEFT SIDE) ───
+            const aX = aPos.left - 4;
+            const aY = aPos.midY;
+            const sX = sPos.left - 4;
+            const sY = sPos.bottom - 10;
+            const offsetX1 = -24;
+
+            const path1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const d1 = `M ${aX} ${aY} H ${aX + offsetX1} V ${sY} H ${sX}`;
+            path1.setAttribute('d', d1);
+            path1.setAttribute('fill', 'none');
+            path1.setAttribute('stroke', '#a78bfa');
+            path1.setAttribute('stroke-width', '2');
+            path1.setAttribute('stroke-linecap', 'round');
+            path1.setAttribute('stroke-linejoin', 'round');
+            path1.setAttribute('filter', 'url(#glowPurple)');
+            path1.setAttribute('stroke-dasharray', '6 4');
+            path1.style.animation = 'dashFlow 1.5s linear infinite';
+            svg.appendChild(path1);
+
+            // ─── Draw connector: Tráfego → Sistemas (LEFT SIDE) ───
+            const tX = tPos.left - 4;
+            const tY = tPos.midY;
+            const sY2 = sPos.bottom - 20;
+            const offsetX2 = -38;
+
+            const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const d2 = `M ${tX} ${tY} H ${tX + offsetX2} V ${sY2} H ${sX}`;
+            path2.setAttribute('d', d2);
+            path2.setAttribute('fill', 'none');
+            path2.setAttribute('stroke', '#fbbf24');
+            path2.setAttribute('stroke-width', '2');
+            path2.setAttribute('stroke-linecap', 'round');
+            path2.setAttribute('stroke-linejoin', 'round');
+            path2.setAttribute('filter', 'url(#glowAmber)');
+            path2.setAttribute('stroke-dasharray', '6 4');
+            path2.style.animation = 'dashFlow 1.5s linear infinite';
+            path2.style.animationDelay = '0.5s';
+            svg.appendChild(path2);
+
+            // ─── Draw connector: Sites → Sistemas (RIGHT SIDE) ───
+            const siRX = sitesPos.right + 4;
+            const siRY = sitesPos.midY;
+            const sRX = sPos.right + 4;
+            const sRY = sPos.top + 10;
+            const offsetXR = 24;
+
+            const path3 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const d3 = `M ${siRX} ${siRY} H ${siRX + offsetXR} V ${sRY} H ${sRX}`;
+            path3.setAttribute('d', d3);
+            path3.setAttribute('fill', 'none');
+            path3.setAttribute('stroke', '#6c8aff');
+            path3.setAttribute('stroke-width', '2');
+            path3.setAttribute('stroke-linecap', 'round');
+            path3.setAttribute('stroke-linejoin', 'round');
+            path3.setAttribute('filter', 'url(#glowBlue)');
+            path3.setAttribute('stroke-dasharray', '6 4');
+            path3.style.animation = 'dashFlow 1.5s linear infinite';
+            path3.style.animationDelay = '1s';
+            svg.appendChild(path3);
+        }
+
+        // Draw on load and resize
+        drawConnectors();
+        window.addEventListener('resize', drawConnectors);
+
+        // Redraw when items toggle (changes card heights)
+        const origToggle = toggleItem;
+        toggleItem = function(row) {
+            origToggle(row);
+            setTimeout(drawConnectors, 400);
+        };
+
+        // ═══════════ INIT ═══════════
+        (async function init() {
+            const remoto = await carregarDoSupabase();
+            if (remoto) localStorage.setItem(STORAGE_KEY, JSON.stringify(remoto));
+            restoreAnswers();
+            updateProgress();
+        })();
+    </script>
+</body>
+</html>

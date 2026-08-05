@@ -9,7 +9,8 @@ window.MINDLE_SUPABASE = {
   anonKey:        'sb_publishable_tu2HAnxMsSaHNWgzkM2LNg_p281xrRH',
   table:          'leads',
   briefingTable:  'briefings',
-  briefingBucket: 'briefing-arquivos'
+  briefingBucket: 'briefing-arquivos',
+  caminhosTable:  'caminhos_respostas'
 };
 
 // Agenda do diagnóstico (Cal.com) — caminho A agenda na hora
